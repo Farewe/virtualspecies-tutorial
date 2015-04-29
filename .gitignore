@@ -13,8 +13,15 @@ vignettes/*.html
 vignettes/*.pdf
 .Rproj.user
 
-# Downloaded climatic data
+# Downloaded data
 wc10/
+*adm0*
 
 # knit temp files
 tmp*
+*_cache
+*_files
+
+# html output file
+virtualspecies-tutorial.html
+virtualspecies-tutorial.md
