@@ -1,0 +1,1362 @@
+---
+title: 'The virtualspecies R package: a complete tutorial'
+author: "Boris Leroy - leroy.boris@gmail.com"
+date: "May 2015"
+output:
+  html_document:
+    fig_caption: yes
+    includes:
+      in_header: tutoVSstyles.sty
+    keep_md: yes
+    mathjax: default
+    theme: united
+    toc: yes
+    toc_depth: 2
+  pdf_document:
+    fig_caption: yes
+    includes:
+      in_header: tutoVSstyles.sty
+    keep_tex: yes
+    toc: yes
+---
+\counterwithin{figure}{section}
+
+
+*******
+
+_Many thanks to **Céline  Bellard** for commenting and correcting this tutorial_
+
+# Introduction
+
+This complete tutorial introduces all the possibilities of the `virtualspecies` package. It was written with the objective to be helpful for both beginners and experienced R users. You can read this tutorial in full or jump to the particular section you are looking for. In each section, you will find simple examples introducing each function, followed by detailed examples for almost every possible parametrisation in `virtualspecies`.
+
+
+After a small introduction on the spatial data used as input for the `virtualspecies` package (section 1.), you will be introduced to the basics of generating virtual species distributions: the two possible approaches to create species-environment relationships (sections 2. and 3.), followed by the conversion of environmental suitability to presence-absence (section 4.). After that, you will see how to generate random virtual species (section 5.), and most importantly, how to explore, extract, and use the outputs of `virtualspecies` (section 6.). Then, you will see how to sample occurrence points (section 7.). If you are interested, you may also learn about the introduction of distribution limitations in section 8.
+
+In the following sections, you will see how to combine `virtualspecies` with external packages : the species distribution models package biomod (section 9.), and the dispersal limitation package MIGCLIM (section 10. - not yet written).
+
+I will make extensive use of climate data as an example here, but remember that you can use other types of data, as long as it is in the format described in section 1.
+
+
+
+
+*******
+
+# 1. Input data
+
+
+*******
+
+\setcounter{section}{1}
+\setcounter{figure}{0}
+
+`virtualspecies` uses spatialised environmental data as an input. These data must be gridded spatial data in the `RasterStack` format of the package `raster`.
+
+### 1.1. Small introduction to raster data
+The input data for virtual species is gridded spatial data (_i.e._, raster data).  
+To summarise, a raster is a map regularly divided into small units, called pixels. Each pixel has its own value. These values can be, for example, temperature values, for a raster of temperature.
+Raster data can be imported into R using the package `raster`. The command `stack()` will allow you to import your own rasters (stored on your hard drive) into an object of class `RasterStack`. Below you will find some concrete examples.
+
+### 1.2. Required format for virtualspecies
+As stated above, the required format is a `RasterStack` containing all the environmental variables with which you want to generate a virtual species distribution. Note that I may use interchangeably the variables and layers in this tutorial, because they roughly refer to the same aspect: a layer is the spatial representation of an environmental variable.
+
+The most important part here is that every layer of your `RasterStack` must be correctly named, because these names will be used when generating virtual species.  
+Hence, I strongly advise using explicit names for your layers. You can use "variable1", "variable2", etc. or "layer1", "layer2", etc. but names like "bio1", "bio2", "bio3", ([bioclimatic variable names](http://worldclim.org/bioclim)) or "temp1", "temp2", etc. will reduce confusion.  
+You can access the names of the layers of your stack with `names(my.stack)`, and modify them with `names(my.stack) <- c("name1", "name2", etc.)`.
+
+
+### 1.3. A quick and easy example using WorldClim data
+WorldClim (www.worldclim.org) freely provides gridded climate data (temperature and precipitations) for the entire World. 
+These data can be downloaded to your hard drive from the website above, and then imported into R using the stack command:
+`stack("my.path/MyWorldClimStack.bil")`.  
+  
+Otherwise, a much simpler solution is to directly download them into R using the function `getData()` (requires an internet connection). 
+
+You have to provide the type of environmental variables you are looking for:  
+
+* tmean = average monthly mean temperature (°C * 10)
+* tmin = average monthly minimum temperature (°C * 10)
+* tmax = average monthly maximum temperature (°C * 10)
+* prec = average monthly precipitation (mm) 
+* bio = bioclimatic variables derived from the tmean, tmin, tmax and prec
+* alt = altitude (elevation above sea level) (m) (from SRTM)
+
+And the resolution: 0.5, 2.5, 5, or 10 minutes of a degree. Note that at fine resolutions the files downloaded are very heavy and may take a long time; at the finest resolution (0.5) you cannot download the global file, and you have to provide a longitude and latitude to obtain a tile of the world (see `?getData` for help).
+
+Here is the example in practice:
+
+```{r wcload, cache = TRUE, echo = TRUE, message = FALSE}
+library(raster, quietly = T)
+worldclim <- getData("worldclim", var = "bio", res = 10)
+worldclim
+```
+
+You can see that the object is of class `RasterStack`, ready to use for `virtualspecies`. The names of the layers are also convenient.
+
+We can easily access a subset of the layers with `[[]]`:
+```{r wcex1, cache = TRUE}
+# The first four layers
+worldclim[[1:4]]
+
+# Layers bio1 and bio12 (annual mean temperature and annual precipitation)
+worldclim[[c("bio1", "bio12")]]
+```
+
+And we can plot our variables:
+
+
+```{r wcex2, fig.width=10, fig.height = 2.5, cache = TRUE, fig.cap = "Fig. 1.1 Variables bio1 (annual mean temperature in °C * 10) and bio2 (annual precipitation)"}
+# Plotting bio1 and bio12
+par(oma = c(0.1, 0.1, 0.1, 2.1))
+plot(worldclim[[c("bio1", "bio12")]])
+```
+
+
+*******
+
+
+# 2. First approach: generate virtual species distributions by defining response functions
+
+
+*******
+
+\setcounter{section}{2}
+\setcounter{figure}{0}
+
+The first approach to generate a virtual species consists in defining its response functions to each of the environmental variables contained in our `RasterStack`. These responses are then combined to calculcate the environmental suitability of the virtual species.
+
+The function providing this approach is `generateSpFromFun`.
+
+## 2.1. An introduction example
+
+Before we start using the package, let's prepare our first simulation of virtual species.
+
+We want to generate a virtual species with two environmental variables, the annual mean temperature `bio1` and annual mean precipitation `bio2`. We want to generate a tropical species, i.e., living in hot and humid environments. We can define bell-shaped response functions to these two variables, as in the following figure:
+
+```{r vspload, echo=FALSE, fig.width=8, fig.height = 4, fig.cap = "Fig. 2.1 Example of bell-shaped response functions to bio1 and bio2, suitable for a tropical species."}
+library(virtualspecies)
+a <- formatFunctions(x = worldclim[[c(1, 12)]], bio1 = c(fun = "dnorm", mean = 250, sd = 50),
+                     bio12 = c(fun = "dnorm", mean = 4000, sd = 2000),
+                     rescale = FALSE)
+rm(a)
+
+```
+
+_Note that bioclimatic temperature variables (here bio1) are is in °C * 10, [as explained here.](http://worldclim.org/bioclim)_
+
+These bell-shaped functions are in fact gaussian distributions functions of the form:
+
+$$ f(x, \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2 \sigma^2}}$$
+
+If we take the example of bio1 above, the mean $\mu$ is equal to 250 (i.e., 25°C) and standard deviation $\sigma$ is equal to 50 (5°C). Hence the response function for bio1 is:
+
+$$ f(bio1) = \frac{1}{50\sqrt{2\pi}}\, e^{-\frac{(bio1 - 250)^2}{2 \times 50^2}} $$
+
+In R, it is very simple to obtain the result of the equation above, with the function `dnorm`: 
+
+```{r resp2, cache = TRUE}
+# Suitability of the environment for bio1 = 15 °C
+dnorm(x = 150, mean = 250, sd = 50)
+```
+
+The idea with `virtualspecies` is to keep the same simplicity when generating a species: we will use the `dnorm` function to generate our virtual species.  
+
+Let's start with the package now:
+The first step is to provide to the helper function `formatFunctions` which responses you want for which variables:
+
+```{r resp3, cache = TRUE}
+library(virtualspecies)
+
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+                                 bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
+```
+
+After that, the generation of the virtual species is fairly easy:
+```{r resp4, cache = TRUE, fig.cap = "Fig. 2.2 Environmental suitability of the generated virtual species"}
+# Generation of the virtual species
+my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
+                                              parameters = my.parameters,
+                                              plot = TRUE)
+my.first.species
+```
+
+Congratulations! You have just generated your first virtual species distribution, with the default settings. In the next section you will learn about the simple, yet important settings of this function.
+
+## 2.2. Customisation of parameters
+
+The function `generateSpFromFun` proceeds into four important steps:
+
+1. The response to each environmental variable is calculated according to the user-chosen functions.
+2. Each response is rescaled between 0 and 1. This step can be disabled.
+3. The responses are combined together to compute the environmental suitability. The user can choose how to combine the responses.
+4. The environmental suitability is rescaled between 0 and 1. This step can be disabled.
+
+### 2.2.1. Response functions
+You can use any existing function with `generateSpFromFun`, as long as you provide the necessary parameters. 
+For example, you can use the function `dnorm` shown above, if you provide the parameters `mean` and `sd`: `formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50))`. Naturally you can change the values of `mean` and `sd` to your needs.
+
+You can also use the basic functions provided with the package:
+
+* Linear function: `formatFunctions(bio1 = c(fun = 'linearFun', a = 1, b = 0))`
+$$ f(bio1) = a * bio1 + b $$
+
+* Quadratic function: `formatFunctions(bio1 = c(fun = 'quadraticFun', a = 1, b = 2, c = 0))`
+$$ f(bio1) = a \times bio1^2 + b \times bio1 + c$$
+
+* Logistic function: `formatFunctions(bio1 = c(fun = 'logisticFun', beta = 150, alpha = -5))`
+$$ f(bio1) = \frac{1}{1 + e^{\frac{bio1 - \beta}{\alpha}}} $$
+
+Or you can create your own functions (see the section *How to create your own response functions* if you need help for this).
+
+### 2.2.2. Rescaling of individual response functions
+
+This rescaling is performed because if you use very different response function for different variables, (_e.g._, a Gaussian distribution function with a linear function), then the responses may be disproportionate among variables. By default this rescaling is enabled (`rescale.each.response = TRUE`), but it can be disabled (`rescale.each.response = FALSE`).
+
+### 2.2.3. Combining response functions
+
+There are three possibilities to combine response functions to calculate the environmental suitability, as defined by the parameter `species.type`:
+
+* `species.type = "additive"`: the response functions are added.
+* `species.type = "multiplicative"`: the response functions are multiplied. 
+* `species.type = "mixed"`: there is a mix of additions and products to calculate the environmental suitability. In this case, you have to provide the desired formula: `formula = bio1 + bio2 * bio3 + bio4` for example. If you do not provide a formula, then it will be randomly generated.
+
+### 2.2.4. Rescaling of the final environmental suitability
+
+This final rescaling is performed because the combination of the different responses can lead to very different range of values. It is therefore necessary to allow environmental suitabilities to be comparable among virtual species, and should not be disabled unless you have very precise reasons to do it. The argument `rescale` controls this rescaling (`TRUE` by default).
+
+## 2.3. How to create and use your own response functions
+
+An important aspect of `generateSpFromFun` is that you can create and use your own response functions. In this section we will see how we can do that in practice.  
+We will take the example of a simple linear function:
+$$ f(x, a, b) = ax + b$$
+
+Our first step will be to create the function in R:
+
+```{r custfun1, cache = TRUE}
+linear.function <- function(x, a, b)
+{
+  a*x + b
+}
+```
+
+That's it! You created a function called `linear.function` in R.
+
+Let's try it now:
+```{r custfun2, cache = TRUE}
+linear.function(x = 0.5, a = 2, b = 1)
+
+linear.function(x = 3, a = 4, b = 1)
+
+linear.function(x = -20, a = 2, b = 0)
+```
+
+It seems to work properly. Now we will use `linear.function` to generate a virtual species distribution. We want a species responding linearly to the annual mean temperature, and with a gaussian to the annual precipitations:
+
+```{r custfun3, cache = TRUE, fig.cap = "Fig 2.3 Environmental suitability of the generated virtual species"}
+my.responses <- formatFunctions(bio1 = c(fun = "linear.function", a = 1, b = 0),
+                                bio12 = c(fun = "dnorm", mean = 1000, sd = 1000))
+
+generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
+                  parameters = my.responses, plot = TRUE)
+```
+
+And it worked! Your turn now!
+
+
+
+*******
+
+
+# 3. Second approach: generate virtual species with a Principal Components Analysis
+
+
+*******
+\setcounter{section}{3}
+\setcounter{figure}{0}
+
+If you try to use the first approach with a large number of variables, _e.g._ 10, then you  will rapidly hit the unextricable problem of unrealistic environmental requirements. When you have 2 environmental variables, it is easy to choose response functions that are compatible. For example, you know that you should not try to generate a species which requires a temperature of the warmest month at 35°C, and a temperature of the coldest month at -25°C, because such conditions are unlikely to exist on Earth. However, if you have 10 variables, the task is much more complicated: if you want to generate a species which is dependent on 5 different temperature variables, 3 precipitation variables, and 2 land use variables, then it is almost impossible to know if your response functions are realistic regarding environmental conditions. 
+
+This is why we implemented the second approach, which consits in generating a Principal Component Analysis (PCA) of all the environmental variables in your `RasterStack`, and then define the response of the species to two axes (pricipal components). Using this approach will greatly help you to generate virtual species which have plausible environmental requirements, whil being dependent on all of your variables.
+
+The function providing this approach is `generateSpFromPCA`.
+
+## 3.1. An introduction example
+
+We want to generate a species dependent on three temperature variables ([bio2, bio5 and bio6](http://worldclim.org/bioclim)) and three precipitation variables ([bio12, bio13, bio14](http://worldclim.org/bioclim) ).
+
+```{r pca1, cache = TRUE}
+my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
+```
+
+The generation of a virtual species is relatively straightforward:
+
+```{r pca2, eval = T, cache = TRUE}
+my.pca.species <- generateSpFromPCA(raster.stack = my.stack)
+my.pca.species
+```
+
+Something very important to know here is that the PCA is performed on all the pixels of the raster stack. As a consequence, if you use large stacks (large spatial scales, fine resolutions), your computer may not be able to extract all the values. In this case, you can run the PCA on a random subset of values, by setting `sample.points = TRUE` and defining the number of pixels to sample with `nb.points` (default 10000, try less if your computer is struggling). _Note that there is an automatic safety check if you don't set `sample.points = TRUE`, and the function will not if your computer cannot handle it._
+
+```{r pca3, eval = T, cache = TRUE}
+# A safe run of the function
+my.pca.species <- generateSpFromPCA(raster.stack = my.stack, 
+                                    sample.points = TRUE, nb.points = 5000)
+my.pca.species
+```
+
+Congratulations! You have just generated your first virtual species with a PCA. You will probably have noticed that you have not entered any parameter, but the generation has still succeeded. Indeed, when no parameter is entered, the response of the species to PCA axes is randomly generated. The reason behind this choice is that you can hardly choose by yourself the parameters before you have seen the PCA! The next step is therefore to take a look at the PCA, using the function `plotResponse` (note that you can also use the argument `plot = TRUE` in `generateSpFromPCA`)
+
+```{r pca4, eval = T, cache = TRUE, fig.width = 10, fig.height = 8, fig.cap = "Fig. 3.1 PCA used to generate the virtual species", warning = FALSE}
+plotResponse(my.pca.species)
+```
+
+
+On Fig. 3.1 you can see the PCA of environmental conditions, where each point is the representation of a pixel of your stack in the factorial space. On one of the corners is shown the projection of the variables on this PCA (the position varies for an easier reading, although it is not always perfect). Along each axis, you can see the response of the species: on my example, a wide tolerance to the axis 1, driven mostly by precipitation variables (bio12 and bio13), and an intermediate tolerance to the axis 2, driven mostly by temperature variables (bio2 and bio5). The resulting environmental suitability, as a product of responses to each axis, is illustrated by a coloration of the points, from red (high suitability), to yellow and grey (low/unsuitable pixels).
+
+Now that you have this information in hand, you will be able (in the next section) to define a narrower niche breadth for the species, or to choose a species leaving in hotter, colder, drier or wetter environments. But before that, you probably would like to see how the species' environmental suitability is distributed in space. Nothing's simpler:
+
+```{r pca5, eval = T, cache = TRUE, fig.cap = "Fig. 3.2 Environmental suitability of a species generated with a PCA approach"}
+plot(my.pca.species)
+```
+
+## 3.2. Customisation of the parameters
+
+The function `generateSpFromPCA` proceeds into four important steps:
+1. The PCA is computed on the basis of the input environmental conditions. You can also provide your own PCA.
+2. The Gaussian responses to axes are randomly chosen (only if you did not provide precise parameters) and then computed.
+3. The environmental suitability is calculated as a product of the responses to both axes.
+4. The environmental suitability is rescaled between 0 and 1. This step can be disabled.
+
+
+### 3.2.1. Customisation of the responses to axes
+
+_First of all, note that at the moment, the choice is restricted to axes 1 and 2, and to the usage of gaussian functions. The reason behind that is the automatic random generation of parameters, which would become very difficult to automatise for numerous different functions. However, an upcoming version of this function is under developement, which should allow to use different axes and custom functions in the future. If you are interested to get it very soon please e-mail me._
+
+You can customise the Gaussian response functions in two different ways:
+
+1. You can constrain the random generation of parameters by choosing either a narrow-niche or a broad-niche species. To do this, specify the argument `niche.breadth = 'narrow'` or `niche.breadth = 'wide'`. By default this argument is set to `niche.breadth = 'any'`, meaning that you can obtain species with any niche breadth.   
+This argument controls the standard deviation of the gaussian distribution. The full details about this is available in the help of the function (`?generateSpFromPCA`)
+
+```{r pca6, eval = T, cache = TRUE}
+narrow.species <- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
+                                    nb.points = 5000,
+                                    niche.breadth = "narrow")
+```
+
+```{r pca6b, eval = T, cache = TRUE, fig.cap = "Fig. 3.3 PCA of a species generated with rather narrow niche breadth", warning = FALSE}
+plotResponse(narrow.species)
+```
+
+```{r pca6c, eval = T, cache = TRUE, fig.cap = "Fig. 3.4 Environmental suitability of a species generated with rather narrow niche breadth"}
+plot(narrow.species)
+```
+
+```{r pca7, eval = T, cache = TRUE, fig.cap = "A species generated with rather wide niche breadth"}
+wide.species <- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
+                                    nb.points = 5000,
+                                    niche.breadth = "wide")
+```
+
+```{r pca7b, eval = T, cache = TRUE, fig.cap = "Fig. 3.5 PCA of a species generated with rather wide niche breadth", warning = FALSE}
+plotResponse(wide.species)
+```
+
+```{r pca7c, eval = T, cache = TRUE, fig.cap = "Fig. 3.6 Environmental suitability of a species generated with rather wide niche breadth"}
+plot(wide.species)
+```
+
+
+2. You can define by yourself the mean and standard deviations of the Gaussian responses. To do this, use arguments `means` and `sds` as in the following example.  
+Using the figure above, we know that the first axis is driven by precipitation variables, and the second one by temperature variables. To define a species living in colder and wetter environments, we will move the means of Gaussian responses to the right of the first axis (_e.g._, a mean of 0 or above) and to the top of the second axis (_e.g._, a mean of 1 or above). In addition, if we want our species to be stenotopic (narrow niche breadth), we will also define lower standard deviations (_e.g._, standard deviations of 0.25). The correct input will be : `means = c(0, 1)` (a mean of 0 for the first axis and 1 for the second) and `sds = c(0.25, 0.5)` (standard deviations of 0.25 for axes 1 and 2):
+
+```{r pca8, eval = T, cache = TRUE}
+my.custom.species <- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
+                                       nb.points = 5000,
+                                       means = c(0, 1), sds = c(0.5, 0.5))
+```
+
+```{r pca8b, eval = T, cache = TRUE, fig.cap = "Fig. 3.7 PCA of the species generated with custom responses to axes"}
+plotResponse(my.custom.species)
+```
+
+```{r pca8c, eval = T, cache = TRUE, fig.cap = "Fig. 3.8 Environmental suitability of the species generated with custom responses to axes"}
+plot(my.custom.species)
+```
+
+### 3.2.2. Rescaling of the final environmental suitability
+
+The final rescaling is performed for the same reasons as in `generateSpFromFun`. It should not be disabled unless you have very precise reasons to do it. The argument `rescale` controls this rescaling (`TRUE` by default).
+
+### 3.2.3. Using a custom PCA
+
+It is possible, if you need, to use your own PCA. In that case, make sure that the PCA was performed with the function `dudi.pca` of the package [`ade4`](http://cran.r-project.org/web/packages/ade4/index.html). You also need to perform the PCA on the same variables as in your `RasterStack`, entered in the **exact same order**.
+
+One reason why you would want to use a custom PCA is because you have a struggling computer, which requires to generate a PCA from a very reduced subset of your environmental stack (_e.g._, `generateSpFromPCA(my.stack, sample.points = TRUE, nb.points = 250)`). In such a case, the PCA may vary substantially among runs, precluding any tentative to finely customise the responses to axes. It is easy to extract the PCA from a previous run, and use it in the next run(s):
+
+```{r pca10, eval = T, cache = TRUE}
+my.first.run <- generateSpFromPCA(raster.stack = my.stack, 
+                                  sample.points = TRUE, nb.points = 250)
+
+# You can access the PCA with the following command
+my.pca <- my.first.run$details$pca
+
+# And then provide it to your second run
+my.second.run <- generateSpFromPCA(raster.stack = my.stack, 
+                                   pca = my.pca)
+```
+
+
+*******
+
+
+# 4. Conversion of environmental suitability to presence-absence
+
+
+*******
+
+\setcounter{section}{4}
+\setcounter{figure}{0}
+
+
+## 4.1. Introduction: why should we avoid a threshold-conversion?
+What we did so far was defining the relationship between the species and its environment. It was the most important part, but what it provides us is a spatial distribution of the species' environmental suitability, not a spatial distribution of the species' presences/absences. Hence we now have to convert the environmental suitability into presence-absence.
+
+The simplest approach, which was also the most widely used until 2014, consists in defining a threshold of environmental suitability, below which conditions are unsuitable, so absence is attributed; and above which conditions are suitable, so persence is attributed. However, you should completely avoid this approach which is *pure evil*:
+
+* Most importantly, this creates completely unrealistic species:
+    + Real species are often absent from areas of high suitability, because of factors acting at smaller spatial scales, such as biotic pressure (competition, predation), disturbances, stochastic events.
+    + Real species often occur in unsuitable areas, because of very particular conditions allowing their occurrence (microclimatic/microhabitat conditions, climatic refugia).
+* The threshold almost completely removes the previously defined relationship between the species and its environment. The gradual aspect is lost: the above-threshold part of the environmental gradient is always fully suitable, while the below-threshold part is always fully unsuitable.
+
+So, how can we convert our environmental suitability into presence-absence without a threshold? 
+
+We use a probabilistic approach: the probability of getting a presence of the species in a given pixel is dependent on its suitability in that pixel:
+
+```{r conv1, echo = FALSE, eval = T, cache = TRUE, fig.cap = "Fig. 4.1 Logistic curve used for a probabilistic conversion into presence-absence"}
+x <- seq(0, 1, length = 100)
+y <- logisticFun(x, alpha = -0.05, beta = 0.5)
+plot(y ~ x, type = "l", main = "Probabilistic conversion into Presence-Absence",
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l")
+# segments(x0 = 0.5, x1 = 0.5, y0 = -0.1, y1 = logisticFun(0.5, alpha = -0.05, beta = 0.5),
+#          lty = 3)
+segments(x0 = 0.6, x1 = 0.6, y0 = -0.1, y1 = logisticFun(0.6, alpha = -0.05, beta = 0.5),
+         lty = 3)
+segments(x0 = -0.1, x1 = 0.6, y0 = logisticFun(0.6, alpha = -0.05, beta = 0.5),
+         y1 = logisticFun(0.6, alpha = -0.05, beta = 0.5),
+         lty = 3)
+# mtext(text = expression(symbol("b")), side = 1, line = 1, at = c(0.5))
+```
+
+With the example above, a pixel with environmental suitability equal to 0.6 has 88% chance of having species presence, and 12% chance of having species absence. 
+
+Of course, this conversion is fully customisable, to simulate different cases:
+
+
+```{r conv2, echo = FALSE, fig.width = 9, fig.height = 7, message=FALSE, eval = T, cache = TRUE, fig.cap = "Fig. 4.2 Contrasting examples of conversion curves and their result on the distribution range of the same virtual species."}
+par(mfrow = c(2, 3))
+x <- seq(0, 1, length = 100)
+y1 <- logisticFun(x, alpha = -1, beta = 0.5)
+y2 <- logisticFun(x, alpha = -0.08, beta = 0.5)
+y3 <- logisticFun(x, alpha = -0.0000001, beta = 0.5) 
+a1 <- convertToPA(my.first.species, beta = 0.65, alpha = -1, plot = FALSE)
+a2 <- convertToPA(my.first.species, beta = 0.65, alpha = -0.08, plot = FALSE)
+a3 <- convertToPA(my.first.species, beta = 0.65, alpha = -0.0000001, plot = FALSE)
+
+plot(y1 ~ x, type = "l", main = "Linear conversion",
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l")
+plot(y2 ~ x, type = "l", main = "Logistic conversion",
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l")
+plot(y3 ~ x, type = "l", main = "Threshold-like conversion",
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l")
+plot(a1$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20))
+plot(a2$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20))
+plot(a3$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20))
+```
+
+The logistic conversion looks much more like what a real species distribution is than the linear and threshold-like conversions.
+
+In the next section we will see how to perform the conversion, and how to customise it.
+
+## 4.2. Customisation of the conversion
+
+At first you may be interested to see the function in action, before we try to customise it. Here it is!
+
+```{r conv3, message = FALSE, eval = T, cache = TRUE, fig.width = 10, fig.height = 2.5, fig.cap = "Fig. 4.3 Maps of environmental suitability and presence-absence of the virtual species"}
+pa1 <- convertToPA(my.first.species, plot = TRUE)
+```
+
+You have probably noticed that the conversion was performed without you choosing any parameter. This is because by default, the function randomly assigns parameters to the conversion. What are these parameters?
+
+They are the parameters $\alpha$ and $\beta$ which determine the shape of the logistic curve:
+
+* $\beta$ controls the inflexion point,
+
+```{r conv4, echo = FALSE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.4 Impact of beta on the conversion curve"}
+par(mfrow = c(1, 3))
+x <- seq(0, 1, length = 100)
+y1 <- logisticFun(x, alpha = -0.05, beta = 0.2)
+y2 <- logisticFun(x, alpha = -0.05, beta = 0.5)
+y3 <- logisticFun(x, alpha = -0.05, beta = 0.7)
+plot(y1 ~ x, type = "l", main = expression(symbol("b = 0.2")),
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l", xaxt = "n")
+axis(1, at = c(0, 1))
+segments(x0 = 0.2, x1 = 0.2, y0 = -0.1, y1 = logisticFun(0.5, alpha = -0.05, beta = 0.5),
+         lty = 3)
+mtext(text = expression(symbol("b")), side = 1, line = 1, at = c(0.2))
+
+plot(y2 ~ x, type = "l", main = expression(symbol("b = 0.5")),
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l", xaxt = "n")
+axis(1, at = c(0, 1))
+segments(x0 = 0.5, x1 = 0.5, y0 = -0.1, y1 = logisticFun(0.5, alpha = -0.05, beta = 0.5),
+         lty = 3)
+mtext(text = expression(symbol("b")), side = 1, line = 1, at = c(0.5))
+
+plot(y3 ~ x, type = "l", main = expression(symbol("b = 0.7")),
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l", xaxt = "n")
+axis(1, at = c(0, 1))
+segments(x0 = 0.7, x1 = 0.7, y0 = -0.1, y1 = logisticFun(0.5, alpha = -0.05, beta = 0.5),
+         lty = 3)
+mtext(text = expression(symbol("b")), side = 1, line = 1, at = c(0.7))
+```
+
+* and $\alpha$ drives the 'slope' of the curve
+
+```{r conv5, echo = FALSE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.4 Impact of alpha on the conversion curve"}
+x <- seq(0, 1, length = 100)
+y1 <- logisticFun(x, alpha = -1, beta = 0.5)
+y2 <- logisticFun(x, alpha = -0.05, beta = 0.5)
+y3 <- logisticFun(x, alpha = -0.000001, beta = 0.5)
+par(mfrow = c(1, 3))
+plot(y1 ~ x, type = "l", main = expression(symbol("a = -1")),
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l")
+
+plot(y2 ~ x, type = "l", main = expression(symbol("a = -0.05")),
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l")
+
+plot(y3 ~ x, type = "l", main = expression(symbol("a = -0.000001")),
+     xlab = "Environmental suitability", ylab = "Probability of occurrence",
+     cex.axis = 0.8, las = 1, bty = "l")
+```
+
+
+The parameters are fairly simple to customise:
+
+
+```{r conv6, message = FALSE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07"}
+pa2 <- convertToPA(my.first.species,
+                   beta = 0.65, alpha = -0.07,
+                   plot = TRUE)
+```
+
+```{r conv7, message = FALSE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07"}
+# You can modify the conversion of your object if you did not like it:
+pa2 <- convertToPA(pa2,
+                   beta = 0.3, alpha = -0.02,
+                   plot = TRUE)
+```
+
+In the next sections I summarise how to choose appropriate values of `alpha` and `beta`, and also I introduce a third parameter which may be very useful to generate virtual species distributions: the species prevalance (i.e., the number of places occupied by the species, out of the total number of available places). 
+
+
+### 4.2.1. beta
+
+`beta` is very simple to grasp, as it is the inflexion point of the curve. Hence, looking at the three beta curves above, we can see that a lower `beta` will increase the probability of finding suitable conditions for the species (wider distribution range). A higher `beta` will decrease the probability of finding suitable conditions (smaller distribution range).
+
+### 4.2.2. alpha
+
+`alpha` may be more difficult to grasp, as it is dependent on the range of values of the `x` axis (in our case, the environmental suitability, ranging from 0 to 1):
+
+* If `alpha` is approximately equal to the range of`x` pr greater (in absolute value), then the conversion will have a linear shape. In our case, it means  values of `alpha` close to -1 or below).
+* If `alpha` is about 5-10% of the range of `x`, then the conversion will be logistic. In our case, you can have nice logistic curves for values of `alpha` between -0.1 and -0.01.
+* If `alpha` is much smaller compared to `x` (in absolute value), then the conversion will be threshold-like. In our case, if means values of `alpha` in the range [-0.001, 0[.
+
+### 4.2.3. Conversion to presence-absence based on a value of species prevalence
+
+_The species prevalence is the number of places (here, pixels) actually occupied by the species out of the total number of places (pixels) available. Do not confuse the **SPECIES PREVALENCE** with the [**SAMPLE PREVALENCE**](#sample-prevalence), which in turn is the proportion of samples in which you have found the species._
+
+Numerous authors have shown the importance of the species prevalence in species distribution modelling, and how it can bias models. As a consequence, when generating virtual species distributions to test particular protocols or modelling techniques, you may be interested in testing different values of species prevalence. However, it is important to know that the species prevalence is dependent on **the species-environment relationship**, **the shape of the probabilistic conversion curve** AND **the spatial distribution of environmental conditions**. As a consequence, the function has to try different shapes of conversion curve to find a conversion according to your chosen value of species prevalence. Sometimes, it is not possible to reach a particular species prevalence, in that case the function will choose the conversion curve providing results closest to your species prevalence.
+
+If you want to generate a species with a particular species prevalence, then you also have to fix either `alpha` or `beta`. I strongly advise to fix a value of `alpha` (this is the default paramter, with `alpha = -0.05`), so that the function will try to find an appropriate conversion by testing different values of `beta`. If you prefer to fix the value of `beta`, then the function will try different values of `alpha`, but it is likely that it will not be able to find a conversion generating a species with the appropriate prevalence.
+
+Let's see it in practice:
+
+```{r conv8, message = TRUE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.6 Conversion of a species with a prevalence of 0.2, _i.e._ occupying 20% of the world"}
+# Let's generate a species occupying 20% of the world
+# Default settings, alpha = -0.05
+sp.0.2 <- convertToPA(my.first.species,
+                      species.prevalence = 0.2)
+sp.0.2
+```
+
+```{r conv9, message = TRUE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.7 Conversion of a species with a prevalence of 0.015, _i.e._ occupying 1.5% of the world"}
+# Now, a species occupying 1.5% of the world
+# Change alpha to have a slightly more steep curve
+sp.0.015 <- convertToPA(my.first.species,
+                        species.prevalence = 0.015,
+                        alpha = -0.015)
+sp.0.015
+```
+
+```{r conv10, message = TRUE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.8 Conversion of a species with a prevalence of 0.1, _i.e._ occupying 10% of the world"}
+# Let's try by fixing beta rather than alpha
+# We want a species occupying 10% of the world, with a high value of beta
+sp.10 <- convertToPA(my.first.species,
+                     species.prevalence = 0.1,
+                     alpha = NULL,
+                     beta = 0.9)
+
+sp.10
+```
+It worked, but the resulting species does not look realistic
+
+```{r conv11, message = TRUE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.9 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta"}
+# Now an impossible task: a low value of beta for the same requirements:
+sp.10bis <- convertToPA(my.first.species,
+                        species.prevalence = 0.1,
+                        alpha = NULL,
+                        beta = 0.3)
+sp.10bis
+```
+
+
+********
+
+
+# 5. Generating random virtual species
+
+
+
+********
+
+\setcounter{section}{5}
+\setcounter{figure}{0}
+
+
+The `virtualspecies` package embeds a function to randomly generate virtual species `generateRandomSp`, with many customisable options to constrain the randomisation process.
+
+Let's take a look:
+
+```{r rand1, eval = T, cache = TRUE, fig.height = 2.51, fig.width = 10, fig.cap = "Fig. 5.1 A species randomly generated with `generateRandomSp`"}
+my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
+random.sp <- generateRandomSp(my.stack)
+random.sp
+
+```
+
+We can see that the species was generated using a PCA approach. Indeed, [as explained in the PCA section](#PCA.approach), when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function `generateRandomSp` uses a PCA approach if you have 6 or more variables, and a 'response functions' approach if you have less than 6 variables.
+
+In the next sections I detail the many possible customisations for the function `generateRandomSp`.
+
+## 5.1. General parameters
+
+### 5.1.1. Choosing the approach
+
+You can choose `approach = `:
+
+* `"automatic"`: a 'response' approach is used if you have less than 6 variables and a 'PCA' approach is used if you have 6 or more variables
+* `"random"`: a random approach is chosen (response or PCA)
+* `"response"`: to use a response approach
+* `"pca"`: to use a pca approach
+
+### 5.1.2. Rescaling of the environmental suitability
+
+By default, `rescale = TRUE`, which means that the environmental suitability is rescaled between 0 and 1.
+
+### 5.1.3. Conversion to presence-absence
+
+You can choose to enable the conversion of environmental suitability to presence-absence. To do this, set `convert.to.PA = TRUE`. You can customise the conversion:
+
+* choose the conversion method with `PA.method`. You should leave it to `probability` unless you have a very particular reason to use the `threshold` approach.
+* define the parameters `alpha`, `beta` and `species.prevalence` exactly as explained in the convert to presence-absence section, or leave them as they are to create a random conversion into presence-absence
+
+## 5.2. Parameters specific to a 'response' approach
+
+### 5.2.1. Define the possible response functions
+
+At the moment, four relations are possible for a random generation of virtual species: Gaussian (`gaussian`), linear (`linear`), logistic (`logistic`) and quadratic (`quadratic`) relations. By default, all the relation types are used. You can choose to use any combination with the argument `relations`:
+
+```{r rand2, fig.width = 10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 5.2 A species randomly generated with `generateRandomSp`, with gaussian and logistic response functions"}
+# A species with gaussian and logistic response functions
+random.sp1 <- generateRandomSp(worldclim[[1:3]], 
+                              relations = c("gaussian", "logistic"))
+
+random.sp1
+```
+
+```{r rand3, fig.width = 5, fig.height = 5, eval = T, cache = TRUE, fig.cap = "Response functions of the randomly generated species"}
+plotResponse(random.sp1)
+```
+
+
+```{r rand4, fig.width = 10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 5.4 A species randomly generated with `generateRandomSp`, with gaussian response functions only"}
+# A purely gaussian species
+random.sp2 <- generateRandomSp(worldclim[[1:3]], 
+                              relations = "gaussian")
+
+random.sp2
+```
+
+```{r rand5, fig.width = 5, fig.height = 5, eval = T, cache = TRUE, fig.cap = "Fig. 5.5 Response functions of the randomly generated species"}
+plotResponse(random.sp2)
+```
+
+
+### 5.2.2. Rescale individual response functions
+
+As explained in the section on the 'response' approach, you can choose to rescale or not each individual response function, with the argument `rescale.each.response`. `TRUE` by default.
+
+### 5.2.3. Try to find a realistic species
+
+An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35°C and winter temperature of -50°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: `realistic.sp`.
+
+When activating this argument, the function will proceed step-by-step to try defining a realistic species. At step one, one of the variable is chosen, and the program randomly determines a response function for this variable. Then, it will compute the environmental suitability of this species. At step two, the program will pick a second variable, and will constrain its random generation depending on the environmental suitability obtained at step one. For example, if at step 2 a gaussian response is picked, then the mean will be chosen in areas where the species had a high environmental suitability. Then, the environmental suitability is recalculated on the basis of the first two response functions. At step 3, another variable is picked, a response function randomly generated with respect to areas where the species already has a high suitability, and so on until there are no variables left. While this process helps, it does not always work, especially when you have a larger number of variables.
+
+Let's see an example :
+
+```{r rand6, fig.width = 10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = c("Fig. 5.6 A species randomly generated, constrained to find realistic environmental requirements", "Fig. 5.7 A species randomly generated, with no constraints")}
+realistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
+                                 realistic.sp = TRUE)
+
+
+
+unrealistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
+                                   realistic.sp = FALSE)
+```
+
+Note that you can always change the conversion to presence-absence while keeping the same species-environment relationships:
+
+```{r rand7, fig.width = 10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6", cache = TRUE}
+realistic.sp <- convertToPA(realistic.sp, beta = 0.5)
+```
+
+If, in spite of all your attempts, you are struggling to obtain satisfactory species, then perhaps you should try the 'PCA' approach.
+
+### 5.2.4. Define how response functions are combined to compute the environmental suitability
+
+You can define how response functions are combined with the argument `sp.type`, exactly as explained in the 'response' approach section:
+
+* `species.type = "additive"`: the response functions are added.
+* `species.type = "multiplicative"`: the response functions are multiplied (default value). 
+* `species.type = "mixed"`: there is a mix of additions and products to calculate the environmental suitability, randomly generated.
+
+## 5.3. Parameters specific to a 'PCA' approach
+
+### 5.3.1. Generate a random species with a PCA approach on a low-memory computer
+
+As explained in the PCA section, if you have low-memory computer, or are working with very large raster files (large extent, fine resolution), then you can still perform the PCA by using a sample of the pixels of your raster.
+
+To do this, set `sample.points = TRUE`, and choose the number of pixels to sample, depending on your computer's memory, with `nb.points`.
+
+```{r rand8, fig.width = 10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure"}
+# A safe run for a low memory computer
+safe.run.sp <- generateRandomSp(worldclim[[c(1, 5, 6)]], 
+                                sample.points = TRUE,
+                                nb.points = 1000)
+```
+
+### 5.3.2. Generate stenotopic or eurytopic species
+
+You can modify the `niche.breadth` argument to generate stenotopic (`niche.breadth = 'narrow'`), eurytopic (`niche.breadth = 'wide'`), or any type of species (`niche.breadth = 'any'`).
+
+
+********
+
+
+# 6. Exploring and using the outputs of virtualspecies 
+
+
+
+********
+
+\setcounter{section}{6}
+\setcounter{figure}{0}
+
+
+This section is mainly intended to users not very familiar with R. For example, if you are not sure how to obtain the maps of generated virtual species, read this section. If you simply want to extract (sample) occurrence points for your virtual species, then you should jump to the next section.
+
+
+## 6.1. Consult the details of a generated virtual species
+
+Let's create a simple virtual species:
+```{r output1, fig.height = 2.5, fig.width = 10, cache = TRUE, fig.cap = "6.1 Automatic illustration of the randomly generated species"}
+random.sp1 <- generateRandomSp(raster.stack = worldclim[[c("bio2", "bio5")]],
+                               relations = "gaussian")
+```
+
+If we want to know how it was generated, we simply type the object name in the R console:
+
+```{r output2, cache = TRUE, dependson = "output1"}
+random.sp1
+```
+
+And a summary of how the virtual species was generated appears:
+
+* It shows us the variables used.
+* It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9°C) to 314 (31.4°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25°C).
+* If a conversion to presence-absence was performed, it shows us the parameters of the conversion, and provides the species prevalence (the species prevalence is always calculated and provided).
+* If you have introduced a distribution bias (will be seen in a later section), it will provide information about this particular bias.
+
+
+## 6.2. Plot the virtual species map
+
+Plotting the distribution maps of a virtual species is straightforward:
+```{r output3, fig.height = 2.5, fig.width = 10, cache = TRUE, dependson = "output1", fig.cap = "6.2 Maps obtained when using the function `plot()` on virtual species objects"}
+plot(random.sp1)
+```
+
+If the environmental sutiability has been converted into presence-absence, then the plot will conveniently display both the environmental suitability and the presence-absence map.
+
+## 6.3. Plot the species-environment relationship
+
+As illustrated several times in this tutorial, there is a function to automatically generate an appropriate plot for your virtual species: `plotResponse`
+
+```{r output3bis, fig.height = 2.5, fig.width = 10, cache = TRUE, dependson = "output1", fig.cap = "6.3 Example of figure obtained when running `plotResponse()` on a virtual species object"}
+plotResponse(random.sp1)
+```
+
+## 6.4. Extracting elements of the virtual species, such as the rasters of environmental suitability
+
+The virtual species object is structured as a `list` in R, which roughly means that it is an object containing many "sub-objects". When you run functions on your virtual species object, such as the conversion into presence-absence, then new sub-objects are added or replaced in the list.
+
+There is a function allowing you to see the content of the list: `str()`
+
+```{r output4, cache = TRUE, dependson = "output1"}
+str(random.sp1)
+```
+
+We are informed that the object is a `list` containing 5 elements (sub-objects), that you can read on the lines starting with a `$`: `approach`, `details`, `suitab.raster`, `PA.conversion` and `pa.raster`.
+
+You can extract each element using the `$`: for example, to extract the suitability raster, type
+
+```{r output5, cache = TRUE, dependson = "output1"}
+random.sp1$suitab.raster
+```
+
+If you are interested in the presence-absence raster, type
+
+```{r output6, cache = TRUE, dependson = "output1"}
+random.sp1$pa.raster
+```
+
+
+You can also see that we have "sub-sub-objects", in the lines starting with `..$`: these are objects contained within the sub-object `details`. You can also extract them easily:
+
+```{r output7, cache = TRUE, dependson = "output1"}
+random.sp1$details$variables
+```
+
+However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use `str()` on your virtual species object. For example, if we extract the `parameters` object from the details, we can see that it contains all the function names and their parameters:
+
+```{r output8, cache = TRUE, dependson = "output1"}
+random.sp1$details$parameters
+
+# Looking at how it is structured:
+str(random.sp1$details$parameters)
+```
+
+
+Hence, the main message here is if you want to explore the content of the virtual species object, use the function `str()`, look at which sub-objects you are interested in, and extract them with `$`. 
+
+
+
+## 6.5. Saving the virtual species objects for later use
+
+
+If you want to save a virtual species object, you can save it on your hard drive, using the R function `save()`:
+
+```{r, eval =F, dependson = "output1"}
+save(random.sp1, file = "MyVirtualSpecies")
+```
+
+You can load it in a later session of R, using `load()`:
+
+```{r, eval =F, dependson = "output1"}
+load(file = "MyVirtualSpecies")
+```
+
+The object will be restored in the memory of R, with its original name.
+
+
+*******
+
+
+# 7. Sampling occurrence points
+
+
+*******
+
+\setcounter{section}{7}
+\setcounter{figure}{0}
+
+
+## 7.1. Basic usage
+
+If you generated virtual species distributions with this package, there is a good chance that your objective is to test a particular modelling protocol or technique. Hence, there is one last step for you to perform: the sampling of species occurrences. This can be done with the function `sampleOccurrences`, with which you can sample either "presence-absence" or "presence only" occurrence data. The function `sampleOccurrences` also provides the possibility to introduce a number of sampling biases, such as uneven spatial sampling intensity, probability of detection, and probability of error.
+
+Let's see an example in practice, using the same tropical species we generated in the beginning of this tutorial:
+```{r samp1, cache = TRUE, message = TRUE}
+# Formatting of the response functions
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+                                 bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
+                                      parameters = my.parameters)
+
+# Conversion to presence-absence
+my.first.species <- convertToPA(my.first.species,
+                                beta = 0.7, plot = FALSE)
+```
+
+```{r samp1b, cache = TRUE, message = TRUE, fig.cap = "Fig 7.1 Illustration of the points sampled for our virtual species"}
+# Sampling of 'presence only' occurrences
+presence.points <- sampleOccurrences(my.first.species,
+                                     n = 30, # The number of points to sample
+                                     type = "presence only")
+```
+
+We can see that a map was plotted, with the sampled presence points illustrated with black dots. 
+
+Now let's see how our object `presence.points` looks like:
+
+```{r samp2, cache = TRUE}
+str(presence.points)
+```
+
+This is a list containing three elements: 
+
+1. `sampled.points`: a data frame containing the sampled points
+2. `detection.probability` : the detection probability of our virtual species
+3. `error.probability`: the probability of an erroneous detection of our virtual species
+
+We can specifically access the data frame of sampled points:
+
+```{r samp3, cache = TRUE}
+presence.points$sampled.points
+```
+
+The data frame has four colums: the pixel coordinates `x` and `y`, the real presence/absence (1/0) of the species in the sampled pixel `Real`, and the result of the sampling `Observed` (1 = presence, 0 = absence, NA = no information). The columns `Real` and `Observed` differ only if you have specified a detection probability and/or an error probability.
+
+Now, let's sample the other type of occurrence data: presence-absence.
+
+
+```{r samp4, cache = TRUE, fig.cap = "Fig 7.2 Illustration of the presence-absence points sampled for our virtual species. Black dots are presences, open dots are absences."}
+# Sampling of 'presence-absence' occurrences
+PA.points <- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = "presence-absence")
+
+PA.points
+```
+
+You can see that the points are sampled randomly throughout the whole raster. In the next section you will see how to limit the sampling to a region in particular, and after that, how to introduce a bias in the sampling procedure.
+
+## 7.2. Delimiting a sampling area
+
+There are three main possibilities to delimit the sampling areas :
+
+1. Specifying the region(s) of the world (country, continent, region
+2. Provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` of package `sp`)
+3. Provide an `extent` object (a rectangular area, from the package `raster`)
+
+### 7.2.1. Specifying the region(s) of the world
+
+You can specify any combination of countries, continents and regions of the world to restrict your sampling area, using the argument `sampling.area`. For example:
+
+```{r samp5, cache = TRUE, fig.cap = "Fig 7.3 Illustration of points sampled in a restricted area (here, South America + Mexico)"}
+# Sampling of 'presence-absence' occurrences
+PA.points <- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = "presence-absence",
+                               sampling.area = c("South America", "Mexico"))
+```
+
+
+
+The only restriction is to provide the correct names.
+
+The correct region names are: "Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", "South America"
+
+The correct continent names are: "Africa", "Antarctica", "Australia", "Eurasia", "North America", "South America"
+
+And you can consult the correct names with the following commands:
+
+```{r, samp6, cache = TRUE}
+library(rworldmap, quiet = TRUE)
+# Country names
+levels(getMap()@data$SOVEREIGNT)
+```
+
+### 7.2.2. Providing a polygon
+
+In this case you have to import in R your own polygon, using commands of the package `sp`. The polygon has to be of type `SpatialPolygons` or `SpatialPolygonsDataFrame`. 
+
+We will use here the example of a `SpatialPolygonsDataFrame` which we can download straight into R using the function `getData()` of the package `raster`. Since our species is a tropical species, let's assume we are working in Brasil only. Remember that this is an example, and that you can import your own polygons into R.
+
+First, let's download our polygon:
+
+```{r samp7, cache = TRUE, echo = 1, fig.cap = "Fig 7.4 A polygon of the brazil"}
+brasil <- getData("GADM", country = "BRA", level = 0)
+plot(brasil, xlab = "Latitude", ylab = "Longitude")
+axis(1)
+axis(2)
+```
+
+Now, to limit the sampling area to our polygon, we simply provide it to the argument `sampling.area` of the function `sampleOccurrences`:
+
+```{r samp8, cache = TRUE, fig.cap = "Fig 7.5 Points sampled within the Brazil polygon"}
+PA.points <- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = "presence-absence",
+                               sampling.area = brasil)
+
+PA.points
+```
+
+It worked!
+
+However, the plot is not very convenient because it kept the scale of our input raster, so we may be interested in manually restricting the plot region to Brasil:
+
+```{r samp9, cache = TRUE, fig.cap = "Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom"}
+# First we get our data frame of occurrence points
+occ <- PA.points$sample.points
+
+plot(my.first.species$pa.raster, 
+     xlim = c(-80, -20),
+     ylim = c(-35, 5))
+plot(brasil, add = TRUE)
+points(occ[occ$Observed == 1, c("x", "y")], pch = 16, cex = .8)
+points(occ[occ$Observed == 0, c("x", "y")], pch = 1, cex = .8)
+```
+
+### 7.2.3. Providing an extent object
+
+An extent object is a rectangular area defined by four coordinates xmin/xmax/ymin/ymax. You can easily create an extent object using the command `extent`, of the package `raster`:
+
+```{r samp10, cache = TRUE, fig.cap = "Fig 7.7 Points sampled within our extent object"}
+my.extent <- extent(-80, -20, -35, -5)
+PA.points <- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = "presence-absence",
+                               sampling.area = my.extent)
+plot(my.extent, add = TRUE)
+```
+
+## 7.3. Introducing a sampling bias
+
+### 7.3.1.Detection probability
+
+Detection probability has been shown to be influencial on SDM performance. Hence, you might be interested in generating species with varying degrees of detection probability. This can be done easily, using the argument `detection.probability`, ranging from 0 (species cannot be detected) to 1 (species is always detected):
+
+```{r samp11, cache = TRUE, fig.cap = "Fig 7.8 Presence-absence points sampled with a low detection probability"}
+# Let's try to find samples of a very cryptic species
+PA.points <- sampleOccurrences(my.first.species,
+                               sampling.area = "Brazil",
+                               n = 50,
+                               type = "presence-absence",
+                               detection.probability = 0.3)
+PA.points
+```
+
+You can see that some points sampled in its distribution range are classified as "absences".
+
+If you use this argument when sampling 'presence only' occurrences, then this will result in a lower number of sampled points than asked:
+
+```{r samp12, cache = TRUE, fig.cap = "Fig 7.9 Presence only points sampled with a low detection probability"}
+PO.points <- sampleOccurrences(my.first.species,
+                               sampling.area = "Brazil",
+                               n = 50,
+                               type = "presence only",
+                               detection.probability = 0.3)
+PO.points
+```
+
+In this case, we see that out of all the possible sampling points, only a fraction are sampled as presence points.
+
+### 7.3.2. Detection probability as a function of environmental suitability
+
+You can further complexify the detection probability by making it dependent on the environmental suitability. In this case, cells will be weighted by the environmental suitability: less suitable cells will have a lesser chance of detecting the species. This can be seen as an impact on the population size: a higher environmental suitability increases the population size, and thus the detection probability. How does this work in practice?
+
+The initial probability of detection ($P_{di}$) is multiplied by the environmental suitability ($S$) to obtain the final probability of detection ($P_d$):
+
+$$P_d = P_{di} \times S$$
+
+Hence, if our species has a probability of detection of 0.5, the final probability of detection will be:
+
+* 1 if the cell has an environmental suitability of 1
+* 0.25 if the cell has an environmental suitability of 0.5
+
+Of course, no occurrence points will be detected outside the distribution range, regardless of their environmental suitability.
+
+You can also keep the detection probability to 1, and set `correct.by.suitabilaty = TRUE`. In that case, the detection probability will be equal to the environmental suitability. This can be seen as a species whose detection probability is strictly dependent on its population size, which in turn is strictly dependent on the environmental suitability.
+
+An example in practice:
+
+```{r samp13, cache = TRUE, fig.cap = "Fig 7.10 Presence-absence points sampled with a detection probability equal to the environmental suitability"}
+PA.points <- sampleOccurrences(my.first.species,
+                               sampling.area = "Brazil",
+                               n = 100,
+                               type = "presence-absence",
+                               detection.probability = 1,
+                               correct.by.suitability = TRUE,
+                               plot = FALSE)
+
+# Below is a custom plot to show the sampled point above the map of environmental suitability
+occ <- PA.points$sample.points
+
+plot(my.first.species$suitab.raster, 
+     xlim = c(-80, -20),
+     ylim = c(-35, 5))
+plot(brasil, add = TRUE)
+points(occ[occ$Observed == 1, c("x", "y")], pch = 16, cex = .8)
+points(occ[occ$Observed == 0, c("x", "y")], pch = 1, cex = .8)
+
+```
+
+
+### 7.3.3. Error probability
+
+You can also introduce an error probability, which is a probability of finding the species where it is absent. This is straightforward with the argument `error.probability`:
+
+```{r samp14, cache = TRUE, fig.cap = "Fig 7.11 Presence-absence points sampled with an error probability of 0.3"}
+PA.points <- sampleOccurrences(my.first.species,
+                               sampling.area = "Brazil",
+                               n = 20,
+                               type = "presence-absence",
+                               error.probability = 0.3)
+PA.points
+```
+
+Two important remarks with the error probability:
+
+1. The error probability is useless in a 'presence only' sampling scheme, because the sampling strictly occurs within the boundaries of the species distribution range. Nevertheless, **if you still want to introduce errors**, then make a sampling scheme 'presence-absence', and use only the 'presence' points obtained.
+
+2. **There is an interaction between the detection probability and the error probability**: in a cell where the species is present, but not detected, a presence can still be attributed because of an error. See the following (extreme) example, for a species with a low detection probability and high error probability:
+
+```{r samp15, cache = TRUE, fig.cap = "Fig 7.12 Presence-absence points sampled with a detection probability of 0.2, and an error probability of 0.8. In numerous pixels the species was not detected, but erroneous presences were nevertheless attributed."}
+PA.points <- sampleOccurrences(my.first.species,
+                               sampling.area = "Brazil",
+                               n = 20,
+                               type = "presence-absence",
+                               detection.probability = 0.2,
+                               error.probability = 0.8)
+PA.points
+```
+
+### 7.3.4. Uneven sampling intensity
+
+The `sampleOccurrences` also allows you to introduce a sampling bias such as uneven sampling intensity in space. How does it works?
+
+You will have to define a region in which the sampling is biased, with arguments `bias` and `area`. In this region, the sampling will be biased by a strength equal to the argument `bias.strength`. If `bias.strength` is equal to 50 for example, then the sampling will be 50 times more intense in the chosen area. If `bias.strength`is below 1, then the sampling will be less intense in the biased area than elsewhere.
+
+Let's see an example in practice before we go into the details:
+
+```{r samp16, cache = TRUE, fig.cap = "Fig 7.13 Presence only points sampled with a strong bias in South America (20 times more sample)"}
+PO.points <- sampleOccurrences(my.first.species,
+                               n = 100, 
+                               bias = "region",
+                               bias.strength = 20,
+                               bias.area = "South America")
+```
+
+Now that you have grasped how the bias works, let's see the different possibilities:
+
+* Introducing a bias using country, region or continent names  
+Set either `bias = "country"`, `bias = "region"` or `bias = "continent"`, and provide to `bias.area` the name(s) of the country(-ies), region(s) or continent(s).
+
+```{r samp17, cache = TRUE, fig.cap = "Fig 7.14 Presence only points sampled with a strong bias in Mexico and Colombia"}
+PO.points <- sampleOccurrences(my.first.species,
+                               n = 100, 
+                               bias = "country",
+                               bias.strength = 20,
+                               bias.area = c("Mexico", "Colombia"))
+```
+
+* Using a polygon in which the sampling will be biased  
+Set `bias = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `bias.area`.
+
+```{r samp18, cache = TRUE, fig.cap = "Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon"}
+philippines <- getData("GADM", country = "PHL", level = 0)
+PO.points <- sampleOccurrences(my.first.species,
+                               n = 100, 
+                               bias = "polygon",
+                               bias.strength = 50,
+                               bias.area = philippines)
+```
+
+* Using an extent object  
+Set `bias = "extent"`, and provide an extent to the argument `bias.area` ([see section 7.2.3. if you are not familiar with extents](#providing-an-extent-object)). You can also simply set `bias.area = polygon`, and click twice on the map when asked to:
+
+```{r samp19, eval = FALSE}
+PO.points <- sampleOccurrences(my.first.species,
+                               n = 100, 
+                               bias = "extent",
+                               bias.strength = 50)
+```
+
+* Manually defining weights for all the cells  
+A last option is to manually define the weights with which the sampling will be biased. This may be especially useful when you want to precisely create a sampling bias. To do this, set `bias = "manual"`, and provide a raster of weights to the argument `weights`.  
+To clear things up, we will see an example together:
+
+```{r samp20, eval = TRUE, cache = TRUE, fig.cap = "Fig 7.16 Raster used to weight the sampling bias: a raster of cell areas"}
+library(rworldmap)
+# First, we create a raster of weights
+# As an arbitrary example, we will use the area of each cell as a weight:
+# larger cells have more chance of being sampled
+weight.raster <- area(worldclim)
+
+plot(weight.raster)
+plot(getMap(), add = TRUE)
+```
+
+Now, let's weight our samplings using this raster:
+
+```{r samp21, cache = TRUE, fig.cap = "Fig 7.16 Presence only points sampled with a sampling biased according to the area of each cell", dependson = "samp20"}
+PO.points <- sampleOccurrences(my.first.species,
+                               n = 100, 
+                               bias = "manual",
+                               weights = weight.raster)
+```
+
+Of course, the changes are not  visible, because our species occurs mainly in pixels of relatively similar areas. Nevertheless, this example should be useful if you want to create a manual sampling bias later on.
+
+
+
+**Important note** Please note that when using rasters based on longitude-latitude, larger cells have _automatically_ more chance of being sampled than smaller cells, so you do not need to do it by yourself. See documentation of the `randomPoints` function of package `dismo` for more details.
+
+
+### 7.4. Defining the sample prevalence
+
+_The sample prevalence is the proportion of samples in which the species has been found. It is therefore different from the species prevalence which [was mentionned earlier](#Conversion-to-presence-absence-based-on-a-value-of-species-prevalence)._
+
+You can define the desired sample prevalence when sampling presences and absences, with the parameter `sample.prevalence`:
+
+```{r samp22, cache = TRUE, fig.cap = "Fig 7.17 Presence-absence points sampled with a prevalence of 0.5 (i.e., 50% of presence points, 50% of absence points)"}
+PA.points <- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = "presence-absence",
+                               sample.prevalence = 0.5)
+
+PA.points
+```
+
+*******
+
+# 8. Introduction a distribution bias
+
+*******
+
+\setcounter{section}{8}
+\setcounter{figure}{0}
+
+One of the most disputed assumptions of species distribution models is that species are at equilibrium with their environment. This assumptions means that species are supposed to occupy their full range of suitable environmental conditions. In reality, it is unlikely, because of dispersal limitations, biotic interactions, etc., which precludes species to occupy areas which are theoretically suitable. As a consequence, it is worth testing how well modelling techniques perform when this assumption is violated.
+
+This is why we introduced the possibility of biasing the distribution of species, to simulate species which are not at equilibrium. This possibility is implemented in the function `limitDistribution`.
+
+## 8.1. An introduction example
+
+Let's use the same virtual species we generated above:
+```{r dist1, cache = TRUE, message = TRUE}
+# Formatting of the response functions
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+                                 bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
+                                      parameters = my.parameters)
+
+# Conversion to presence-absence
+my.first.species <- convertToPA(my.first.species,
+                                beta = 0.7, plot = FALSE)
+```
+
+
+
+Now, let's assume our species originates from South America, and has not been able to disperse through the oceans (result in figure 8.2).
+
+```{r dist2, cache = TRUE, fig.cap = "Fig. 8.2 Distribution of a species limited to South America", fig.width = 6, fig.height = 6}
+my.first.species <- limitDistribution(my.first.species, 
+                                      geographical.limit = "continent",
+                                      area = "South America",
+                                      plot = FALSE)
+
+par(mfrow = c(2, 1))
+plot(my.first.species$pa.raster, main = "Theoretical distribution")
+plot(my.first.species$occupied.area, main = "Realised distribution")
+```
+
+In the following sections, we see how to customise this function, but [the usage is basically the same as when applying a sampling bias.](#uneven-sampling-intensity)  
+  
+.  
+.  
+.           
+.               
+.           
+.               
+.           
+.               
+.           
+.               
+.           
+.               
+
+
+## 8.2. Customisation of the parameters
+
+There are 5 main possibilities to limit the distribution to a particular area.
+
+### 8.2.1. Using countries, regions or continents
+
+As illustrated in the example above, use `geographical.limit = "country"`, `geographical.limit = continent` or `geographical.limit = "region"` and provide the correct name(s) of the area to `area`
+
+```{r dist3, cache = TRUE, fig.cap = "Fig. 8.3 Distribution of a species arbitrary limited to Brazil and Venezuela", fig.height = 4, fig.width = 8}
+my.sp1 <- limitDistribution(my.first.species, 
+                            geographical.limit = "country",
+                            area = c("Brazil", "Venezuela"))
+```
+
+
+### 8.2.2. Using a polygon
+
+Set `geographical.limit = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `area`.
+
+```{r dist4, cache = TRUE, fig.cap = "Fig. 8.4 Distribution of a species limited to the Philippines", fig.height = 4, fig.width = 8}
+philippines <- getData("GADM", country = "PHL", level = 0)
+my.sp2 <- limitDistribution(my.first.species, 
+                            geographical.limit = "polygon",
+                            area = philippines)
+```
+
+* Using an extent object  
+Set `geographical.limit = "extent"`, and provide an extent to the argument `area` ([see section 7.2.3. if you are not familiar with extents](#providing-an-extent-object)). You can also simply set `geographical.limit = "extent"`, and click twice on the map when asked to:
+
+```{r dist5, cache = TRUE, fig.cap = "Fig. 8.5 Distribution of a species limited to a particular extent", fig.height = 4, fig.width = 8}
+my.extent <- extent(-80, -20, -35, -5)
+my.sp2 <- limitDistribution(my.first.species, 
+                            geographical.limit = "extent",
+                            area = my.extent)
+plot(my.extent, add = TRUE)
+```
+
+
+*******
+
+# 9. Using virtual species with the SDM package biomod (not yet written)
+
+
+This section is not yet written; it should be soon.
+
+*******
+
+# 10. Creating dispersal limitations with the MIGCLIM R package (not yet written)
+
+This section is not yet written; it should be soon.

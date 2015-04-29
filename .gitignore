@@ -11,3 +11,7 @@
 # produced vignettes
 vignettes/*.html
 vignettes/*.pdf
+.Rproj.user
+
+# Downloaded climatic data
+wc10/
