@@ -214,11 +214,45 @@ This rescaling is performed because if you use very different response function 
 
 ### 2.2.3. Combining response functions
 
-There are three possibilities to combine response functions to calculate the environmental suitability, as defined by the parameter `species.type`:
+There are three main possibilities to combine response functions to calculate the environmental suitability, as defined by the parameters `species.type` and `formula`:
 
 * `species.type = "additive"`: the response functions are added.
-* `species.type = "multiplicative"`: the response functions are multiplied. 
-* `species.type = "mixed"`: there is a mix of additions and products to calculate the environmental suitability. In this case, you have to provide the desired formula: `formula = bio1 + bio2 * bio3 + bio4` for example. If you do not provide a formula, then it will be randomly generated.
+* `species.type = "multiplicative"`: the response functions are multiplied. This is the default behaviour of the function.
+* `formula = "bio1 + 2 * bio2 + bio3"`: if you choose a formula, then the response functions are combined according to your formula (parameter `species.type` is then ignored).
+
+For example, if you want to generate a species with the same partial responses as in 2.1, but with a strong importance for temperature, then you can specify the formula : `formula = "2 * bio1 + bio12"`
+
+```{r resp5, cache = TRUE, fig.cap = "Fig. 2.3 Environmental suitability of the generated virtual species"}
+library(virtualspecies)
+
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+                                 bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+new.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
+                                 parameters = my.parameters,
+                                 formula = "2 * bio1 + bio12",
+                                 plot = TRUE)
+new.species
+```
+
+One can even make complex interactions between partial responses:
+
+```{r resp6, cache = TRUE, fig.cap = "Fig. 2.3 Environmental suitability of the generated virtual species"}
+library(virtualspecies)
+
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+                                 bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+new.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
+                                 parameters = my.parameters,
+                                 formula = "3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1",
+                                 plot = TRUE)
+new.species
+```
+
+Note that this is an example to show the possibilities of the function; I have no idea of the relevance of such a relationship!
 
 ### 2.2.4. Rescaling of the final environmental suitability
 

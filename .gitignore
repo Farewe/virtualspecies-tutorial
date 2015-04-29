@@ -15,3 +15,6 @@ vignettes/*.pdf
 
 # Downloaded climatic data
 wc10/
+
+# knit temp files
+tmp*
