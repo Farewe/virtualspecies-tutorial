@@ -310,7 +310,7 @@ And it worked! Your turn now!
 
 If you try to use the first approach with a large number of variables, _e.g._ 10, then you  will rapidly hit the unextricable problem of unrealistic environmental requirements. When you have 2 environmental variables, it is easy to choose response functions that are compatible. For example, you know that you should not try to generate a species which requires a temperature of the warmest month at 35°C, and a temperature of the coldest month at -25°C, because such conditions are unlikely to exist on Earth. However, if you have 10 variables, the task is much more complicated: if you want to generate a species which is dependent on 5 different temperature variables, 3 precipitation variables, and 2 land use variables, then it is almost impossible to know if your response functions are realistic regarding environmental conditions. 
 
-This is why we implemented the second approach, which consits in generating a Principal Component Analysis (PCA) of all the environmental variables in your `RasterStack`, and then define the response of the species to two axes (pricipal components). Using this approach will greatly help you to generate virtual species which have plausible environmental requirements, whil being dependent on all of your variables.
+This is why we implemented the second approach, which consists in generating a Principal Component Analysis (PCA) of all the environmental variables in your `RasterStack`, and then define the response of the species to two axes (pricipal components). Using this approach will greatly help you to generate virtual species which have plausible environmental requirements, whil being dependent on all of your variables.
 
 The function providing this approach is `generateSpFromPCA`.
 
@@ -329,7 +329,7 @@ my.pca.species <- generateSpFromPCA(raster.stack = my.stack)
 my.pca.species
 ```
 
-Something very important to know here is that the PCA is performed on all the pixels of the raster stack. As a consequence, if you use large stacks (large spatial scales, fine resolutions), your computer may not be able to extract all the values. In this case, you can run the PCA on a random subset of values, by setting `sample.points = TRUE` and defining the number of pixels to sample with `nb.points` (default 10000, try less if your computer is struggling). _Note that there is an automatic safety check if you don't set `sample.points = TRUE`, and the function will not if your computer cannot handle it._
+Something very important to know here is that the PCA is performed on all the pixels of the raster stack. As a consequence, if you use large stacks (large spatial scales, fine resolutions), your computer may not be able to extract all the values. In this case, you can run the PCA on a random subset of values, by setting `sample.points = TRUE` and defining the number of pixels to sample with `nb.points` (default 10000, try less if your computer is struggling). _Note that there is an automatic safety check if you don't set `sample.points = TRUE`, and the function will not run if your computer cannot handle it._
 
 ```{r pca3, eval = T, cache = TRUE}
 # A safe run of the function
@@ -347,7 +347,7 @@ plotResponse(my.pca.species)
 
 On Fig. 3.1 you can see the PCA of environmental conditions, where each point is the representation of a pixel of your stack in the factorial space. On one of the corners is shown the projection of the variables on this PCA (the position varies for an easier reading, although it is not always perfect). Along each axis, you can see the response of the species: on my example, a wide tolerance to the axis 1, driven mostly by precipitation variables (bio12 and bio13), and an intermediate tolerance to the axis 2, driven mostly by temperature variables (bio2 and bio5). The resulting environmental suitability, as a product of responses to each axis, is illustrated by a coloration of the points, from red (high suitability), to yellow and grey (low/unsuitable pixels).
 
-Now that you have this information in hand, you will be able (in the next section) to define a narrower niche breadth for the species, or to choose a species leaving in hotter, colder, drier or wetter environments. But before that, you probably would like to see how the species' environmental suitability is distributed in space. Nothing's simpler:
+Now that you have this information in hand, you will be able (in the next section) to define a narrower niche breadth for the species, or to choose a species living in hotter, colder, drier or wetter environments. But before that, you probably would like to see how the species' environmental suitability is distributed in space. Nothing's simpler:
 
 ```{r pca5, eval = T, cache = TRUE, fig.cap = "Fig. 3.2 Environmental suitability of a species generated with a PCA approach"}
 plot(my.pca.species)
@@ -452,7 +452,7 @@ my.second.run <- generateSpFromPCA(raster.stack = my.stack,
 \setcounter{figure}{0}
 
 
-## 4.1. Introduction: why should we avoid a threshold-conversion?
+## 4.1. Introduction: why should we avoid a threshold conversion?
 What we did so far was defining the relationship between the species and its environment. It was the most important part, but what it provides us is a spatial distribution of the species' environmental suitability, not a spatial distribution of the species' presences/absences. Hence we now have to convert the environmental suitability into presence-absence.
 
 The simplest approach, which was also the most widely used until 2014, consists in defining a threshold of environmental suitability, below which conditions are unsuitable, so absence is attributed; and above which conditions are suitable, so persence is attributed. However, you should completely avoid this approach which is *pure evil*:
@@ -482,33 +482,53 @@ segments(x0 = -0.1, x1 = 0.6, y0 = logisticFun(0.6, alpha = -0.05, beta = 0.5),
 # mtext(text = expression(symbol("b")), side = 1, line = 1, at = c(0.5))
 ```
 
-With the example above, a pixel with environmental suitability equal to 0.6 has 88% chance of having species presence, and 12% chance of having species absence. 
+With the example above, a pixel with environmental suitability equal to 0.6 has 88% chance of having species presence, and 12% chance of having species absence.
 
-Of course, this conversion is fully customisable, to simulate different cases:
+This means that we convert the environmental suitability of each pixel into a probability of occurrence. This probability of occurrence is then used to sample presence or absence in each cell, i.e., we make a random draw of presence or absence weighted by the probability of occurrence. As a consequence, repeated realisation of the presence-absence conversion will produce different occupancy maps, each providing a valid realisation of the true species distribution map.
+
+This conversion is fully customisable, and can range from threshold conversion to logistic to linear conversion, by adjusting parameters (explained in section 4.2):
 
 
-```{r conv2, echo = FALSE, fig.width = 9, fig.height = 7, message=FALSE, eval = T, cache = TRUE, fig.cap = "Fig. 4.2 Contrasting examples of conversion curves and their result on the distribution range of the same virtual species."}
-par(mfrow = c(2, 3))
+```{r conv2, echo = FALSE, fig.width = 9, fig.height = 14, message=FALSE, eval = T, cache = TRUE, fig.cap = "Fig. 4.2 Contrasting examples of conversion curves and their result on the distribution range of the same virtual species."}
+par(mfrow = c(4, 3))
 x <- seq(0, 1, length = 100)
-y1 <- logisticFun(x, alpha = -1, beta = 0.5)
-y2 <- logisticFun(x, alpha = -0.08, beta = 0.5)
-y3 <- logisticFun(x, alpha = -0.0000001, beta = 0.5) 
-a1 <- convertToPA(my.first.species, beta = 0.65, alpha = -1, plot = FALSE)
-a2 <- convertToPA(my.first.species, beta = 0.65, alpha = -0.08, plot = FALSE)
-a3 <- convertToPA(my.first.species, beta = 0.65, alpha = -0.0000001, plot = FALSE)
+y1 <- logisticFun(x, alpha = -0.0000001, beta = 0.65) 
+y2 <- logisticFun(x, alpha = -0.08, beta = 0.65)
+y3 <- logisticFun(x, alpha = -.3, beta = 0.65)
 
-plot(y1 ~ x, type = "l", main = "Linear conversion",
+a1 <- convertToPA(my.first.species, beta = 0.65, alpha = -0.0000001, plot = FALSE)
+a2 <- convertToPA(my.first.species, beta = 0.65, alpha = -0.08, plot = FALSE)
+a3 <- convertToPA(my.first.species, beta = 0.65, alpha = -.3, plot = FALSE)
+
+# Plot environmental suitability
+plot(1, type = "n", axes = F, xlab = "", ylab = "")
+plot(a1$suitab.raster, main = "Environmental suitability",
+     xlim = c(-100, -40), ylim = c(-50, 20))
+plot(1, type = "n", axes = F, xlab = "", ylab = "")
+
+# Plot conversion  curves
+plot(y1 ~ x, type = "l", main = "Threshold-like conversion",
      xlab = "Environmental suitability", ylab = "Probability of occurrence",
      cex.axis = 0.8, las = 1, bty = "l")
 plot(y2 ~ x, type = "l", main = "Logistic conversion",
      xlab = "Environmental suitability", ylab = "Probability of occurrence",
      cex.axis = 0.8, las = 1, bty = "l")
-plot(y3 ~ x, type = "l", main = "Threshold-like conversion",
+plot(y3 ~ x, type = "l", main = "Linear conversion",
      xlab = "Environmental suitability", ylab = "Probability of occurrence",
      cex.axis = 0.8, las = 1, bty = "l")
-plot(a1$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20))
-plot(a2$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20))
-plot(a3$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20))
+
+# Plot probability of occurrence
+plot(calc(a1$suitab.raster, fun = function(x) logisticFun(x,  beta = 0.65, alpha = -0.0000001)),
+     main = "Probability of occurrence\nThreshold-like conversion", xlim = c(-100, -40), ylim = c(-50, 20))
+plot(calc(a1$suitab.raster, fun = function(x) logisticFun(x,  beta = 0.65, alpha = -0.08)),
+     main = "Probability of occurrence\nLogistic conversion", xlim = c(-100, -40), ylim = c(-50, 20))
+plot(calc(a1$suitab.raster, fun = function(x) logisticFun(x,  beta = 0.65, alpha = -.3)),
+     main = "Probability of occurrence\nLinear conversion", xlim = c(-100, -40), ylim = c(-50, 20))
+
+# Plot presence-absence maps
+plot(a1$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20), main = "Presence-absence map\nThreshold-like conversion")
+plot(a2$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20), main = "Presence-absence map\nLogistic conversion")
+plot(a3$pa.raster, xlim = c(-100, -40), ylim = c(-50, 20), main = "Presence-absence map\nLinear conversion")
 ```
 
 The logistic conversion looks much more like what a real species distribution is than the linear and threshold-like conversions.
@@ -609,13 +629,13 @@ In the next sections I summarise how to choose appropriate values of `alpha` and
 
 `alpha` may be more difficult to grasp, as it is dependent on the range of values of the `x` axis (in our case, the environmental suitability, ranging from 0 to 1):
 
-* If `alpha` is approximately equal to the range of`x` pr greater (in absolute value), then the conversion will have a linear shape. In our case, it means  values of `alpha` close to -1 or below).
+* If `alpha` is approximately equal to the range of`x` or greater (in absolute value), then the conversion will have a linear shape. In our case, it means  values of `alpha` below -.3).
 * If `alpha` is about 5-10% of the range of `x`, then the conversion will be logistic. In our case, you can have nice logistic curves for values of `alpha` between -0.1 and -0.01.
 * If `alpha` is much smaller compared to `x` (in absolute value), then the conversion will be threshold-like. In our case, if means values of `alpha` in the range [-0.001, 0[.
 
 ### 4.2.3. Conversion to presence-absence based on a value of species prevalence
 
-_The species prevalence is the number of places (here, pixels) actually occupied by the species out of the total number of places (pixels) available. Do not confuse the **SPECIES PREVALENCE** with the [**SAMPLE PREVALENCE**](#sample-prevalence), which in turn is the proportion of samples in which you have found the species._
+_The species prevalence is the number of places (here, pixels) actually occupied by the species out of the total number of places (pixels) available. Do not confuse the **SPECIES PREVALENCE** with the [**SAMPLE PREVALENCE**](#defining-the-sample-prevalence), which in turn is the proportion of samples in which you have found the species._
 
 Numerous authors have shown the importance of the species prevalence in species distribution modelling, and how it can bias models. As a consequence, when generating virtual species distributions to test particular protocols or modelling techniques, you may be interested in testing different values of species prevalence. However, it is important to know that the species prevalence is dependent on **the species-environment relationship**, **the shape of the probabilistic conversion curve** AND **the spatial distribution of environmental conditions**. As a consequence, the function has to try different shapes of conversion curve to find a conversion according to your chosen value of species prevalence. Sometimes, it is not possible to reach a particular species prevalence, in that case the function will choose the conversion curve providing results closest to your species prevalence.
 
@@ -623,7 +643,7 @@ If you want to generate a species with a particular species prevalence, then you
 
 Let's see it in practice:
 
-```{r conv8, message = TRUE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.6 Conversion of a species with a prevalence of 0.2, _i.e._ occupying 20% of the world"}
+```{r conv8, message = TRUE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.6 Conversion of a species with a prevalence of 0.2, _i.e._ occupying 20% of the world (which is quite large)"}
 # Let's generate a species occupying 20% of the world
 # Default settings, alpha = -0.05
 sp.0.2 <- convertToPA(my.first.species,
@@ -650,7 +670,9 @@ sp.10 <- convertToPA(my.first.species,
 
 sp.10
 ```
-It worked, but the resulting species does not look realistic
+
+It worked, but the resulting species does not look realistic at all: alpha was below -0.3, which means that we had a quasi-linear conversion curve, producing this unrealistic presence-absence map.
+
 
 ```{r conv11, message = TRUE, fig.width=10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 4.9 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta"}
 # Now an impossible task: a low value of beta for the same requirements:
@@ -686,7 +708,7 @@ random.sp
 
 ```
 
-We can see that the species was generated using a PCA approach. Indeed, [as explained in the PCA section](#PCA.approach), when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function `generateRandomSp` uses a PCA approach if you have 6 or more variables, and a 'response functions' approach if you have less than 6 variables.
+We can see that the species was generated using a PCA approach. Indeed, [as explained in the PCA section](#second-approach-generate-virtual-species-with-a-principal-components-analysis), when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function `generateRandomSp` uses a PCA approach if you have 6 or more variables, and a 'response functions' approach if you have less than 6 variables.
 
 In the next sections I detail the many possible customisations for the function `generateRandomSp`.
 
@@ -752,7 +774,7 @@ As explained in the section on the 'response' approach, you can choose to rescal
 
 An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35°C and winter temperature of -50°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: `realistic.sp`.
 
-When activating this argument, the function will proceed step-by-step to try defining a realistic species. At step one, one of the variable is chosen, and the program randomly determines a response function for this variable. Then, it will compute the environmental suitability of this species. At step two, the program will pick a second variable, and will constrain its random generation depending on the environmental suitability obtained at step one. For example, if at step 2 a gaussian response is picked, then the mean will be chosen in areas where the species had a high environmental suitability. Then, the environmental suitability is recalculated on the basis of the first two response functions. At step 3, another variable is picked, a response function randomly generated with respect to areas where the species already has a high suitability, and so on until there are no variables left. While this process helps, it does not always work, especially when you have a larger number of variables.
+When activating this argument, the function will proceed step-by-step to try defining a realistic species. At step one, one of the variable is chosen, and the program randomly determines a response function for this variable. Then, it will compute the environmental suitability of this species. At step two, the program will pick a second variable, and will constrain its random generation depending on the environmental suitability obtained at step one. For example, if at step 2 a gaussian response is picked, then the mean will be chosen in areas where the species had a high environmental suitability. Then, the environmental suitability is recalculated on the basis of the first two response functions. At step 3, another variable is picked, a response function randomly generated with respect to areas where the species already has a high suitability, and so on until there are no variables left. While this process can help, it does not always work, and can provide completely unrealistic results also. In this case, you should try different runs, or switch to a 'PCA' approach.
 
 Let's see an example :
 
@@ -992,7 +1014,9 @@ PA.points <- sampleOccurrences(my.first.species,
 PA.points
 ```
 
-You can see that the points are sampled randomly throughout the whole raster. In the next section you will see how to limit the sampling to a region in particular, and after that, how to introduce a bias in the sampling procedure.
+You can see that the points are sampled randomly throughout the whole raster. However, we may have only a few or even no presence points at all because the samples are purely random at the moment. We can define the number of presences and the number of absences by using the parameter [`sample.prevalence`](#defining-the-sample-prevalence).
+
+In the next section you will see how to limit the sampling to a region in particular, and after that, how to introduce a bias in the sampling procedure.
 
 ## 7.2. Delimiting a sampling area
 
@@ -1268,9 +1292,9 @@ Of course, the changes are not  visible, because our species occurs mainly in pi
 **Important note** Please note that when using rasters based on longitude-latitude, larger cells have _automatically_ more chance of being sampled than smaller cells, so you do not need to do it by yourself. See documentation of the `randomPoints` function of package `dismo` for more details.
 
 
-### 7.4. Defining the sample prevalence
+## 7.4. Defining the sample prevalence
 
-_The sample prevalence is the proportion of samples in which the species has been found. It is therefore different from the species prevalence which [was mentionned earlier](#Conversion-to-presence-absence-based-on-a-value-of-species-prevalence)._
+_The sample prevalence is the proportion of samples in which the species has been found. It is therefore different from the species prevalence which [was mentionned earlier](#conversion-to-presence-absence-based-on-a-value-of-species-prevalence)._
 
 You can define the desired sample prevalence when sampling presences and absences, with the parameter `sample.prevalence`:
 
