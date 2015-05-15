@@ -199,14 +199,39 @@ You can also use the basic functions provided with the package:
 
 * Linear function: `formatFunctions(bio1 = c(fun = 'linearFun', a = 1, b = 0))`
 $$ f(bio1) = a * bio1 + b $$
+```{r resp4.1, echo = FALSE, cache = TRUE, fig.cap = "Fig. 2.3 Linear response function", fig.width = 3, fig.height = 2.5, results = "hide", fig.align = 'center'}
+par(mar = c(3.1, 3.1, 0.1, 0.1))
+formatFunctions(bio1 = c(fun = 'linearFun', a = 1, b = 0), x = worldclim[["bio1"]])
+```
 
-* Quadratic function: `formatFunctions(bio1 = c(fun = 'quadraticFun', a = 1, b = 2, c = 0))`
+* Quadratic function: `formatFunctions(bio1 = c(fun = 'quadraticFun', a = -1, b = 2, c = 0))`
 $$ f(bio1) = a \times bio1^2 + b \times bio1 + c$$
+```{r resp4.2, echo = FALSE, cache = TRUE, fig.cap = "Fig. 2.4 Quadratic response function", fig.width = 3, fig.height = 2.5, results = "hide", fig.align = 'center'}
+par(mar = c(3.1, 3.1, 0.1, 0.1))
+formatFunctions(bio1 = c(fun = 'quadraticFun', a = -1, b = 2, c = 0), x = worldclim[["bio1"]])
+```
 
 * Logistic function: `formatFunctions(bio1 = c(fun = 'logisticFun', beta = 150, alpha = -5))`
 $$ f(bio1) = \frac{1}{1 + e^{\frac{bio1 - \beta}{\alpha}}} $$
+```{r resp4.3, echo = FALSE, cache = TRUE, fig.cap = "Fig. 2.5 Logistic response function", fig.width = 3, fig.height = 2.5, results = "hide", fig.align = 'center'}
+par(mar = c(3.1, 3.1, 0.1, 0.1))
+formatFunctions(bio1 = c(fun = 'logisticFun', beta = 150, alpha = -5), x = worldclim[["bio1"]])
+```
+* Normal function defined by extremes: `formatFunctions(bio1 = c(fun = 'custnorm', mean = 250, diff = 50, prob = 0.99))`
+This function allows you to set extremum of a normal curve. In the example above, we define a response where the optimum is 25°C (`mean = 250`), and 99% of the area under the curve (`prob = 0.99`) will be comprised between 20 and 30°C (`diff = 50`).
+```{r resp4.4, echo = FALSE, cache = TRUE, fig.cap = "Fig. 2.6 Normal function defined by extremes", fig.width = 3, fig.height = 2.5, results = "hide", fig.align = 'center'}
+par(mar = c(3.1, 3.1, 0.1, 0.1))
+formatFunctions(bio1 = c(fun = 'custnorm', mean = 250, diff = 50, prob = 0.99), x = worldclim[["bio1"]])
+```
 
-Or you can create your own functions (see the section *How to create your own response functions* if you need help for this).
+* Beta response function (Oksanen & Minchin, 2002, _Ecological Modelling_ __157__:119-129): `formatFunctions(bio1 = c(fun = 'betaFun', p1 = 0, p2 = 250, alpha = 0.9, gamma = 0.08))`
+$$ f(bio1) = (bio1 - p1)^{\alpha} * (p2 - bio1)^{\gamma} $$
+```{r resp4.5, fig.cap = "Fig. 2.7 Beta response function",  echo = FALSE, cache = TRUE, fig.width = 3, fig.height = 2.5, results = "hide", fig.align = 'center'}
+par(mar = c(3.1, 3.1, 0.1, 0.1))
+formatFunctions(bio1 = c(fun = 'betaFun', p1 = 0, p2 = 250, alpha = 0.9, gamma = 0.08), x = worldclim[["bio1"]])
+```
+
+* Or you can create your own functions (see the section [How to create your own response functions](#how-to-create-and-use-your-own-response-functions) if you need help for this).
 
 ### 2.2.2. Rescaling of individual response functions
 
