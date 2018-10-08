@@ -17,17 +17,6 @@ Let's take a look:
 
 ```r
 library(virtualspecies)
-```
-
-```
-## Loading required package: raster
-```
-
-```
-## Loading required package: sp
-```
-
-```r
 worldclim <- getData("worldclim", var = "bio", res = 10)
 
 my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
@@ -67,15 +56,15 @@ random.sp
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=0.5838015; sd=3.377431)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=0.2761077; sd=0.1933877)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=2.236413; sd=5.367503)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=1.883838; sd=2.361146)
 ## - Environmental suitability was rescaled between 0 and 1
 ## 
 ## - Converted into presence-absence:
 ##    .Method = probability
 ##    .alpha (slope)           = -0.1
-##    .beta  (inflexion point) = 0.509509509509509
-##    .species prevalence      = 0.114
+##    .beta  (inflexion point) = 0.376376376376376
+##    .species prevalence      = 0.731
 ```
 
 We can see that the species was generated using a PCA approach. Indeed, [as explained in the PCA section](#second-approach-generate-virtual-species-with-a-principal-components-analysis), when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function `generateRandomSp` uses a PCA approach if you have 6 or more variables, and a 'response functions' approach if you have less than 6 variables.
@@ -134,13 +123,13 @@ random.sp1
 
 ```
 ## Virtual species generated from 3 variables:
-##  bio3, bio2, bio1
+##  bio1, bio2, bio3
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio3  [min=8; max=95] : logisticFun   (alpha=-8.7; beta=73.4596484596485)
-##    .bio2  [min=9; max=211] : logisticFun   (alpha=-16.3436363636364; beta=128.132447132447)
-##    .bio1  [min=-269; max=314] : logisticFun   (alpha=-36.57; beta=-212.673981673982)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=-265.770147701477; sd=488.337343373434)
+##    .bio2  [min=9; max=211] : logisticFun   (alpha=-11.2018181818182; beta=129.430096430096)
+##    .bio3  [min=8; max=95] : dnorm   (mean=54.1680416804168; sd=49.4008340083401)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1
@@ -178,13 +167,13 @@ random.sp2
 
 ```
 ## Virtual species generated from 3 variables:
-##  bio3, bio1, bio2
+##  bio1, bio2, bio3
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio3  [min=8; max=95] : dnorm   (mean=91.7148471484715; sd=68.1242912429124)
-##    .bio1  [min=-269; max=314] : dnorm   (mean=-19.7654576545766; sd=316.694596945969)
-##    .bio2  [min=9; max=211] : dnorm   (mean=69.1432814328143; sd=108.337723377234)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=256.218292182922; sd=279.213152131521)
+##    .bio2  [min=9; max=211] : dnorm   (mean=79.8495284952849; sd=153.210452104521)
+##    .bio3  [min=8; max=95] : dnorm   (mean=54.2474424744247; sd=33.8990189901899)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1

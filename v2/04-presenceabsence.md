@@ -154,7 +154,7 @@ sp.0.2
 ##    .Method = probability
 ##    .alpha (slope)           = -0.05
 ##    .beta  (inflexion point) = 0.234375
-##    .species prevalence      = 0.2
+##    .species prevalence      = 0.199
 ```
 
 

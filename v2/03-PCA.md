@@ -23,17 +23,6 @@ We want to generate a species dependent on three temperature variables ([bio2, b
 
 ```r
 library(virtualspecies)
-```
-
-```
-## Loading required package: raster
-```
-
-```
-## Loading required package: sp
-```
-
-```r
 worldclim <- getData("worldclim", var = "bio", res = 10)
 my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
 ```
@@ -70,8 +59,8 @@ my.pca.species
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=-0.1970169; sd=3.327524)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=4.193209; sd=4.302949)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=-0.1642768; sd=1.674329)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-1.977342; sd=0.8077037)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
@@ -107,10 +96,10 @@ my.pca.species
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.16 % explained by these axes
+## - Axes:  1, 2 ;  83.55 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-10.3; max=2.62] : dnorm (mean=1.010662; sd=4.845516)
-##    .Axis 2  [min=-3.47; max=7.74] : dnorm (mean=-0.8998638; sd=0.1560963)
+##    .Axis 1  [min=-15.36; max=2.56] : dnorm (mean=1.85619; sd=5.003718)
+##    .Axis 2  [min=-3.42; max=7.93] : dnorm (mean=1.074964; sd=3.270717)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
