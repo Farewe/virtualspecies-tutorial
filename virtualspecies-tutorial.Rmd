@@ -964,20 +964,17 @@ Hence, the main message here is if you want to explore the content of the virtua
 ## 6.5. Saving the virtual species objects for later use
 
 
-If you want to save a virtual species object, you can save it on your hard drive, using the R function `save()`:
+If you want to save a virtual species object, you can save it on your hard drive, using the R function `saveRDS()`:
 
 ```{r, eval =F, dependson = "output1"}
-save(my.species, file = "MyVirtualSpecies")
+saveRDS(my.species, file = "MyVirtualSpecies.RDS")
 ```
 
-You can load it in a later session of R, using `load()`:
+You can load it in a later session of R, using `readRDS()`:
 
 ```{r, eval =F, dependson = "output1"}
-load(file = "MyVirtualSpecies")
+my.species <- readRDS("MyVirtualSpecies.RDS")
 ```
-
-The object will be restored in the memory of R, with its original name.
-
 
 *******
 

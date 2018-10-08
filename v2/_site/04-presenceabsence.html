@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Virtualspecies tutorial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="01-inputdata.html">1. Input data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Simulating virtual species
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="02-response.html">2. Virtual species defined by response to environmental variables</a>
+    </li>
+    <li>
+      <a href="03-PCA.html">3. Virtual species defined by response to a PCA of the environment</a>
+    </li>
+    <li>
+      <a href="04-presenceabsence.html">4. Converting environmental suitability to presence-absence</a>
+    </li>
+    <li>
+      <a href="05-randomspecies.html">5. Generating random species</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="06-virtualspeciesobjects.html">6. Exploring virtual species</a>
+</li>
+<li>
+  <a href="07-sampleoccurrences.html">7. Sampling occurrences</a>
+</li>
+<li>
+  <a href="08-dispersallimitation.html">8. Dispersal limitation</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore"><ol start="4" style="list-style-type: decimal">
+<li>Converting environmental suitability to presence-absence</li>
+</ol></h1>
+
+</div>
+
+
+<div id="introduction-why-should-we-avoid-a-threshold-conversion" class="section level2">
+<h2>4.1. Introduction: why should we avoid a threshold conversion?</h2>
+<p>What we did so far was defining the relationship between the species and its environment. It was the most important part, but what it provides us is a spatial distribution of the species’ environmental suitability, not a spatial distribution of the species’ presences/absences. Hence we now have to convert the environmental suitability into presence-absence.</p>
+<p>The simplest approach, which was also the most widely used until 2014, consists in defining a threshold of environmental suitability, below which conditions are unsuitable, so absence is attributed; and above which conditions are suitable, so persence is attributed. However, you should completely avoid this approach which is <em>pure evil</em>:</p>
+<ul>
+<li>Most importantly, this creates completely unrealistic species:
+<ul>
+<li>Real species are often absent from areas of high suitability, because of factors acting at smaller spatial scales, such as biotic pressure (competition, predation), disturbances, stochastic events.</li>
+<li>Real species often occur in unsuitable areas, because of very particular conditions allowing their occurrence (microclimatic/microhabitat conditions, climatic refugia).</li>
+</ul></li>
+<li>The threshold almost completely removes the previously defined relationship between the species and its environment. The gradual aspect is lost: the above-threshold part of the environmental gradient is always fully suitable, while the below-threshold part is always fully unsuitable.</li>
+</ul>
+<p>So, how can we convert our environmental suitability into presence-absence without a threshold?</p>
+<p>We use a probabilistic approach: the probability of getting a presence of the species in a given pixel is dependent on its suitability in that pixel:</p>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv1-1.png" alt="Fig. 4.1 Logistic curve used for a probabilistic conversion into presence-absence" />
+<p class="caption">Fig. 4.1 Logistic curve used for a probabilistic conversion into presence-absence</p>
+</div>
+<p>With the example above, a pixel with environmental suitability equal to 0.6 has 88% chance of having species presence, and 12% chance of having species absence.</p>
+<p>This means that we convert the environmental suitability of each pixel into a probability of occurrence. This probability of occurrence is then used to sample presence or absence in each cell, i.e., we make a random draw of presence or absence weighted by the probability of occurrence. As a consequence, repeated realisation of the presence-absence conversion will produce different occupancy maps, each providing a valid realisation of the true species distribution map.</p>
+<p>This conversion is fully customisable, and can range from threshold conversion to logistic to linear conversion, by adjusting parameters (explained in section 4.2):</p>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv2-1.png" alt="Fig. 4.2 Contrasting examples of conversion curves and their result on the distribution range of the same virtual species." />
+<p class="caption">Fig. 4.2 Contrasting examples of conversion curves and their result on the distribution range of the same virtual species.</p>
+</div>
+<p>The logistic conversion looks much more like what a real species distribution is than the linear and threshold-like conversions.</p>
+<p>In the next section we will see how to perform the conversion, and how to customise it.</p>
+</div>
+<div id="customisation-of-the-conversion" class="section level2">
+<h2>4.2. Customisation of the conversion</h2>
+<p>At first you may be interested to see the function in action, before we try to customise it. Here it is!</p>
+<pre class="r"><code># Let&#39;s use the same species we generated before:
+my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),
+                                 bio12 = c(fun = &#39;dnorm&#39;, mean = 4000, sd = 2000))
+my.first.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
+                                      parameters = my.parameters,
+                                      plot = FALSE)
+
+# Run the conversion to presence-absence
+pa1 &lt;- convertToPA(my.first.species, plot = TRUE)</code></pre>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv3-1.png" alt="Fig. 4.3 Maps of environmental suitability and presence-absence of the virtual species" />
+<p class="caption">Fig. 4.3 Maps of environmental suitability and presence-absence of the virtual species</p>
+</div>
+<p>You have probably noticed that the conversion was performed without you choosing any parameter. This is because by default, the function randomly assigns parameters to the conversion. What are these parameters?</p>
+<p>They are the parameters <span class="math inline">\(\alpha\)</span> and <span class="math inline">\(\beta\)</span> which determine the shape of the logistic curve:</p>
+<ul>
+<li><span class="math inline">\(\beta\)</span> controls the inflexion point,</li>
+</ul>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv4-1.png" alt="Fig. 4.4 Impact of beta on the conversion curve" />
+<p class="caption">Fig. 4.4 Impact of beta on the conversion curve</p>
+</div>
+<ul>
+<li>and <span class="math inline">\(\alpha\)</span> drives the ‘slope’ of the curve</li>
+</ul>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv5-1.png" alt="Fig. 4.4 Impact of alpha on the conversion curve" />
+<p class="caption">Fig. 4.4 Impact of alpha on the conversion curve</p>
+</div>
+<p>The parameters are fairly simple to customise:</p>
+<pre class="r"><code>pa2 &lt;- convertToPA(my.first.species,
+                   beta = 0.65, alpha = -0.07,
+                   plot = TRUE)</code></pre>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv6-1.png" alt="Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07" />
+<p class="caption">Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07</p>
+</div>
+<pre class="r"><code># You can modify the conversion of your object if you did not like it:
+pa2 &lt;- convertToPA(pa2,
+                   beta = 0.3, alpha = -0.02,
+                   plot = TRUE)</code></pre>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv7-1.png" alt="Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07" />
+<p class="caption">Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07</p>
+</div>
+<p>In the next sections I summarise how to choose appropriate values of <code>alpha</code> and <code>beta</code>, and also I introduce a third parameter which may be very useful to generate virtual species distributions: the species prevalence (i.e., the number of places occupied by the species, out of the total number of available places).</p>
+<div id="beta" class="section level3">
+<h3>4.2.1. beta</h3>
+<p><code>beta</code> is very simple to grasp, as it is the inflexion point of the curve. Hence, looking at the three beta curves above, we can see that a lower <code>beta</code> will increase the probability of finding suitable conditions for the species (wider distribution range). A higher <code>beta</code> will decrease the probability of finding suitable conditions (smaller distribution range).</p>
+</div>
+<div id="alpha" class="section level3">
+<h3>4.2.2. alpha</h3>
+<p><code>alpha</code> may be more difficult to grasp, as it is dependent on the range of values of the <code>x</code> axis (in our case, the environmental suitability, ranging from 0 to 1):</p>
+<ul>
+<li>If <code>alpha</code> is approximately equal to the range of<code>x</code> or greater (in absolute value), then the conversion will have a linear shape. In our case, it means values of <code>alpha</code> below -.3).</li>
+<li>If <code>alpha</code> is about 5-10% of the range of <code>x</code>, then the conversion will be logistic. In our case, you can have nice logistic curves for values of <code>alpha</code> between -0.1 and -0.01.</li>
+<li>If <code>alpha</code> is much smaller compared to <code>x</code> (in absolute value), then the conversion will be threshold-like. In our case, if means values of <code>alpha</code> in the range [-0.001, 0[.</li>
+</ul>
+</div>
+<div id="conversion-to-presence-absence-based-on-a-value-of-species-prevalence" class="section level3">
+<h3>4.2.3. Conversion to presence-absence based on a value of species prevalence</h3>
+<p><em>The species prevalence is the number of places (here, pixels) actually occupied by the species out of the total number of places (pixels) available. Do not confuse the <strong>SPECIES PREVALENCE</strong> with the <a href="07-sampleoccurrences.html#defining-the-sample-prevalence"><strong>SAMPLE PREVALENCE</strong></a>, which in turn is the proportion of samples in which you have found the species.</em></p>
+<p>Numerous authors have shown the importance of the species prevalence in species distribution modelling, and how it can bias models. As a consequence, when generating virtual species distributions to test particular protocols or modelling techniques, you may be interested in testing different values of species prevalence. However, it is important to know that the species prevalence is dependent on <strong>the species-environment relationship</strong>, <strong>the shape of the probabilistic conversion curve</strong> AND <strong>the spatial distribution of environmental conditions</strong>. As a consequence, the function has to try different shapes of conversion curve to find a conversion according to your chosen value of species prevalence. Sometimes, it is not possible to reach a particular species prevalence, in that case the function will choose the conversion curve providing results closest to your species prevalence.</p>
+<p>If you want to generate a species with a particular species prevalence, then you also have to fix either <code>alpha</code> or <code>beta</code>. I strongly advise to fix a value of <code>alpha</code> (this is the default paramter, with <code>alpha = -0.05</code>), so that the function will try to find an appropriate conversion by testing different values of <code>beta</code>. If you prefer to fix the value of <code>beta</code>, then the function will try different values of <code>alpha</code>, but it is likely that it will not be able to find a conversion generating a species with the appropriate prevalence.</p>
+<p>Let’s see it in practice:</p>
+<pre class="r"><code># Let&#39;s generate a species occupying 20% of the world
+# Default settings, alpha = -0.05
+sp.0.2 &lt;- convertToPA(my.first.species,
+                      species.prevalence = 0.2)</code></pre>
+<pre><code>##    --- Determing beta automatically according to alpha and species.prevalence</code></pre>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv8-1.png" alt="Fig. 4.6 Conversion of a species with a prevalence of 0.2, i.e. occupying 20% of the world (which is quite large)" />
+<p class="caption">Fig. 4.6 Conversion of a species with a prevalence of 0.2, <em>i.e.</em> occupying 20% of the world (which is quite large)</p>
+</div>
+<pre class="r"><code>sp.0.2</code></pre>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.05
+##    .beta  (inflexion point) = 0.234375
+##    .species prevalence      = 0.2</code></pre>
+<pre class="r"><code># Now, a species occupying 1.5% of the world
+# Change alpha to have a slightly more steep curve
+sp.0.015 &lt;- convertToPA(my.first.species,
+                        species.prevalence = 0.015,
+                        alpha = -0.015)</code></pre>
+<pre><code>##    --- Determing beta automatically according to alpha and species.prevalence</code></pre>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv9-1.png" alt="Fig. 4.7 Conversion of a species with a prevalence of 0.015, i.e. occupying 1.5% of the world" />
+<p class="caption">Fig. 4.7 Conversion of a species with a prevalence of 0.015, <em>i.e.</em> occupying 1.5% of the world</p>
+</div>
+<pre class="r"><code>sp.0.015</code></pre>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.015
+##    .beta  (inflexion point) = 0.828125
+##    .species prevalence      = 0.014</code></pre>
+<pre class="r"><code># Let&#39;s try by fixing beta rather than alpha
+# We want a species occupying 10% of the world, with a high value of beta
+sp.10 &lt;- convertToPA(my.first.species,
+                     species.prevalence = 0.1,
+                     alpha = NULL,
+                     beta = 0.9)</code></pre>
+<pre><code>##    --- Determing alpha automatically according to beta and species.prevalence</code></pre>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv10-1.png" alt="Fig. 4.8 Conversion of a species with a prevalence of 0.1, i.e. occupying 10% of the world" />
+<p class="caption">Fig. 4.8 Conversion of a species with a prevalence of 0.1, <em>i.e.</em> occupying 10% of the world</p>
+</div>
+<pre class="r"><code>sp.10</code></pre>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.31346875
+##    .beta  (inflexion point) = 0.9
+##    .species prevalence      = 0.091</code></pre>
+<p>It worked, but the resulting species does not look realistic at all: alpha was below -0.3, which means that we had a quasi-linear conversion curve, producing this unrealistic presence-absence map.</p>
+<pre class="r"><code># Now an impossible task: a low value of beta for the same requirements:
+sp.10bis &lt;- convertToPA(my.first.species,
+                        species.prevalence = 0.1,
+                        alpha = NULL,
+                        beta = 0.3)</code></pre>
+<pre><code>##    --- Determing alpha automatically according to beta and species.prevalence</code></pre>
+<pre><code>## Warning in convertToPA(my.first.species, species.prevalence = 0.1, alpha = NULL, : Warning, the desired species prevalence cannot be obtained, because of the chosen beta and available environmental conditions (see details).
+##                         The closest possible estimate of prevalence was 0.15 
+## Perhaps you can try a higher beta value.</code></pre>
+<div class="figure">
+<img src="04-presenceabsence_files/figure-html/conv11-1.png" alt="Fig. 4.9 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta" />
+<p class="caption">Fig. 4.9 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta</p>
+</div>
+<pre class="r"><code>sp.10bis</code></pre>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.001
+##    .beta  (inflexion point) = 0.3
+##    .species prevalence      = 0.147</code></pre>
+</div>
+</div>
+
+<p><br>
+<br>
+-----------------
+<br>
+
+
+Do not hesitate if you have a question, find a bug, or would like to add a feature in virtualspecies: mail me!</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

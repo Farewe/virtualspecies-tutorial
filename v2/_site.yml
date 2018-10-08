@@ -1,0 +1,29 @@
+name: "virtualspecies-tutorial"
+navbar:
+  title: "Virtualspecies tutorial"
+  left:
+    - text: "Introduction"
+      href: index.html
+    - text: "1. Input data"
+      href: 01-inputdata.html
+    - text: "Simulating virtual species"
+      menu:
+        - text: "2. Virtual species defined by response to environmental variables"
+          href: 02-response.html
+        - text: "3. Virtual species defined by response to a PCA of the environment"
+          href: 03-PCA.html
+        - text: "4. Converting environmental suitability to presence-absence"
+          href: 04-presenceabsence.html
+        - text: "5. Generating random species"
+          href: 05-randomspecies.html
+    - text: "6. Exploring virtual species"
+      href: 06-virtualspeciesobjects.html
+    - text: "7. Sampling occurrences"
+      href: 07-sampleoccurrences.html
+    - text: "8. Dispersal limitation"
+      href: 08-dispersallimitation.html
+output:
+  html_document:
+    css: styles.css
+    include:
+      after_body: footer.html

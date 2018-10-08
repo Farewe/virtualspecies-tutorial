@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Virtualspecies tutorial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="01-inputdata.html">1. Input data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Simulating virtual species
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="02-response.html">2. Virtual species defined by response to environmental variables</a>
+    </li>
+    <li>
+      <a href="03-PCA.html">3. Virtual species defined by response to a PCA of the environment</a>
+    </li>
+    <li>
+      <a href="04-presenceabsence.html">4. Converting environmental suitability to presence-absence</a>
+    </li>
+    <li>
+      <a href="05-randomspecies.html">5. Generating random species</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="06-virtualspeciesobjects.html">6. Exploring virtual species</a>
+</li>
+<li>
+  <a href="07-sampleoccurrences.html">7. Sampling occurrences</a>
+</li>
+<li>
+  <a href="08-dispersallimitation.html">8. Dispersal limitation</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore"><ol start="8" style="list-style-type: decimal">
+<li>Dispersal limitation</li>
+</ol></h1>
+
+</div>
+
+
+<p>One of the most disputed assumptions of species distribution models is that species are at equilibrium with their environment. This assumptions means that species are supposed to occupy their full range of suitable environmental conditions. In reality, it is unlikely, because of dispersal limitations, biotic interactions, etc., which precludes species to occupy areas which are theoretically suitable. As a consequence, it is worth testing how well modelling techniques perform when this assumption is violated.</p>
+<p>This is why we introduced the possibility of biasing the distribution of species, to simulate species which are not at equilibrium. This possibility is implemented in the function <code>limitDistribution</code>.</p>
+<div id="an-introduction-example" class="section level2">
+<h2>8.1. An introduction example</h2>
+<p>Let’s use the same virtual species we generated above:</p>
+<pre class="r"><code>library(virtualspecies)</code></pre>
+<pre><code>## Loading required package: raster</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
+<pre class="r"><code>worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
+
+# Formatting of the response functions
+my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),
+                                 bio12 = c(fun = &#39;dnorm&#39;, mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+my.first.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
+                                      parameters = my.parameters)
+
+# Conversion to presence-absence
+my.first.species &lt;- convertToPA(my.first.species,
+                                beta = 0.7, plot = FALSE)</code></pre>
+<pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
+<p>Now, let’s assume our species originates from South America, and has not been able to disperse through the oceans (result in figure 8.2).</p>
+<pre class="r"><code>my.first.species &lt;- limitDistribution(my.first.species, 
+                                      geographical.limit = &quot;continent&quot;,
+                                      area = &quot;South America&quot;,
+                                      plot = FALSE)
+
+par(mfrow = c(2, 1))
+plot(my.first.species$pa.raster, main = &quot;Theoretical distribution&quot;)
+plot(my.first.species$occupied.area, main = &quot;Realised distribution&quot;)</code></pre>
+<div class="figure">
+<img src="08-dispersallimitation_files/figure-html/dist2-1.png" alt="Fig. 8.2 Distribution of a species limited to South America" />
+<p class="caption">Fig. 8.2 Distribution of a species limited to South America</p>
+</div>
+<p>In the following sections, we see how to customise this function, but <a href="07-sampleoccurrences.html#uneven-sampling-intensity">the usage is basically the same as when applying a sampling bias.</a></p>
+</div>
+<div id="customisation-of-the-parameters" class="section level2">
+<h2>8.2. Customisation of the parameters</h2>
+<p>There are six main possibilities to limit the distribution to a particular area.</p>
+<div id="using-countries-regions-or-continents" class="section level3">
+<h3>8.2.1. Using countries, regions or continents</h3>
+<p>As illustrated in the example above, use <code>geographical.limit = &quot;country&quot;</code>, <code>geographical.limit = continent</code> or <code>geographical.limit = &quot;region&quot;</code> and provide the correct name(s) of the area to <code>area</code></p>
+<pre class="r"><code>my.sp1 &lt;- limitDistribution(my.first.species, 
+                            geographical.limit = &quot;country&quot;,
+                            area = c(&quot;Brazil&quot;, &quot;Venezuela&quot;))</code></pre>
+<div class="figure">
+<img src="08-dispersallimitation_files/figure-html/dist3-1.png" alt="Fig. 8.3 Distribution of a species arbitrary limited to Brazil and Venezuela" />
+<p class="caption">Fig. 8.3 Distribution of a species arbitrary limited to Brazil and Venezuela</p>
+</div>
+</div>
+<div id="using-a-polygon" class="section level3">
+<h3>8.2.2. Using a polygon</h3>
+<p>Set <code>geographical.limit = &quot;polygon&quot;</code>, and provide a polygon (of type <code>SpatialPolygons</code> or <code>SpatialPolygonsDataFrame</code> from package <code>sp</code>) to the argument <code>area</code>.</p>
+<pre class="r"><code>philippines &lt;- getData(&quot;GADM&quot;, country = &quot;PHL&quot;, level = 0)
+my.sp2 &lt;- limitDistribution(my.first.species, 
+                            geographical.limit = &quot;polygon&quot;,
+                            area = philippines)</code></pre>
+</div>
+<div id="using-an-extent-object" class="section level3">
+<h3>8.2.3. Using an extent object</h3>
+<p>Set <code>geographical.limit = &quot;extent&quot;</code>, and provide an extent to the argument <code>area</code> (<a href="07-sampleoccurrences.html#providing-an-extent-object">see section 7.2.3. if you are not familiar with extents</a>). You can also simply set <code>geographical.limit = &quot;extent&quot;</code>, and click twice on the map when asked to:</p>
+<pre class="r"><code>my.extent &lt;- extent(-80, -20, -35, -5)
+my.sp2 &lt;- limitDistribution(my.first.species, 
+                            geographical.limit = &quot;extent&quot;,
+                            area = my.extent)
+plot(my.extent, add = TRUE)</code></pre>
+<div class="figure">
+<img src="08-dispersallimitation_files/figure-html/dist5-1.png" alt="Fig. 8.5 Distribution of a species limited to a particular extent" />
+<p class="caption">Fig. 8.5 Distribution of a species limited to a particular extent</p>
+</div>
+</div>
+<div id="using-a-raster-of-suitable-habitat" class="section level3">
+<h3>8.2.4. Using a raster of suitable habitat</h3>
+<p>Let’s first generate an example raster of habitat patches. <a href="https://github.com/Farewe/CooccurrenceIssue/blob/master/scripts/functions/patch_generation.R">For this, I will use this function that you can find here.</a></p>
+<pre class="r"><code>suitable.habitat &lt;- generate.patches(worldclim[[1]], n.patches = 100, patch.size = 300)
+plot(suitable.habitat)</code></pre>
+<p><img src="08-dispersallimitation_files/figure-html/dist5c-1.png" alt="Fig. 8.6 Raster of suitable habitat patches" /> Then, we will restrict the distribution of our species to these suitable habitat patches:</p>
+<pre class="r"><code>my.sp3 &lt;- limitDistribution(my.first.species, 
+                            geographical.limit = &quot;raster&quot;,
+                            area = suitable.habitat)</code></pre>
+<div class="figure">
+<img src="08-dispersallimitation_files/figure-html/dist5d-1.png" alt="Fig. 8.7 Distribution of our species restricted to suitable habitat patches" />
+<p class="caption">Fig. 8.7 Distribution of our species restricted to suitable habitat patches</p>
+</div>
+</div>
+</div>
+<div id="sampling-occurrence-points-in-the-dispersal-limited-distribution" class="section level2">
+<h2>8.3. Sampling occurrence points in the dispersal-limited distribution</h2>
+<p>Once the distribution of a species has been limited with <code>limitDistribution()</code>, you just have to apply <code>sampleOccurrences</code> on this species: it will automatically sample from the realised distribution of the species.</p>
+<pre class="r"><code>my.first.species &lt;- limitDistribution(my.first.species, 
+                                      geographical.limit = &quot;continent&quot;,
+                                      area = &quot;South America&quot;,
+                                      plot = FALSE)
+
+sampleOccurrences(my.first.species, n = 30)</code></pre>
+<div class="figure">
+<img src="08-dispersallimitation_files/figure-html/dist6-1.png" alt="Fig. 8.8 Occurrence sampled in the distribution of a species limited to South America" />
+<p class="caption">Fig. 8.8 Occurrence sampled in the distribution of a species limited to South America</p>
+</div>
+<pre><code>## Occurrence points sampled from a virtual species
+## 
+## - Type: presence only
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Multiple samples can occur in a single cell: No
+## 
+## First 10 lines: 
+##            x           y Real Observed
+## 1  -45.75000 -2.25000000    1        1
+## 2  -46.58333 -1.75000000    1        1
+## 3  -72.91667 -2.25000000    1        1
+## 4  -61.58333 -5.41666667    1        1
+## 5  -74.91667 -0.25000000    1        1
+## 6  -70.91667 -4.41666667    1        1
+## 7  -61.25000 -7.91666667    1        1
+## 8  -49.75000 -1.08333333    1        1
+## 9  -73.75000  0.08333333    1        1
+## 10 -62.75000  4.08333333    1        1
+## ... 20 more lines.</code></pre>
+</div>
+
+<p><br>
+<br>
+-----------------
+<br>
+
+
+Do not hesitate if you have a question, find a bug, or would like to add a feature in virtualspecies: mail me!</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

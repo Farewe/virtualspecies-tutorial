@@ -21,6 +21,9 @@ wc10/
 tmp*
 *_cache
 *_files
+/v2/*_cache
+/v2/*_files
+*cmip5*
 
 # html output file
 virtualspecies-tutorial.html

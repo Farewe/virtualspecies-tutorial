@@ -1,0 +1,232 @@
+---
+title: '8. Dispersal limitation'
+output:
+  html_document:
+    fig_caption: yes
+    keep_md: yes
+    mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+    theme: united
+    toc: true
+    toc_float: true
+---
+
+
+
+One of the most disputed assumptions of species distribution models is that species are at equilibrium with their environment. This assumptions means that species are supposed to occupy their full range of suitable environmental conditions. In reality, it is unlikely, because of dispersal limitations, biotic interactions, etc., which precludes species to occupy areas which are theoretically suitable. As a consequence, it is worth testing how well modelling techniques perform when this assumption is violated.
+
+This is why we introduced the possibility of biasing the distribution of species, to simulate species which are not at equilibrium. This possibility is implemented in the function `limitDistribution`.
+
+## 8.1. An introduction example
+
+Let's use the same virtual species we generated above:
+```{r dist1, cache = TRUE, message = TRUE}
+library(virtualspecies)
+worldclim <- getData("worldclim", var = "bio", res = 10)
+
+# Formatting of the response functions
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+                                 bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
+                                      parameters = my.parameters)
+
+# Conversion to presence-absence
+my.first.species <- convertToPA(my.first.species,
+                                beta = 0.7, plot = FALSE)
+```
+
+
+
+Now, let's assume our species originates from South America, and has not been able to disperse through the oceans (result in figure 8.2).
+
+```{r dist2, cache = TRUE, fig.cap = "Fig. 8.2 Distribution of a species limited to South America", fig.width = 6, fig.height = 6}
+my.first.species <- limitDistribution(my.first.species, 
+                                      geographical.limit = "continent",
+                                      area = "South America",
+                                      plot = FALSE)
+
+par(mfrow = c(2, 1))
+plot(my.first.species$pa.raster, main = "Theoretical distribution")
+plot(my.first.species$occupied.area, main = "Realised distribution")
+```
+
+In the following sections, we see how to customise this function, but [the usage is basically the same as when applying a sampling bias.](07-sampleoccurrences.html#uneven-sampling-intensity)  
+  
+
+
+## 8.2. Customisation of the parameters
+
+There are six main possibilities to limit the distribution to a particular area.
+
+### 8.2.1. Using countries, regions or continents
+
+As illustrated in the example above, use `geographical.limit = "country"`, `geographical.limit = continent` or `geographical.limit = "region"` and provide the correct name(s) of the area to `area`
+
+```{r dist3, cache = TRUE, fig.cap = "Fig. 8.3 Distribution of a species arbitrary limited to Brazil and Venezuela", fig.height = 4, fig.width = 8}
+my.sp1 <- limitDistribution(my.first.species, 
+                            geographical.limit = "country",
+                            area = c("Brazil", "Venezuela"))
+```
+
+
+### 8.2.2. Using a polygon
+
+Set `geographical.limit = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `area`.
+
+```{r dist4, cache = TRUE, fig.cap = "Fig. 8.4 Distribution of a species limited to the Philippines", fig.height = 4, fig.width = 8, eval = FALSE}
+philippines <- getData("GADM", country = "PHL", level = 0)
+my.sp2 <- limitDistribution(my.first.species, 
+                            geographical.limit = "polygon",
+                            area = philippines)
+```
+
+### 8.2.3. Using an extent object  
+Set `geographical.limit = "extent"`, and provide an extent to the argument `area` ([see section 7.2.3. if you are not familiar with extents](07-sampleoccurrences.html#providing-an-extent-object)). You can also simply set `geographical.limit = "extent"`, and click twice on the map when asked to:
+
+```{r dist5, cache = TRUE, fig.cap = "Fig. 8.5 Distribution of a species limited to a particular extent", fig.height = 4, fig.width = 8}
+my.extent <- extent(-80, -20, -35, -5)
+my.sp2 <- limitDistribution(my.first.species, 
+                            geographical.limit = "extent",
+                            area = my.extent)
+plot(my.extent, add = TRUE)
+```
+
+### 8.2.4. Using a raster of suitable habitat
+Let's first generate an example raster of habitat patches. [For this, I will use this function
+that you can find here.](https://github.com/Farewe/CooccurrenceIssue/blob/master/scripts/functions/patch_generation.R)
+```{r dist5b, cache = TRUE, echo = FALSE}
+generate.patches <- function(environment.raster, n.patches = 50, patch.size = 10)
+{
+  dummy.raster <- environment.raster
+  dummy.raster[!is.na(dummy.raster)] <- 1
+  n.cols <- ncol(dummy.raster)
+  n.rows <- nrow(dummy.raster)
+  
+  # Get the environment matrix
+  env.m <- getValues(dummy.raster, format = "matrix")
+  
+  if(patch.size > 1)
+  {
+    # Select the number of patches
+    # n.patches <- 50
+    # Define the starting points for each patch
+    starts <- sample(x = which(!is.na(env.m)), size = n.patches, replace = FALSE)
+    # Select patch size
+    # patch.size <- sample(5:20, n.patches, replace = T)
+    patch.s <- patch.size
+    ids <- NULL
+    for (run in 1:n.patches)
+    {
+      s <- starts[run]
+      # patch.s <- patch.size[run]
+      # Create the patch (same matrix as env.m, but with values of 2 where the patch exist)
+      patch <- expand(x = env.m, n.size = patch.s, start = s)
+      # Get patch cell ids
+      ids <- c(ids, which(patch == 2))
+    }
+    
+    # Attribute all patch values in the environment matrix (NA = sea, 0 = no patch, 1 = patch)
+    env.m[!(is.na(env.m))] <- 0
+    env.m[ids] <- 1
+  } else if(patch.size == 1)
+  {
+    env.m[!(is.na(env.m))] <- 0
+    env.m[sample(x = which(!is.na(env.m)), size = n.patches, replace = FALSE)] <- 1
+  } else stop("Why did you choose a weird patch.size value?")
+ 
+  
+  patch.raster <- setValues(dummy.raster,
+                            env.m)
+  
+  return(patch.raster)
+}
+expand <- function(x, n.size, start) {
+  if (x[start] != 1) stop("Attempting to begin on an unoccupied cell")
+  n.rows <- dim(x)[1]
+  n.cols <- dim(x)[2]
+  nbrhood <- matrix(c(-1,-1, -1,0, -1,1, 0,-1, 0,1, 1,-1, 1,0, 1,1), nrow=2)
+  #
+  # Adjoin one more random cell and update `state`, which records
+  # (1) the immediately available cells and (2) already occupied cells.
+  #
+  grow <- function(state) {
+    #
+    # Find all available neighbors that lie within the extent of `x` and
+    # are unoccupied.
+    #
+    neighbors <- function(i) {
+      n <- c((i-1)%%n.rows+1, floor((i-1)/n.rows+1)) + nbrhood
+      n <- n[, n[1,] >= 1 & n[2,] >= 1 & n[1,] <= n.rows & n[2,] <= n.cols,
+             drop=FALSE]             # Remain inside the extent of `x`.
+      n <- n[1,] + (n[2,]-1)*n.rows  # Convert to *vector* indexes into `x`.
+      n <- n[x[n]==1]                # Stick to valid cells in `x`.
+      n <- setdiff(n, state$occupied)# Remove any occupied cells.
+      return (n)
+    }
+    #
+    # Select one available cell uniformly at random.
+    # Return an updated state.
+    #
+    j <- ceiling(runif(1) * length(state$available))
+    i <- state$available[j]
+    return(list(index=i,
+                available = union(state$available[-j], neighbors(i)),
+                occupied = c(state$occupied, i)))
+  }
+  #
+  # Initialize the state.
+  # (If `start` is missing, choose a value at random.)
+  #
+  if(missing(start)) {
+    indexes <- 1:(n.rows * n.cols)
+    indexes <- indexes[x[indexes]==1]
+    start <- sample(indexes, 1)
+  }
+  if(length(start)==2) start <- start[1] + (start[2]-1)*n.rows
+  state <- list(available=start, occupied=c())
+  #
+  # Grow for as long as possible and as long as needed.
+  #
+  i <- 1
+  indices <- c(NA, n.size)
+  while(length(state$available) > 0 && i <= n.size) {
+    state <- grow(state)
+    indices[i] <- state$index
+    i <- i+1
+  }
+  #
+  # Return a grid of generation numbers from 1, 2, ... through n.size.
+  #
+  indices <- indices[!is.na(indices)]
+  y <- matrix(NA, n.rows, n.cols)
+  y[indices] <- 2
+  return(y)
+}
+```
+
+```{r dist5c, cache = TRUE, fig.cap = "Fig. 8.6 Raster of suitable habitat patches", fig.height = 4, fig.width = 8}
+suitable.habitat <- generate.patches(worldclim[[1]], n.patches = 100, patch.size = 300)
+plot(suitable.habitat)
+```
+Then, we will restrict the distribution of our species to these suitable habitat patches:
+
+```{r dist5d, cache = TRUE, fig.cap = "Fig. 8.7 Distribution of our species restricted to suitable habitat patches", fig.height = 4, fig.width = 8}
+my.sp3 <- limitDistribution(my.first.species, 
+                            geographical.limit = "raster",
+                            area = suitable.habitat)
+```
+
+                            
+## 8.3. Sampling occurrence points in the dispersal-limited distribution
+
+Once the distribution of a species has been limited with `limitDistribution()`, you just have to apply `sampleOccurrences` on this species: it will automatically sample from the realised distribution of the species.
+
+```{r dist6, cache = TRUE, fig.cap = "Fig. 8.8 Occurrence sampled in the distribution of a species limited to South America", fig.width = 6, fig.height = 6}
+my.first.species <- limitDistribution(my.first.species, 
+                                      geographical.limit = "continent",
+                                      area = "South America",
+                                      plot = FALSE)
+
+sampleOccurrences(my.first.species, n = 30)
+```

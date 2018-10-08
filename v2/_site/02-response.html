@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+
+
+
+
+<title></title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
+<script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+<link rel="stylesheet" href="styles.css" type="text/css" />
+
+</head>
+
+<body>
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+  height: auto;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+
+<div class="container-fluid main-container">
+
+<!-- tabsets -->
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+</script>
+
+<!-- code folding -->
+
+
+
+
+<script>
+$(document).ready(function ()  {
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
+</script>
+
+<style type="text/css">
+
+#TOC {
+  margin: 25px 0px 20px 0px;
+}
+@media (max-width: 768px) {
+#TOC {
+  position: relative;
+  width: 100%;
+}
+}
+
+
+.toc-content {
+  padding-left: 30px;
+  padding-right: 40px;
+}
+
+div.main-container {
+  max-width: 1200px;
+}
+
+div.tocify {
+  width: 20%;
+  max-width: 260px;
+  max-height: 85%;
+}
+
+@media (min-width: 768px) and (max-width: 991px) {
+  div.tocify {
+    width: 25%;
+  }
+}
+
+@media (max-width: 767px) {
+  div.tocify {
+    width: 100%;
+    max-width: none;
+  }
+}
+
+.tocify ul, .tocify li {
+  line-height: 20px;
+}
+
+.tocify-subheader .tocify-item {
+  font-size: 0.90em;
+  padding-left: 25px;
+  text-indent: 0;
+}
+
+.tocify .list-group-item {
+  border-radius: 0px;
+}
+
+
+</style>
+
+<!-- setup 3col/9col grid for toc_float and main content  -->
+<div class="row-fluid">
+<div class="col-xs-12 col-sm-4 col-md-3">
+<div id="TOC" class="tocify">
+</div>
+</div>
+
+<div class="toc-content col-xs-12 col-sm-8 col-md-9">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Virtualspecies tutorial</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        <li>
+  <a href="index.html">Introduction</a>
+</li>
+<li>
+  <a href="01-inputdata.html">1. Input data</a>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+    Simulating virtual species
+     
+    <span class="caret"></span>
+  </a>
+  <ul class="dropdown-menu" role="menu">
+    <li>
+      <a href="02-response.html">2. Virtual species defined by response to environmental variables</a>
+    </li>
+    <li>
+      <a href="03-PCA.html">3. Virtual species defined by response to a PCA of the environment</a>
+    </li>
+    <li>
+      <a href="04-presenceabsence.html">4. Converting environmental suitability to presence-absence</a>
+    </li>
+    <li>
+      <a href="05-randomspecies.html">5. Generating random species</a>
+    </li>
+  </ul>
+</li>
+<li>
+  <a href="06-virtualspeciesobjects.html">6. Exploring virtual species</a>
+</li>
+<li>
+  <a href="07-sampleoccurrences.html">7. Sampling occurrences</a>
+</li>
+<li>
+  <a href="08-dispersallimitation.html">8. Dispersal limitation</a>
+</li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore"><ol start="2" style="list-style-type: decimal">
+<li>Virtual species defined by response to environmental variables</li>
+</ol></h1>
+
+</div>
+
+
+<p>The first approach to generate a virtual species consists in defining its response functions to each of the environmental variables contained in our <code>RasterStack</code>. These responses are then combined to calculcate the environmental suitability of the virtual species.</p>
+<p>The function providing this approach is <code>generateSpFromFun</code>.</p>
+<div id="an-introduction-example" class="section level2">
+<h2>2.1. An introduction example</h2>
+<p>Before we start using the package, let’s prepare our first simulation of virtual species.</p>
+<p>We want to generate a virtual species with two environmental variables, the annual mean temperature <code>bio1</code> and annual mean precipitation <code>bio2</code>. We want to generate a tropical species, i.e., living in hot and humid environments. We can define bell-shaped response functions to these two variables, as in the following figure:</p>
+<div class="figure">
+<img src="02-response_files/figure-html/vspload-1.png" alt="Fig. 2.1 Example of bell-shaped response functions to bio1 and bio2, suitable for a tropical species." />
+<p class="caption">Fig. 2.1 Example of bell-shaped response functions to bio1 and bio2, suitable for a tropical species.</p>
+</div>
+<p><em>Note that bioclimatic temperature variables (here bio1) are is in °C * 10, <a href="http://worldclim.org/bioclim">as explained here.</a></em></p>
+<p>These bell-shaped functions are in fact gaussian distributions functions of the form:</p>
+<p><span class="math display">\[ f(x, \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2 \sigma^2}}\]</span></p>
+<p>If we take the example of bio1 above, the mean <span class="math inline">\(\mu\)</span> is equal to 250 (i.e., 25°C) and standard deviation <span class="math inline">\(\sigma\)</span> is equal to 50 (5°C). Hence the response function for bio1 is:</p>
+<p><span class="math display">\[ f(bio1) = \frac{1}{50\sqrt{2\pi}}\, e^{-\frac{(bio1 - 250)^2}{2 \times 50^2}} \]</span></p>
+<p>In R, it is very simple to obtain the result of the equation above, with the function <code>dnorm</code>:</p>
+<pre class="r"><code># Suitability of the environment for bio1 = 15 °C
+dnorm(x = 150, mean = 250, sd = 50)</code></pre>
+<pre><code>## [1] 0.001079819</code></pre>
+<p>The idea with <code>virtualspecies</code> is to keep the same simplicity when generating a species: we will use the <code>dnorm</code> function to generate our virtual species.</p>
+<p>Let’s start with the package now: The first step is to provide to the helper function <code>formatFunctions</code> which responses you want for which variables:</p>
+<pre class="r"><code>library(virtualspecies)
+
+my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),
+                                 bio12 = c(fun = &#39;dnorm&#39;, mean = 4000, sd = 2000))</code></pre>
+<p>After that, the generation of the virtual species is fairly easy:</p>
+<pre class="r"><code># Generation of the virtual species
+my.first.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
+                                              parameters = my.parameters,
+                                              plot = TRUE)</code></pre>
+<div class="figure">
+<img src="02-response_files/figure-html/resp4-1.png" alt="Fig. 2.2 Environmental suitability of the generated virtual species" />
+<p class="caption">Fig. 2.2 Environmental suitability of the generated virtual species</p>
+</div>
+<pre class="r"><code>my.first.species</code></pre>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1</code></pre>
+<p>Congratulations! You have just generated your first virtual species distribution, with the default settings. In the next section you will learn about the simple, yet important settings of this function.</p>
+</div>
+<div id="customisation-of-parameters" class="section level2">
+<h2>2.2. Customisation of parameters</h2>
+<p>The function <code>generateSpFromFun</code> proceeds into four important steps:</p>
+<ol style="list-style-type: decimal">
+<li>The response to each environmental variable is calculated according to the user-chosen functions.</li>
+<li>Each response is rescaled between 0 and 1. This step can be disabled.</li>
+<li>The responses are combined together to compute the environmental suitability. The user can choose how to combine the responses.</li>
+<li>The environmental suitability is rescaled between 0 and 1. This step can be disabled.</li>
+</ol>
+<div id="response-functions" class="section level3">
+<h3>2.2.1. Response functions</h3>
+<p>You can use any existing function with <code>generateSpFromFun</code>, as long as you provide the necessary parameters. For example, you can use the function <code>dnorm</code> shown above, if you provide the parameters <code>mean</code> and <code>sd</code>: <code>formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50))</code>. Naturally you can change the values of <code>mean</code> and <code>sd</code> to your needs.</p>
+<p>You can also use the basic functions provided with the package:</p>
+<ul>
+<li>Linear function: <code>formatFunctions(bio1 = c(fun = 'linearFun', a = 1, b = 0))</code> <span class="math display">\[ f(bio1) = a * bio1 + b \]</span>
+<div class="figure" style="text-align: center">
+<img src="02-response_files/figure-html/resp4.1-1.png" alt="Fig. 2.3 Linear response function"  />
+<p class="caption">
+Fig. 2.3 Linear response function
+</p>
+</div></li>
+<li>Quadratic function: <code>formatFunctions(bio1 = c(fun = 'quadraticFun', a = -1, b = 2, c = 0))</code> <span class="math display">\[ f(bio1) = a \times bio1^2 + b \times bio1 + c\]</span>
+<div class="figure" style="text-align: center">
+<img src="02-response_files/figure-html/resp4.2-1.png" alt="Fig. 2.4 Quadratic response function"  />
+<p class="caption">
+Fig. 2.4 Quadratic response function
+</p>
+</div></li>
+<li>Logistic function: <code>formatFunctions(bio1 = c(fun = 'logisticFun', beta = 150, alpha = -5))</code> <span class="math display">\[ f(bio1) = \frac{1}{1 + e^{\frac{bio1 - \beta}{\alpha}}} \]</span>
+<div class="figure" style="text-align: center">
+<img src="02-response_files/figure-html/resp4.3-1.png" alt="Fig. 2.5 Logistic response function"  />
+<p class="caption">
+Fig. 2.5 Logistic response function
+</p>
+</div></li>
+<li>Normal function defined by extremes: <code>formatFunctions(bio1 = c(fun = 'custnorm', mean = 250, diff = 50, prob = 0.99))</code> This function allows you to set extremum of a normal curve. In the example above, we define a response where the optimum is 25°C (<code>mean = 250</code>), and 99% of the area under the curve (<code>prob = 0.99</code>) will be comprised between 20 and 30°C (<code>diff = 50</code>).
+<div class="figure" style="text-align: center">
+<img src="02-response_files/figure-html/resp4.4-1.png" alt="Fig. 2.6 Normal function defined by extremes"  />
+<p class="caption">
+Fig. 2.6 Normal function defined by extremes
+</p>
+</div></li>
+<li>Beta response function (Oksanen &amp; Minchin, 2002, <em>Ecological Modelling</em> <strong>157</strong>:119-129): <code>formatFunctions(bio1 = c(fun = 'betaFun', p1 = 0, p2 = 250, alpha = 0.9, gamma = 0.08))</code> <span class="math display">\[ f(bio1) = (bio1 - p1)^{\alpha} * (p2 - bio1)^{\gamma} \]</span>
+<div class="figure" style="text-align: center">
+<img src="02-response_files/figure-html/resp4.5-1.png" alt="Fig. 2.7 Beta response function"  />
+<p class="caption">
+Fig. 2.7 Beta response function
+</p>
+</div></li>
+<li>Or you can create your own functions (see the section <a href="#how-to-create-and-use-your-own-response-functions">How to create your own response functions</a> if you need help for this).</li>
+</ul>
+</div>
+<div id="rescaling-of-individual-response-functions" class="section level3">
+<h3>2.2.2. Rescaling of individual response functions</h3>
+<p>This rescaling is performed because if you use very different response function for different variables, (<em>e.g.</em>, a Gaussian distribution function with a linear function), then the responses may be disproportionate among variables. By default this rescaling is enabled (<code>rescale.each.response = TRUE</code>), but it can be disabled (<code>rescale.each.response = FALSE</code>).</p>
+</div>
+<div id="combining-response-functions" class="section level3">
+<h3>2.2.3. Combining response functions</h3>
+<p>There are three main possibilities to combine response functions to calculate the environmental suitability, as defined by the parameters <code>species.type</code> and <code>formula</code>:</p>
+<ul>
+<li><code>species.type = &quot;additive&quot;</code>: the response functions are added.</li>
+<li><code>species.type = &quot;multiplicative&quot;</code>: the response functions are multiplied. This is the default behaviour of the function.</li>
+<li><code>formula = &quot;bio1 + 2 * bio2 + bio3&quot;</code>: if you choose a formula, then the response functions are combined according to your formula (parameter <code>species.type</code> is then ignored).</li>
+</ul>
+<p>For example, if you want to generate a species with the same partial responses as in 2.1, but with a strong importance for temperature, then you can specify the formula : <code>formula = &quot;2 * bio1 + bio12&quot;</code></p>
+<pre class="r"><code>library(virtualspecies)
+
+my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),
+                                 bio12 = c(fun = &#39;dnorm&#39;, mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+new.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
+                                 parameters = my.parameters,
+                                 formula = &quot;2 * bio1 + bio12&quot;,
+                                 plot = TRUE)</code></pre>
+<pre><code>## [1] &quot;2 * bio1 + bio12&quot;</code></pre>
+<div class="figure">
+<img src="02-response_files/figure-html/resp5-1.png" alt="Fig. 2.3 Environmental suitability of the generated virtual species" />
+<p class="caption">Fig. 2.3 Environmental suitability of the generated virtual species</p>
+</div>
+<pre class="r"><code>new.species</code></pre>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = 2 * bio1 + bio12
+## - Environmental suitability was rescaled between 0 and 1</code></pre>
+<p>One can even make complex interactions between partial responses:</p>
+<pre class="r"><code>library(virtualspecies)
+
+my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),
+                                 bio12 = c(fun = &#39;dnorm&#39;, mean = 4000, sd = 2000))
+
+# Generation of the virtual species
+new.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
+                                 parameters = my.parameters,
+                                 formula = &quot;3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1&quot;,
+                                 plot = TRUE)</code></pre>
+<pre><code>## [1] &quot;3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1&quot;</code></pre>
+<div class="figure">
+<img src="02-response_files/figure-html/resp6-1.png" alt="Fig. 2.3 Environmental suitability of the generated virtual species" />
+<p class="caption">Fig. 2.3 Environmental suitability of the generated virtual species</p>
+</div>
+<pre class="r"><code>new.species</code></pre>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = 3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1
+## - Environmental suitability was rescaled between 0 and 1</code></pre>
+<p>Note that this is an example to show the possibilities of the function; I have no idea of the relevance of such a relationship!</p>
+</div>
+<div id="rescaling-of-the-final-environmental-suitability" class="section level3">
+<h3>2.2.4. Rescaling of the final environmental suitability</h3>
+<p>This final rescaling is performed because the combination of the different responses can lead to very different range of values. It is therefore necessary to allow environmental suitabilities to be comparable among virtual species, and should not be disabled unless you have very precise reasons to do it. The argument <code>rescale</code> controls this rescaling (<code>TRUE</code> by default).</p>
+</div>
+</div>
+<div id="how-to-create-and-use-your-own-response-functions" class="section level2">
+<h2>2.3. How to create and use your own response functions</h2>
+<p>An important aspect of <code>generateSpFromFun</code> is that you can create and use your own response functions. In this section we will see how we can do that in practice.<br />
+We will take the example of a simple linear function: <span class="math display">\[ f(x, a, b) = ax + b\]</span></p>
+<p>Our first step will be to create the function in R:</p>
+<pre class="r"><code>linear.function &lt;- function(x, a, b)
+{
+  a*x + b
+}</code></pre>
+<p>That’s it! You created a function called <code>linear.function</code> in R.</p>
+<p>Let’s try it now:</p>
+<pre class="r"><code>linear.function(x = 0.5, a = 2, b = 1)</code></pre>
+<pre><code>## [1] 2</code></pre>
+<pre class="r"><code>linear.function(x = 3, a = 4, b = 1)</code></pre>
+<pre><code>## [1] 13</code></pre>
+<pre class="r"><code>linear.function(x = -20, a = 2, b = 0)</code></pre>
+<pre><code>## [1] -40</code></pre>
+<p>It seems to work properly. Now we will use <code>linear.function</code> to generate a virtual species distribution. We want a species responding linearly to the annual mean temperature, and with a gaussian to the annual precipitations:</p>
+<pre class="r"><code>my.responses &lt;- formatFunctions(bio1 = c(fun = &quot;linear.function&quot;, a = 1, b = 0),
+                                bio12 = c(fun = &quot;dnorm&quot;, mean = 1000, sd = 1000))
+
+generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
+                  parameters = my.responses, plot = TRUE)</code></pre>
+<div class="figure">
+<img src="02-response_files/figure-html/custfun3-1.png" alt="Fig 2.3 Environmental suitability of the generated virtual species" />
+<p class="caption">Fig 2.3 Environmental suitability of the generated virtual species</p>
+</div>
+<pre><code>## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : linear.function   (a=1; b=0)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=1000; sd=1000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1</code></pre>
+<p>And it worked! Your turn now!</p>
+</div>
+
+<p><br>
+<br>
+-----------------
+<br>
+
+
+Do not hesitate if you have a question, find a bug, or would like to add a feature in virtualspecies: mail me!</p>
+
+
+</div>
+</div>
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
