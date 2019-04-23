@@ -15,7 +15,7 @@ output:
 ## 4.1. Introduction: why should we avoid a threshold conversion?
 What we did so far was defining the relationship between the species and its environment. It was the most important part, but what it provides us is a spatial distribution of the species' environmental suitability, not a spatial distribution of the species' presences/absences. Hence we now have to convert the environmental suitability into presence-absence.
 
-The simplest approach, which was also the most widely used until 2014, consists in defining a threshold of environmental suitability, below which conditions are unsuitable, so absence is attributed; and above which conditions are suitable, so persence is attributed. However, you should completely avoid this approach which is *pure evil*:
+The simplest approach, which was also the most widely used until 2014, consists in defining a threshold of environmental suitability, below which conditions are unsuitable, so absence is attributed; and above which conditions are suitable, so presence is attributed. However, you should completely avoid this approach which is *pure evil*:
 
 * Most importantly, this creates completely unrealistic species:
     + Real species are often absent from areas of high suitability, because of factors acting at smaller spatial scales, such as biotic pressure (competition, predation), disturbances, stochastic events.
@@ -24,7 +24,12 @@ The simplest approach, which was also the most widely used until 2014, consists 
 
 So, how can we convert our environmental suitability into presence-absence without a threshold? 
 
-We use a probabilistic approach: the probability of getting a presence of the species in a given pixel is dependent on its suitability in that pixel:
+
+
+We use a probabilistic approach: the probability of getting a presence of the species in a given pixel is dependent on its suitability in that pixel.
+With the package, the probability of presence can be defined as a linear transformation of  environmental suitability, or as a logistic transformation of environmental suitability.
+
+
 
 ```{r conv1, echo = FALSE, eval = T, cache = TRUE, fig.cap = "Fig. 4.1 Logistic curve used for a probabilistic conversion into presence-absence"}
 library(virtualspecies)
