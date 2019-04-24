@@ -23,6 +23,17 @@ We want to generate a species dependent on three temperature variables ([bio2, b
 
 ```r
 library(virtualspecies)
+```
+
+```
+## Loading required package: raster
+```
+
+```
+## Loading required package: sp
+```
+
+```r
 worldclim <- getData("worldclim", var = "bio", res = 10)
 my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
 ```
@@ -46,6 +57,11 @@ my.pca.species <- generateSpFromPCA(raster.stack = my.stack)
 ##  - Calculating suitability values
 ```
 
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
+```
+
 ![](03-PCA_files/figure-html/pca2-1.png)<!-- -->
 
 ```r
@@ -59,8 +75,8 @@ my.pca.species
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=-0.1642768; sd=1.674329)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-1.977342; sd=0.8077037)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=-1.533744; sd=3.882747)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-1.497914; sd=1.93748)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
@@ -85,6 +101,11 @@ my.pca.species <- generateSpFromPCA(raster.stack = my.stack,
 ##  - Calculating suitability values
 ```
 
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
+```
+
 ![](03-PCA_files/figure-html/pca3-1.png)<!-- -->
 
 ```r
@@ -96,10 +117,10 @@ my.pca.species
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.55 % explained by these axes
+## - Axes:  1, 2 ;  83.15 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-15.36; max=2.56] : dnorm (mean=1.85619; sd=5.003718)
-##    .Axis 2  [min=-3.42; max=7.93] : dnorm (mean=1.074964; sd=3.270717)
+##    .Axis 1  [min=-2.51; max=11.11] : dnorm (mean=-1.818115; sd=1.895758)
+##    .Axis 2  [min=-3.33; max=6.76] : dnorm (mean=1.307395; sd=1.239453)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
@@ -159,6 +180,11 @@ narrow.species <- generateSpFromPCA(raster.stack = my.stack, sample.points = TRU
 ##  - Calculating suitability values
 ```
 
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
+```
+
 ![](03-PCA_files/figure-html/pca6-1.png)<!-- -->
 
 
@@ -192,6 +218,11 @@ wide.species <- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
 
 ```
 ##  - Calculating suitability values
+```
+
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
 ```
 
 ![A species generated with rather wide niche breadth](03-PCA_files/figure-html/pca7-1.png)
@@ -237,6 +268,11 @@ my.custom.species <- generateSpFromPCA(raster.stack = my.stack, sample.points = 
 ##  - Calculating suitability values
 ```
 
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
+```
+
 ![](03-PCA_files/figure-html/pca8-1.png)<!-- -->
 
 
@@ -272,6 +308,11 @@ my.custom.species <- generateSpFromPCA(raster.stack = my.stack,
 
 ```
 ##  - Calculating suitability values
+```
+
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
 ```
 
 ![](03-PCA_files/figure-html/pca9-1.png)<!-- -->
@@ -323,6 +364,11 @@ my.first.run <- generateSpFromPCA(raster.stack = my.stack,
 ##  - Calculating suitability values
 ```
 
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
+```
+
 ![](03-PCA_files/figure-html/pca10-1.png)<!-- -->
 
 ```r
@@ -336,8 +382,15 @@ my.second.run <- generateSpFromPCA(raster.stack = my.stack,
 
 ```
 ##  - Defining the response of the species along PCA axes
-## 
+```
+
+```
 ##  - Calculating suitability values
+```
+
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
 ```
 
 ![](03-PCA_files/figure-html/pca10-2.png)<!-- -->
@@ -374,6 +427,11 @@ vs1.current <- generateSpFromPCA(raster.stack = my.stack,
 ##  - Calculating suitability values
 ```
 
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
+```
+
 ![](03-PCA_files/figure-html/pca11-1.png)<!-- -->
 
 Then, we will project this virtual species onto future conditions:
@@ -401,6 +459,11 @@ vs1.future <- generateSpFromPCA(raster.stack = future.stack,
 
 ```
 ##  - Calculating suitability values
+```
+
+```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
 ```
 
 ![](03-PCA_files/figure-html/pca12-1.png)<!-- -->

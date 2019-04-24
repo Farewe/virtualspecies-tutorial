@@ -16,7 +16,7 @@ This section is mainly intended to users not very familiar with R. For example, 
 ## 6.1. Consult the details of a generated virtual species
 
 Let's create a simple virtual species:
-```{r output1, fig.height = 2.5, fig.width = 10, cache = TRUE, fig.cap = "Fig. 6.1 Automatic illustration of the randomly generated species"}
+```{r output1, fig.height = 6, fig.width = 10, cache = TRUE, fig.cap = "Fig. 6.1 Automatic illustration of the randomly generated species"}
 library(virtualspecies)
 # Worldclim data
 worldclim <- getData("worldclim", var = "bio", res = 10)
@@ -43,7 +43,7 @@ my.species
 And a summary of how the virtual species was generated appears:
 
 * It shows us the variables used.
-* It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9°C) to 314 (31.4°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25°C).
+* It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9Â°C) to 314 (31.4Â°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25Â°C).
 * If a conversion to presence-absence was performed, it shows us the parameters of the conversion, and provides the species prevalence (the species prevalence is always calculated and provided).
 * If you have introduced a distribution bias (will be seen in a later section), it will provide information about this particular bias.
 
@@ -51,7 +51,7 @@ And a summary of how the virtual species was generated appears:
 ## 6.2. Plot the virtual species map
 
 Plotting the distribution maps of a virtual species is straightforward:
-```{r output3, fig.height = 2.5, fig.width = 10, cache = TRUE, dependson = "output1", fig.cap = "Fig. 6.2 Maps obtained when using the function `plot()` on virtual species objects"}
+```{r output3, fig.height = 6, fig.width = 10, cache = TRUE, dependson = "output1", fig.cap = "Fig. 6.2 Maps obtained when using the function `plot()` on virtual species objects"}
 plot(my.species)
 ```
 
@@ -61,11 +61,20 @@ If the environmental sutiability has been converted into presence-absence, then 
 
 As illustrated several times in this tutorial, there is a function to automatically generate an appropriate plot for your virtual species: `plotResponse`
 
-```{r output3bis, fig.height = 2.5, fig.width = 10, cache = TRUE, dependson = "output1", fig.cap = "Fig. 6.3 Example of figure obtained when running `plotResponse()` on a virtual species object"}
+```{r output3bis, fig.height = 5, fig.width = 10, cache = TRUE, dependson = "output1", fig.cap = "Fig. 6.3 Example of figure obtained when running `plotResponse()` on a virtual species object"}
 plotResponse(my.species)
 ```
 
-## 6.4. Extracting elements of the virtual species, such as the rasters of environmental suitability
+## 6.4. Plot the relationship between suitability and probability of occurrence
+
+If you converted your environmental suitability into presence-absence with a probabilistic approach, chances are that you modified the environmental suitability function, e.g. if you used a logistic method or if you wanted to reach a specific prevalence. You may be interested in the relationship between environmental suitability and probability of occurrence, which can be plotted with `plotSuitabilityToProba`
+
+```{r output3ter, fig.height = 5, fig.width = 10, cache = TRUE, dependson = "output1", fig.cap = "Fig. 6.4 Example of figure obtained when running `plotSuitabilityToProba()` on a virtual species object"}
+plotSuitabilityToProba(my.species)
+```
+
+
+## 6.5. Extracting elements of the virtual species, such as the rasters of environmental suitability
 
 The virtual species object is structured as a `list` in R, which roughly means that it is an object containing many "sub-objects". When you run functions on your virtual species object, such as the conversion into presence-absence, then new sub-objects are added or replaced in the list.
 
@@ -83,6 +92,12 @@ You can extract each element using the `$`: for example, to extract the suitabil
 my.species$suitab.raster
 ```
 
+If you are interested in the probability of occurrence raster, type
+
+```{r output5.1, cache = TRUE, dependson = "output1"}
+my.species$probability.of.occurrence
+```
+
 If you are interested in the presence-absence raster, type
 
 ```{r output6, cache = TRUE, dependson = "output1"}
@@ -96,7 +111,7 @@ You can also see that we have "sub-sub-objects", in the lines starting with `..$
 my.species$details$variables
 ```
 
-However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use `str()` on your virtual species object. For example, if we extract the `parameters` object from the details, we can see that it contains all the function names and their parameters:
+However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use `str()` on the entire virtual species object. For example, if we extract the `parameters` object from the details, we can see that it contains all the function names and their parameters:
 
 ```{r output8, cache = TRUE, dependson = "output1"}
 my.species$details$parameters
@@ -110,7 +125,7 @@ Hence, the main message here is if you want to explore the content of the virtua
 
 
 
-## 6.5. Saving the virtual species objects for later use
+## 6.6. Saving the virtual species objects for later use
 
 
 

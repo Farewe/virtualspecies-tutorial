@@ -20,6 +20,15 @@ Before we start using the package, let's prepare our first simulation of virtual
 
 We want to generate a virtual species with two environmental variables, the annual mean temperature `bio1` and annual mean precipitation `bio2`. We want to generate a tropical species, i.e., living in hot and humid environments. We can define bell-shaped response functions to these two variables, as in the following figure:
 
+
+```
+## Loading required package: raster
+```
+
+```
+## Loading required package: sp
+```
+
 ![Fig. 2.1 Example of bell-shaped response functions to bio1 and bio2, suitable for a tropical species.](02-response_files/figure-html/vspload-1.png)
 
 _Note that bioclimatic temperature variables (here bio1) are is in °C * 10, [as explained here.](http://worldclim.org/bioclim)_
@@ -64,6 +73,20 @@ After that, the generation of the virtual species is fairly easy:
 my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
                                               parameters = my.parameters,
                                               plot = TRUE)
+```
+
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
 ```
 
 ![Fig. 2.2 Environmental suitability of the generated virtual species](02-response_files/figure-html/resp4-1.png)
@@ -167,6 +190,20 @@ new.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
 ```
 
 ```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
+```
 ## [1] "2 * bio1 + bio12"
 ```
 
@@ -203,6 +240,20 @@ new.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
                                  parameters = my.parameters,
                                  formula = "3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1",
                                  plot = TRUE)
+```
+
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
 ```
 
 ```
@@ -287,6 +338,20 @@ my.responses <- formatFunctions(bio1 = c(fun = "linear.function", a = 1, b = 0),
 
 generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
                   parameters = my.responses, plot = TRUE)
+```
+
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
 ```
 
 ![Fig 2.3 Environmental suitability of the generated virtual species](02-response_files/figure-html/custfun3-1.png)

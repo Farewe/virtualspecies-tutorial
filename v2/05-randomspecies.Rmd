@@ -14,7 +14,7 @@ The `virtualspecies` package embeds a function to randomly generate virtual spec
 
 Let's take a look:
 
-```{r rand1, eval = T, cache = TRUE, fig.height = 2.51, fig.width = 10, fig.cap = "Fig. 5.1 A species randomly generated with `generateRandomSp`"}
+```{r rand1, eval = T, cache = TRUE, fig.height = 6, fig.width = 10, fig.cap = "Fig. 5.1 A species randomly generated with `generateRandomSp`"}
 library(virtualspecies)
 worldclim <- getData("worldclim", var = "bio", res = 10)
 
@@ -110,7 +110,7 @@ unrealistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
 
 Note that you can always let the function randomly determine the conversion to presence-absence by changing the argument `convert.to.PA = TRUE` (be careful: since parameters are defined randomly, the results can be bizarre), or you can do it by yourself later:
 
-```{r rand7, fig.width = 10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6", cache = TRUE}
+```{r rand7, fig.width = 10, fig.height = 6, eval = T, cache = TRUE, fig.cap = "Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6", cache = TRUE}
 realistic.sp <- convertToPA(realistic.sp, beta = 0.5)
 ```
 
@@ -132,7 +132,7 @@ As explained in the PCA section, if you have low-memory computer, or are working
 
 To do this, set `sample.points = TRUE`, and choose the number of pixels to sample, depending on your computer's memory, with `nb.points`.
 
-```{r rand8, fig.width = 10, fig.height = 2.5, eval = T, cache = TRUE, fig.cap = "Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure"}
+```{r rand8, fig.width = 10, fig.height = 6, eval = T, cache = TRUE, fig.cap = "Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure"}
 # A safe run for a low memory computer
 safe.run.sp <- generateRandomSp(worldclim[[c(1, 5, 6)]], 
                                 sample.points = TRUE,

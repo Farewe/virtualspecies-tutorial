@@ -74,7 +74,7 @@ my.sp1 <- limitDistribution(my.first.species,
 
 Set `geographical.limit = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `area`.
 
-```{r dist4, cache = TRUE, fig.cap = "Fig. 8.4 Distribution of a species limited to the Philippines", fig.height = 4, fig.width = 8, eval = FALSE}
+```{r dist4, cache = TRUE, fig.cap = "Fig. 8.4 Distribution of a species limited to the Philippines", fig.height = 4, fig.width = 8, eval = TRUE}
 philippines <- getData("GADM", country = "PHL", level = 0)
 my.sp2 <- limitDistribution(my.first.species, 
                             geographical.limit = "polygon",

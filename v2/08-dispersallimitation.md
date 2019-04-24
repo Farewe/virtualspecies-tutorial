@@ -42,7 +42,23 @@ my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
 # Generation of the virtual species
 my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
                                       parameters = my.parameters)
+```
 
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
+```r
 # Conversion to presence-absence
 my.first.species <- convertToPA(my.first.species,
                                 beta = 0.7, plot = FALSE)
@@ -50,6 +66,14 @@ my.first.species <- convertToPA(my.first.species,
 
 ```
 ##    --- Determing species.prevalence automatically according to alpha and beta
+```
+
+```
+##    Logistic conversion finished:
+##               
+## - beta = 0.7
+## - alpha = -0.05
+## - species prevalence =0.0337387365039066
 ```
 
 
@@ -103,6 +127,14 @@ my.sp2 <- limitDistribution(my.first.species,
                             geographical.limit = "polygon",
                             area = philippines)
 ```
+
+```
+## Warning in limitDistribution(my.first.species, geographical.limit =
+## "polygon", : Polygon projection is not checked. Please make sure you have
+## the same projections between your polygon and your presence-absence raster
+```
+
+![Fig. 8.4 Distribution of a species limited to the Philippines](08-dispersallimitation_files/figure-html/dist4-1.png)
 
 ### 8.2.3. Using an extent object  
 Set `geographical.limit = "extent"`, and provide an extent to the argument `area` ([see section 7.2.3. if you are not familiar with extents](07-sampleoccurrences.html#providing-an-extent-object)). You can also simply set `geographical.limit = "extent"`, and click twice on the map when asked to:
@@ -171,16 +203,16 @@ sampleOccurrences(my.first.species, n = 30)
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x           y Real Observed
-## 1  -45.75000 -2.25000000    1        1
-## 2  -46.58333 -1.75000000    1        1
-## 3  -72.91667 -2.25000000    1        1
-## 4  -61.58333 -5.41666667    1        1
-## 5  -74.91667 -0.25000000    1        1
-## 6  -70.91667 -4.41666667    1        1
-## 7  -61.25000 -7.91666667    1        1
-## 8  -49.75000 -1.08333333    1        1
-## 9  -73.75000  0.08333333    1        1
-## 10 -62.75000  4.08333333    1        1
+##            x          y Real Observed
+## 1  -66.08333  3.9166667    1        1
+## 2  -71.08333 -0.9166667    1        1
+## 3  -77.75000 -4.4166667    1        1
+## 4  -68.25000 -1.5833333    1        1
+## 5  -67.25000  2.9166667    1        1
+## 6  -71.41667  2.2500000    1        1
+## 7  -59.91667  6.9166667    1        1
+## 8  -54.75000 -0.4166667    1        1
+## 9  -72.08333  5.5833333    1        1
+## 10 -84.58333 15.7500000    1        1
 ## ... 20 more lines.
 ```

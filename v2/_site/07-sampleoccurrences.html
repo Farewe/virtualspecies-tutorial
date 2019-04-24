@@ -73,9 +73,7 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -94,8 +92,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -111,7 +115,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -131,6 +134,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -152,18 +192,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -252,6 +349,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -335,8 +442,10 @@ div.tocify {
 <h2>7.1. Basic usage</h2>
 <p>If you generated virtual species distributions with this package, there is a good chance that your objective is to test a particular modelling protocol or technique. Hence, there is one last step for you to perform: the sampling of species occurrences. This can be done with the function <code>sampleOccurrences</code>, with which you can sample either “presence-absence” or “presence only” occurrence data. The function <code>sampleOccurrences</code> also provides the possibility to introduce a number of sampling biases, such as uneven spatial sampling intensity, probability of detection, and probability of error.</p>
 <p>Let’s see an example in practice, using the same tropical species we generated in the beginning of this tutorial:</p>
-<pre class="r"><code>library(virtualspecies)
-# Worldclim data
+<pre class="r"><code>library(virtualspecies)</code></pre>
+<pre><code>## Loading required package: raster</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
+<pre class="r"><code># Worldclim data
 worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
 
 
@@ -346,12 +455,21 @@ my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, 
 
 # Generation of the virtual species
 my.first.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
-                                      parameters = my.parameters)
-
-# Conversion to presence-absence
+                                      parameters = my.parameters)</code></pre>
+<pre><code>## Generating virtual species environmental suitability...</code></pre>
+<pre><code>##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE</code></pre>
+<pre class="r"><code># Conversion to presence-absence
 my.first.species &lt;- convertToPA(my.first.species,
                                 beta = 0.7, plot = FALSE)</code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
+<pre><code>##    Logistic conversion finished:
+##               
+## - beta = 0.7
+## - alpha = -0.05
+## - species prevalence =0.0337130744661013</code></pre>
 <pre class="r"><code># Sampling of &#39;presence only&#39; occurrences
 presence.points &lt;- sampleOccurrences(my.first.species,
                                      n = 30, # The number of points to sample
@@ -376,16 +494,16 @@ presence.points &lt;- sampleOccurrences(my.first.species,
 ## 
 ## First 10 lines: 
 ##            x          y Real Observed
-## 1  -60.58333  -2.583333    1        1
-## 2  -94.58333  17.583333    1        1
-## 3  -62.41667  -2.750000    1        1
-## 4  124.91667  10.416667    1        1
-## 5  -62.08333  -7.083333    1        1
-## 6  -76.41667  -1.750000    1        1
-## 7  105.75000  -2.916667    1        1
-## 8  -69.91667 -13.583333    1        1
-## 9  109.91667  -0.250000    1        1
-## 10 -54.41667   2.083333    1        1
+## 1  -91.58333  14.583333    1        1
+## 2  -64.75000 -16.250000    1        1
+## 3  110.41667  -2.583333    1        1
+## 4  -57.08333  -7.916667    1        1
+## 5  143.08333  -6.416667    1        1
+## 6  111.41667  -1.583333    1        1
+## 7   96.91667  16.916667    1        1
+## 8   80.25000   7.083333    1        1
+## 9  106.75000  -6.583333    1        1
+## 10 -12.58333   9.250000    1        1
 ## ... 20 more lines.</code></pre>
 <p>This message summarizes us information about the 30 occurrence points we just sampled. Now let’s look at the structure of this object:</p>
 <pre class="r"><code>str(presence.points)</code></pre>
@@ -405,18 +523,18 @@ presence.points &lt;- sampleOccurrences(my.first.species,
 ##   ..$ :List of 2
 ##   .. ..- attr(*, &quot;pkgName&quot;)= chr &quot;grid&quot;
 ##   ..- attr(*, &quot;engineVersion&quot;)= int 12
-##   ..- attr(*, &quot;pid&quot;)= int 14280
+##   ..- attr(*, &quot;pid&quot;)= int 9264
 ##   ..- attr(*, &quot;Rversion&quot;)=Classes &#39;R_system_version&#39;, &#39;package_version&#39;, &#39;numeric_version&#39;  hidden list of 1
 ##   ..- attr(*, &quot;load&quot;)= chr(0) 
 ##   ..- attr(*, &quot;attach&quot;)= chr(0) 
 ##   ..- attr(*, &quot;class&quot;)= chr &quot;recordedplot&quot;
 ##  $ sample.points               :&#39;data.frame&#39;:    30 obs. of  4 variables:
-##   ..$ x       : num [1:30] -60.6 -94.6 -62.4 124.9 -62.1 ...
-##   ..$ y       : num [1:30] -2.58 17.58 -2.75 10.42 -7.08 ...
+##   ..$ x       : num [1:30] -91.6 -64.8 110.4 -57.1 143.1 ...
+##   ..$ y       : num [1:30] 14.58 -16.25 -2.58 -7.92 -6.42 ...
 ##   ..$ Real    : num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ Observed: num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
 ##  - attr(*, &quot;RNGkind&quot;)= chr [1:2] &quot;Mersenne-Twister&quot; &quot;Inversion&quot;
-##  - attr(*, &quot;seed&quot;)= int [1:626] 403 523 1200057896 -708608624 -1746846076 -1743172010 -1538418782 770478365 -783450757 -630888081 ...
+##  - attr(*, &quot;seed&quot;)= int [1:626] 403 240 -1371115483 -102304640 330639933 478210271 -1535112554 -2075727951 -1603836908 -868599849 ...
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;VSSampledPoints&quot; &quot;list&quot;</code></pre>
 <p>This is a list containing eight elements:</p>
 <ol style="list-style-type: decimal">
@@ -433,36 +551,36 @@ presence.points &lt;- sampleOccurrences(my.first.species,
 <p>Now, we can specifically access the data frame of sampled points:</p>
 <pre class="r"><code>presence.points$sample.points</code></pre>
 <pre><code>##            x            y Real Observed
-## 1  -60.58333  -2.58333333    1        1
-## 2  -94.58333  17.58333333    1        1
-## 3  -62.41667  -2.75000000    1        1
-## 4  124.91667  10.41666667    1        1
-## 5  -62.08333  -7.08333333    1        1
-## 6  -76.41667  -1.75000000    1        1
-## 7  105.75000  -2.91666667    1        1
-## 8  -69.91667 -13.58333333    1        1
-## 9  109.91667  -0.25000000    1        1
-## 10 -54.41667   2.08333333    1        1
-## 11 128.75000   0.25000000    1        1
-## 12 -60.25000  -1.58333333    1        1
-## 13 148.41667  -9.25000000    1        1
-## 14 -86.58333  16.41666667    1        1
-## 15 -66.75000   3.25000000    1        1
-## 16 -76.91667   0.41666667    1        1
-## 17 -67.08333  -7.25000000    1        1
-## 18  21.25000  -0.08333333    1        1
-## 19 -59.25000  -0.08333333    1        1
-## 20 -63.41667  -9.41666667    1        1
-## 21 -63.25000  -7.58333333    1        1
-## 22 -76.58333   7.91666667    1        1
-## 23  80.58333   6.25000000    1        1
-## 24 -65.58333  -2.41666667    1        1
-## 25 -70.58333  -1.58333333    1        1
-## 26  99.41667   0.25000000    1        1
-## 27  93.75000  26.91666667    1        1
-## 28 102.25000  -0.08333333    1        1
-## 29 114.75000   3.75000000    1        1
-## 30 -83.08333   8.25000000    1        1</code></pre>
+## 1  -91.58333  14.58333333    1        1
+## 2  -64.75000 -16.25000000    1        1
+## 3  110.41667  -2.58333333    1        1
+## 4  -57.08333  -7.91666667    1        1
+## 5  143.08333  -6.41666667    1        1
+## 6  111.41667  -1.58333333    1        1
+## 7   96.91667  16.91666667    1        1
+## 8   80.25000   7.08333333    1        1
+## 9  106.75000  -6.58333333    1        1
+## 10 -12.58333   9.25000000    1        1
+## 11 -73.25000  -6.08333333    1        1
+## 12 -73.25000  -0.91666667    1        1
+## 13 -56.08333   0.91666667    1        1
+## 14 -82.75000   9.75000000    1        1
+## 15  49.08333 -18.91666667    1        1
+## 16 143.08333  -7.08333333    1        1
+## 17  -8.75000   5.08333333    1        1
+## 18 -62.08333  -3.25000000    1        1
+## 19 -92.41667  17.41666667    1        1
+## 20 -94.25000  18.08333333    1        1
+## 21  97.75000  25.41666667    1        1
+## 22 -50.08333  -2.25000000    1        1
+## 23 128.25000  -3.75000000    1        1
+## 24 101.75000   0.08333333    1        1
+## 25 -53.58333   5.25000000    1        1
+## 26 103.75000  -2.41666667    1        1
+## 27 -77.58333  -4.91666667    1        1
+## 28 -54.75000  -8.41666667    1        1
+## 29 110.91667  -2.58333333    1        1
+## 30 -72.41667  -1.25000000    1        1</code></pre>
 <p>The data frame has four colums: the pixel coordinates <code>x</code> and <code>y</code>, the real presence/absence (1/0) of the species in the sampled pixel <code>Real</code>, and the result of the sampling <code>Observed</code> (1 = presence, 0 = absence, NA = no information). The columns <code>Real</code> and <code>Observed</code> differ only if you have specified a detection probability and/or an error probability.</p>
 <p>Now, let’s sample the other type of occurrence data: presence-absence.</p>
 <pre class="r"><code># Sampling of &#39;presence-absence&#39; occurrences
@@ -489,19 +607,54 @@ PA.points &lt;- sampleOccurrences(my.first.species,
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##             x         y Real Observed
-## 1    22.58333  18.75000    0        0
-## 2   -39.91667 -13.75000    0        0
-## 3    55.41667  66.91667    0        0
-## 4   134.58333 -20.58333    0        0
-## 5   -31.41667  74.58333    0        0
-## 6   -81.25000  76.08333    0        0
-## 7   -15.25000  18.25000    0        0
-## 8    56.58333  67.91667    0        0
-## 9  -113.58333  71.91667    0        0
-## 10  120.41667  36.41667    0        0
+##             x          y Real Observed
+## 1  -53.250000 -11.083333    0        0
+## 2   22.083333  -6.083333    0        0
+## 3  143.916667 -15.250000    0        0
+## 4   34.916667  -1.750000    0        0
+## 5  -69.083333 -34.083333    0        0
+## 6   76.250000  29.250000    0        0
+## 7  -70.416667  52.416667    0        0
+## 8  -50.916667  -8.583333    0        0
+## 9    2.416667   7.250000    0        0
+## 10 -66.416667 -22.083333    0        0
 ## ... 20 more lines.</code></pre>
 <p>You can see that the points are sampled randomly throughout the whole raster. However, we may have only a few or even no presence points at all because the samples are purely random at the moment. We can define the number of presences and the number of absences by using the parameter <a href="#defining-the-sample-prevalence"><code>sample.prevalence</code></a>.</p>
+<p>You may be interested in extracting the true probability of occurrence at each sampled point, to compare with your SDM results. To do this, use argument <code>extract.probability</code>:</p>
+<pre class="r"><code># Sampling of &#39;presence-absence&#39; occurrences
+PA.points &lt;- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = &quot;presence-absence&quot;,
+                               extract.probability = TRUE,
+                               plot = FALSE)
+PA.points</code></pre>
+<pre><code>## Occurrence points sampled from a virtual species
+## 
+## - Type: presence-absence
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0.0333333333333333
+##    .Observed:0.0333333333333333
+## - Multiple samples can occur in a single cell: No
+## 
+## First 10 lines: 
+##             x           y Real Observed true.probability
+## 1    90.75000  37.5833333    0        0     8.315280e-07
+## 2   142.41667 -14.9166667    0        0     9.816910e-04
+## 3    41.08333  31.2500000    0        0     6.323756e-06
+## 4  -102.08333  35.0833333    0        0     1.154239e-06
+## 5   -52.91667  -0.4166667    0        0     3.905443e-01
+## 6    70.08333  51.4166667    0        0     8.315880e-07
+## 7   -70.25000  -7.2500000    1        1     7.630413e-01
+## 8    20.58333   8.9166667    0        0     5.253024e-04
+## 9   128.75000 -15.7500000    0        0     3.958858e-05
+## 10   -0.75000   9.0833333    0        0     2.645914e-04
+## ... 20 more lines.</code></pre>
 <p>In the next section you will see how to limit the sampling to a region in particular, and after that, how to introduce a bias in the sampling procedure.</p>
 </div>
 <div id="delimiting-a-sampling-area" class="section level2">
@@ -641,13 +794,47 @@ levels(getMap()@data$SOVEREIGNT)</code></pre>
 <p>We will use here the example of a <code>SpatialPolygonsDataFrame</code> which we can download straight into R using the function <code>getData()</code> of the package <code>raster</code>. Since our species is a tropical species, let’s assume we are working in Brasil only. Remember that this is an example, and that you can import your own polygons into R.</p>
 <p>First, let’s download our polygon:</p>
 <pre class="r"><code>brasil &lt;- getData(&quot;GADM&quot;, country = &quot;BRA&quot;, level = 0)</code></pre>
+<div class="figure">
+<img src="07-sampleoccurrences_files/figure-html/samp7-1.png" alt="Fig 7.4 A polygon of the brazil" />
+<p class="caption">Fig 7.4 A polygon of the brazil</p>
+</div>
 <p>Now, to limit the sampling area to our polygon, we simply provide it to the argument <code>sampling.area</code> of the function <code>sampleOccurrences</code>:</p>
 <pre class="r"><code>PA.points &lt;- sampleOccurrences(my.first.species,
                                n = 30,
                                type = &quot;presence-absence&quot;,
-                               sampling.area = brasil)
-
-PA.points</code></pre>
+                               sampling.area = brasil)</code></pre>
+<div class="figure">
+<img src="07-sampleoccurrences_files/figure-html/samp8-1.png" alt="Fig 7.5 Points sampled within the Brazil polygon" />
+<p class="caption">Fig 7.5 Points sampled within the Brazil polygon</p>
+</div>
+<pre class="r"><code>PA.points</code></pre>
+<pre><code>## Occurrence points sampled from a virtual species
+## 
+## - Type: presence-absence
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0
+##    .Observed:0
+## - Multiple samples can occur in a single cell: No
+## 
+## First 10 lines: 
+##            x           y Real Observed
+## 1  -55.91667  -2.2500000    0        0
+## 2  -54.25000 -14.9166667    0        0
+## 3  -52.08333 -31.0833333    0        0
+## 4  -48.08333 -18.9166667    0        0
+## 5  -45.25000 -13.7500000    0        0
+## 6  -51.25000  -0.4166667    0        0
+## 7  -51.58333 -13.7500000    0        0
+## 8  -50.75000 -22.7500000    0        0
+## 9  -48.75000 -28.4166667    0        0
+## 10 -55.75000 -19.4166667    0        0
+## ... 20 more lines.</code></pre>
 <p>It worked!</p>
 <p>However, the plot is not very convenient because it kept the scale of our input raster, so we may be interested in manually restricting the plot region to Brasil:</p>
 <pre class="r"><code># First we get our data frame of occurrence points
@@ -659,6 +846,10 @@ plot(my.first.species$pa.raster,
 plot(brasil, add = TRUE)
 points(occ[occ$Observed == 1, c(&quot;x&quot;, &quot;y&quot;)], pch = 16, cex = .8)
 points(occ[occ$Observed == 0, c(&quot;x&quot;, &quot;y&quot;)], pch = 1, cex = .8)</code></pre>
+<div class="figure">
+<img src="07-sampleoccurrences_files/figure-html/samp9-1.png" alt="Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom" />
+<p class="caption">Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom</p>
+</div>
 </div>
 <div id="providing-an-extent-object" class="section level3">
 <h3>7.2.3. Providing an extent object</h3>
@@ -701,22 +892,22 @@ PA.points &lt;- sampleOccurrences(my.first.species,
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0
 ## - Sample prevalence: 
-##    .True:0.16
-##    .Observed:0.06
+##    .True:0.22
+##    .Observed:0.04
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -46.08333 -16.416667    0        0
-## 2  -52.91667 -15.416667    0        0
-## 3  -50.75000   0.250000    0        0
-## 4  -46.75000 -22.750000    0        0
-## 5  -63.08333  -7.916667    0        0
-## 6  -43.58333  -2.750000    0        0
-## 7  -53.41667 -17.083333    0        0
-## 8  -48.91667  -4.250000    0        0
-## 9  -64.58333  -0.750000    0        0
-## 10 -51.41667   3.250000    1        1
+##            x           y Real Observed
+## 1  -54.41667 -13.4166667    0        0
+## 2  -55.08333   0.4166667    0        0
+## 3  -66.08333  -7.7500000    1        0
+## 4  -45.75000 -19.2500000    0        0
+## 5  -60.25000 -10.2500000    0        0
+## 6  -62.58333   2.5833333    0        0
+## 7  -44.25000 -18.5833333    0        0
+## 8  -64.58333  -8.5833333    0        0
+## 9  -53.75000 -15.4166667    0        0
+## 10 -60.75000  -6.5833333    0        0
 ## ... 40 more lines.</code></pre>
 <p>You can see that some points sampled in its distribution range are classified as “absences”.</p>
 <p>If you use this argument when sampling ‘presence only’ occurrences, then this will result in a lower number of sampled points than asked:</p>
@@ -743,16 +934,16 @@ PA.points &lt;- sampleOccurrences(my.first.species,
 ## 
 ## First 10 lines: 
 ##            x          y Real Observed
-## 1  -52.58333  2.0833333    1       NA
-## 2  -55.75000 -0.5833333    1       NA
-## 3  -55.75000 -1.0833333    1        1
-## 4  -69.75000 -7.9166667    1       NA
-## 5  -48.75000 -9.7500000    1       NA
-## 6  -55.25000 -5.2500000    1       NA
-## 7  -66.25000 -1.9166667    1        1
-## 8  -65.91667 -2.2500000    1       NA
-## 9  -52.08333 -9.7500000    1       NA
-## 10 -57.25000 -9.9166667    1       NA
+## 1  -53.75000 -12.083333    1        1
+## 2  -50.91667  -3.083333    1       NA
+## 3  -55.75000 -12.916667    1       NA
+## 4  -53.58333  -9.916667    1       NA
+## 5  -50.41667  -1.583333    1       NA
+## 6  -61.91667  -3.583333    1       NA
+## 7  -57.58333  -8.750000    1        1
+## 8  -65.91667  -0.250000    1       NA
+## 9  -51.58333  -4.750000    1       NA
+## 10 -52.91667  -9.250000    1        1
 ## ... 40 more lines.</code></pre>
 <p>In this case, we see that out of all the possible sampling points, only a fraction are sampled as presence points.</p>
 </div>
@@ -763,7 +954,7 @@ PA.points &lt;- sampleOccurrences(my.first.species,
 <p><span class="math display">\[P_d = P_{di} \times S\]</span></p>
 <p>Hence, if our species has a probability of detection of 0.5, the final probability of detection will be:</p>
 <ul>
-<li>1 if the cell has an environmental suitability of 1</li>
+<li>0.5 if the cell has an environmental suitability of 1</li>
 <li>0.25 if the cell has an environmental suitability of 0.5</li>
 </ul>
 <p>Of course, no occurrence points will be detected outside the distribution range, regardless of their environmental suitability.</p>
@@ -815,21 +1006,21 @@ points(occ[occ$Observed == 0, c(&quot;x&quot;, &quot;y&quot;)], pch = 1, cex = .
 ## - Probability of identification error (false positive): 0.3
 ## - Sample prevalence: 
 ##    .True:0.15
-##    .Observed:0.35
+##    .Observed:0.4
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -48.58333 -24.750000    0        0
-## 2  -56.91667   0.750000    0        1
-## 3  -46.41667 -21.250000    0        0
-## 4  -49.91667 -14.416667    0        1
-## 5  -51.91667  -9.916667    0        1
-## 6  -37.58333  -5.083333    0        0
-## 7  -49.41667  -2.583333    1        1
-## 8  -54.41667  -5.416667    1        1
-## 9  -55.58333 -15.416667    0        0
-## 10 -58.58333 -14.583333    0        0
+##            x           y Real Observed
+## 1  -48.41667 -24.9166667    0        1
+## 2  -46.75000 -23.4166667    0        0
+## 3  -64.25000   0.5833333    1        1
+## 4  -44.08333  -6.4166667    0        1
+## 5  -53.58333  -6.5833333    0        1
+## 6  -44.41667  -6.5833333    0        0
+## 7  -50.58333 -25.9166667    0        0
+## 8  -39.25000 -12.7500000    0        0
+## 9  -41.75000 -19.2500000    0        0
+## 10 -55.75000 -20.5833333    0        1
 ## ... 10 more lines.</code></pre>
 <p>Two important remarks with the error probability:</p>
 <ol style="list-style-type: decimal">
@@ -857,22 +1048,22 @@ points(occ[occ$Observed == 0, c(&quot;x&quot;, &quot;y&quot;)], pch = 1, cex = .
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0.8
 ## - Sample prevalence: 
-##    .True:0.35
-##    .Observed:0.7
+##    .True:0.2
+##    .Observed:0.8
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
 ##            x          y Real Observed
-## 1  -57.41667  -1.083333    0        1
-## 2  -46.25000  -4.416667    0        1
-## 3  -48.75000 -13.583333    0        0
-## 4  -40.58333 -14.083333    0        1
-## 5  -45.08333  -9.416667    0        1
-## 6  -44.75000 -10.583333    0        1
-## 7  -64.25000  -2.250000    1        1
-## 8  -69.08333  -3.416667    1        0
-## 9  -68.25000  -2.583333    1        1
-## 10 -68.75000  -6.916667    0        0
+## 1  -41.25000 -12.916667    0        0
+## 2  -42.75000 -14.250000    0        0
+## 3  -46.41667 -21.750000    0        1
+## 4  -49.08333 -13.416667    0        0
+## 5  -60.41667   3.583333    0        1
+## 6  -46.75000 -23.916667    0        1
+## 7  -53.75000 -21.583333    0        1
+## 8  -38.58333  -6.916667    0        1
+## 9  -37.75000  -6.250000    0        1
+## 10 -48.08333  -1.250000    1        1
 ## ... 10 more lines.</code></pre>
 </div>
 <div id="uneven-sampling-intensity" class="section level3">
@@ -913,6 +1104,13 @@ PO.points &lt;- sampleOccurrences(my.first.species,
                                bias = &quot;polygon&quot;,
                                bias.strength = 50,
                                bias.area = philippines)</code></pre>
+<pre><code>## Warning in sampleOccurrences(my.first.species, n = 100, bias = &quot;polygon&quot;, : Polygon projection is not checked. Please make sure you have the 
+##             same projections between your polygon and your presence-absence
+##             raster</code></pre>
+<div class="figure">
+<img src="07-sampleoccurrences_files/figure-html/samp18-1.png" alt="Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon" />
+<p class="caption">Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon</p>
+</div>
 <ul>
 <li>Using an extent object<br />
 Set <code>bias = &quot;extent&quot;</code>, and provide an extent to the argument <code>bias.area</code> (<a href="#providing-an-extent-object">see section 7.2.3. if you are not familiar with extents</a>). You can also simply set <code>bias.area = polygon</code>, and click twice on the map when asked to:</li>
@@ -960,7 +1158,7 @@ plot(getMap(), add = TRUE)</code></pre>
 
 # Number of duplicated records: 
 length(which(duplicated(PO.points$sample.points[, c(&quot;x&quot;, &quot;y&quot;)])))</code></pre>
-<pre><code>## [1] 24</code></pre>
+<pre><code>## [1] 22</code></pre>
 </div>
 </div>
 <div id="defining-the-sample-prevalence" class="section level2">
@@ -991,17 +1189,17 @@ length(which(duplicated(PO.points$sample.points[, c(&quot;x&quot;, &quot;y&quot;
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  130.91667  -2.083333    1        1
-## 2  -58.75000  -7.250000    1        1
-## 3  120.58333  13.250000    1        1
-## 4  -51.41667  -1.083333    1        1
-## 5  -67.91667  -4.583333    1        1
-## 6  152.25000  -3.416667    1        1
-## 7  -48.58333  -2.083333    1        1
-## 8  142.58333  -6.916667    1        1
-## 9  167.41667 -16.416667    1        1
-## 10 138.91667  -5.916667    1        1
+##              x          y Real Observed
+## 1   138.250000  -5.583333    1        1
+## 2     9.583333   4.250000    1        1
+## 3   -79.416667   9.583333    1        1
+## 4   -48.250000  -2.083333    1        1
+## 5    94.750000  24.750000    1        1
+## 6   147.750000  -7.916667    1        1
+## 7    98.750000  10.583333    1        1
+## 8  -169.416667 -14.250000    1        1
+## 9   -73.916667  -9.750000    1        1
+## 10  121.916667   1.083333    1        1
 ## ... 20 more lines.</code></pre>
 </div>
 

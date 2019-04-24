@@ -94,6 +94,17 @@ PA.points
 
 You can see that the points are sampled randomly throughout the whole raster. However, we may have only a few or even no presence points at all because the samples are purely random at the moment. We can define the number of presences and the number of absences by using the parameter [`sample.prevalence`](#defining-the-sample-prevalence).
 
+You may be interested in extracting the true probability of occurrence at each sampled point, to compare with your SDM results. To do this, use argument `extract.probability`:
+```{r samp4.1, cache = TRUE}
+# Sampling of 'presence-absence' occurrences
+PA.points <- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = "presence-absence",
+                               extract.probability = TRUE,
+                               plot = FALSE)
+PA.points
+```
+
 In the next section you will see how to limit the sampling to a region in particular, and after that, how to introduce a bias in the sampling procedure.
 
 ## 7.2. Delimiting a sampling area
@@ -140,7 +151,7 @@ We will use here the example of a `SpatialPolygonsDataFrame` which we can downlo
 
 First, let's download our polygon:
 
-```{r samp7, cache = TRUE, echo = 1, fig.cap = "Fig 7.4 A polygon of the brazil", eval = FALSE}
+```{r samp7, cache = TRUE, echo = 1, fig.cap = "Fig 7.4 A polygon of the brazil", eval = TRUE}
 brasil <- getData("GADM", country = "BRA", level = 0)
 plot(brasil, xlab = "Latitude", ylab = "Longitude")
 axis(1)
@@ -149,7 +160,7 @@ axis(2)
 
 Now, to limit the sampling area to our polygon, we simply provide it to the argument `sampling.area` of the function `sampleOccurrences`:
 
-```{r samp8, cache = TRUE, fig.cap = "Fig 7.5 Points sampled within the Brazil polygon", eval = FALSE}
+```{r samp8, cache = TRUE, fig.cap = "Fig 7.5 Points sampled within the Brazil polygon", eval = TRUE}
 PA.points <- sampleOccurrences(my.first.species,
                                n = 30,
                                type = "presence-absence",
@@ -162,7 +173,7 @@ It worked!
 
 However, the plot is not very convenient because it kept the scale of our input raster, so we may be interested in manually restricting the plot region to Brasil:
 
-```{r samp9, cache = TRUE, fig.cap = "Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom", eval = FALSE}
+```{r samp9, cache = TRUE, fig.cap = "Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom", eval = TRUE}
 # First we get our data frame of occurrence points
 occ <- PA.points$sample.points
 
@@ -320,7 +331,7 @@ PO.points <- sampleOccurrences(my.first.species,
 * Using a polygon in which the sampling will be biased  
 Set `bias = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `bias.area`.
 
-```{r samp18, eval = FALSE, cache = TRUE, fig.cap = "Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon"}
+```{r samp18, eval = TRUE, cache = TRUE, fig.cap = "Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon"}
 philippines <- getData("GADM", country = "PHL", level = 0)
 PO.points <- sampleOccurrences(my.first.species,
                                n = 100, 

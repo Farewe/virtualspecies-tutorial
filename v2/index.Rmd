@@ -1,7 +1,7 @@
 ---
-title: 'The virtualspecies R package: a complete tutorial'
+title: 'The virtualspecies R package: a complete tutorial - version 1.5'
 author: "Boris Leroy - leroy.boris@gmail.com"
-date: "October 2018"
+date: "April 2019"
 output:
   html_document:
     fig_caption: yes

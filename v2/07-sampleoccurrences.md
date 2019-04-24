@@ -18,6 +18,17 @@ Let's see an example in practice, using the same tropical species we generated i
 
 ```r
 library(virtualspecies)
+```
+
+```
+## Loading required package: raster
+```
+
+```
+## Loading required package: sp
+```
+
+```r
 # Worldclim data
 worldclim <- getData("worldclim", var = "bio", res = 10)
 
@@ -29,7 +40,23 @@ my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
 # Generation of the virtual species
 my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
                                       parameters = my.parameters)
+```
 
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
+```r
 # Conversion to presence-absence
 my.first.species <- convertToPA(my.first.species,
                                 beta = 0.7, plot = FALSE)
@@ -37,6 +64,14 @@ my.first.species <- convertToPA(my.first.species,
 
 ```
 ##    --- Determing species.prevalence automatically according to alpha and beta
+```
+
+```
+##    Logistic conversion finished:
+##               
+## - beta = 0.7
+## - alpha = -0.05
+## - species prevalence =0.0337130744661013
 ```
 
 
@@ -72,16 +107,16 @@ presence.points
 ## 
 ## First 10 lines: 
 ##            x          y Real Observed
-## 1  -60.58333  -2.583333    1        1
-## 2  -94.58333  17.583333    1        1
-## 3  -62.41667  -2.750000    1        1
-## 4  124.91667  10.416667    1        1
-## 5  -62.08333  -7.083333    1        1
-## 6  -76.41667  -1.750000    1        1
-## 7  105.75000  -2.916667    1        1
-## 8  -69.91667 -13.583333    1        1
-## 9  109.91667  -0.250000    1        1
-## 10 -54.41667   2.083333    1        1
+## 1  -91.58333  14.583333    1        1
+## 2  -64.75000 -16.250000    1        1
+## 3  110.41667  -2.583333    1        1
+## 4  -57.08333  -7.916667    1        1
+## 5  143.08333  -6.416667    1        1
+## 6  111.41667  -1.583333    1        1
+## 7   96.91667  16.916667    1        1
+## 8   80.25000   7.083333    1        1
+## 9  106.75000  -6.583333    1        1
+## 10 -12.58333   9.250000    1        1
 ## ... 20 more lines.
 ```
 This message summarizes us information about the 30 occurrence points we just sampled.
@@ -109,18 +144,18 @@ str(presence.points)
 ##   ..$ :List of 2
 ##   .. ..- attr(*, "pkgName")= chr "grid"
 ##   ..- attr(*, "engineVersion")= int 12
-##   ..- attr(*, "pid")= int 14280
+##   ..- attr(*, "pid")= int 9264
 ##   ..- attr(*, "Rversion")=Classes 'R_system_version', 'package_version', 'numeric_version'  hidden list of 1
 ##   ..- attr(*, "load")= chr(0) 
 ##   ..- attr(*, "attach")= chr(0) 
 ##   ..- attr(*, "class")= chr "recordedplot"
 ##  $ sample.points               :'data.frame':	30 obs. of  4 variables:
-##   ..$ x       : num [1:30] -60.6 -94.6 -62.4 124.9 -62.1 ...
-##   ..$ y       : num [1:30] -2.58 17.58 -2.75 10.42 -7.08 ...
+##   ..$ x       : num [1:30] -91.6 -64.8 110.4 -57.1 143.1 ...
+##   ..$ y       : num [1:30] 14.58 -16.25 -2.58 -7.92 -6.42 ...
 ##   ..$ Real    : num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ Observed: num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
 ##  - attr(*, "RNGkind")= chr [1:2] "Mersenne-Twister" "Inversion"
-##  - attr(*, "seed")= int [1:626] 403 523 1200057896 -708608624 -1746846076 -1743172010 -1538418782 770478365 -783450757 -630888081 ...
+##  - attr(*, "seed")= int [1:626] 403 240 -1371115483 -102304640 330639933 478210271 -1535112554 -2075727951 -1603836908 -868599849 ...
 ##  - attr(*, "class")= chr [1:2] "VSSampledPoints" "list"
 ```
 
@@ -150,36 +185,36 @@ presence.points$sample.points
 
 ```
 ##            x            y Real Observed
-## 1  -60.58333  -2.58333333    1        1
-## 2  -94.58333  17.58333333    1        1
-## 3  -62.41667  -2.75000000    1        1
-## 4  124.91667  10.41666667    1        1
-## 5  -62.08333  -7.08333333    1        1
-## 6  -76.41667  -1.75000000    1        1
-## 7  105.75000  -2.91666667    1        1
-## 8  -69.91667 -13.58333333    1        1
-## 9  109.91667  -0.25000000    1        1
-## 10 -54.41667   2.08333333    1        1
-## 11 128.75000   0.25000000    1        1
-## 12 -60.25000  -1.58333333    1        1
-## 13 148.41667  -9.25000000    1        1
-## 14 -86.58333  16.41666667    1        1
-## 15 -66.75000   3.25000000    1        1
-## 16 -76.91667   0.41666667    1        1
-## 17 -67.08333  -7.25000000    1        1
-## 18  21.25000  -0.08333333    1        1
-## 19 -59.25000  -0.08333333    1        1
-## 20 -63.41667  -9.41666667    1        1
-## 21 -63.25000  -7.58333333    1        1
-## 22 -76.58333   7.91666667    1        1
-## 23  80.58333   6.25000000    1        1
-## 24 -65.58333  -2.41666667    1        1
-## 25 -70.58333  -1.58333333    1        1
-## 26  99.41667   0.25000000    1        1
-## 27  93.75000  26.91666667    1        1
-## 28 102.25000  -0.08333333    1        1
-## 29 114.75000   3.75000000    1        1
-## 30 -83.08333   8.25000000    1        1
+## 1  -91.58333  14.58333333    1        1
+## 2  -64.75000 -16.25000000    1        1
+## 3  110.41667  -2.58333333    1        1
+## 4  -57.08333  -7.91666667    1        1
+## 5  143.08333  -6.41666667    1        1
+## 6  111.41667  -1.58333333    1        1
+## 7   96.91667  16.91666667    1        1
+## 8   80.25000   7.08333333    1        1
+## 9  106.75000  -6.58333333    1        1
+## 10 -12.58333   9.25000000    1        1
+## 11 -73.25000  -6.08333333    1        1
+## 12 -73.25000  -0.91666667    1        1
+## 13 -56.08333   0.91666667    1        1
+## 14 -82.75000   9.75000000    1        1
+## 15  49.08333 -18.91666667    1        1
+## 16 143.08333  -7.08333333    1        1
+## 17  -8.75000   5.08333333    1        1
+## 18 -62.08333  -3.25000000    1        1
+## 19 -92.41667  17.41666667    1        1
+## 20 -94.25000  18.08333333    1        1
+## 21  97.75000  25.41666667    1        1
+## 22 -50.08333  -2.25000000    1        1
+## 23 128.25000  -3.75000000    1        1
+## 24 101.75000   0.08333333    1        1
+## 25 -53.58333   5.25000000    1        1
+## 26 103.75000  -2.41666667    1        1
+## 27 -77.58333  -4.91666667    1        1
+## 28 -54.75000  -8.41666667    1        1
+## 29 110.91667  -2.58333333    1        1
+## 30 -72.41667  -1.25000000    1        1
 ```
 
 The data frame has four colums: the pixel coordinates `x` and `y`, the real presence/absence (1/0) of the species in the sampled pixel `Real`, and the result of the sampling `Observed` (1 = presence, 0 = absence, NA = no information). The columns `Real` and `Observed` differ only if you have specified a detection probability and/or an error probability.
@@ -217,21 +252,63 @@ PA.points
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##             x         y Real Observed
-## 1    22.58333  18.75000    0        0
-## 2   -39.91667 -13.75000    0        0
-## 3    55.41667  66.91667    0        0
-## 4   134.58333 -20.58333    0        0
-## 5   -31.41667  74.58333    0        0
-## 6   -81.25000  76.08333    0        0
-## 7   -15.25000  18.25000    0        0
-## 8    56.58333  67.91667    0        0
-## 9  -113.58333  71.91667    0        0
-## 10  120.41667  36.41667    0        0
+##             x          y Real Observed
+## 1  -53.250000 -11.083333    0        0
+## 2   22.083333  -6.083333    0        0
+## 3  143.916667 -15.250000    0        0
+## 4   34.916667  -1.750000    0        0
+## 5  -69.083333 -34.083333    0        0
+## 6   76.250000  29.250000    0        0
+## 7  -70.416667  52.416667    0        0
+## 8  -50.916667  -8.583333    0        0
+## 9    2.416667   7.250000    0        0
+## 10 -66.416667 -22.083333    0        0
 ## ... 20 more lines.
 ```
 
 You can see that the points are sampled randomly throughout the whole raster. However, we may have only a few or even no presence points at all because the samples are purely random at the moment. We can define the number of presences and the number of absences by using the parameter [`sample.prevalence`](#defining-the-sample-prevalence).
+
+You may be interested in extracting the true probability of occurrence at each sampled point, to compare with your SDM results. To do this, use argument `extract.probability`:
+
+```r
+# Sampling of 'presence-absence' occurrences
+PA.points <- sampleOccurrences(my.first.species,
+                               n = 30,
+                               type = "presence-absence",
+                               extract.probability = TRUE,
+                               plot = FALSE)
+PA.points
+```
+
+```
+## Occurrence points sampled from a virtual species
+## 
+## - Type: presence-absence
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0.0333333333333333
+##    .Observed:0.0333333333333333
+## - Multiple samples can occur in a single cell: No
+## 
+## First 10 lines: 
+##             x           y Real Observed true.probability
+## 1    90.75000  37.5833333    0        0     8.315280e-07
+## 2   142.41667 -14.9166667    0        0     9.816910e-04
+## 3    41.08333  31.2500000    0        0     6.323756e-06
+## 4  -102.08333  35.0833333    0        0     1.154239e-06
+## 5   -52.91667  -0.4166667    0        0     3.905443e-01
+## 6    70.08333  51.4166667    0        0     8.315880e-07
+## 7   -70.25000  -7.2500000    1        1     7.630413e-01
+## 8    20.58333   8.9166667    0        0     5.253024e-04
+## 9   128.75000 -15.7500000    0        0     3.958858e-05
+## 10   -0.75000   9.0833333    0        0     2.645914e-04
+## ... 20 more lines.
+```
 
 In the next section you will see how to limit the sampling to a region in particular, and after that, how to introduce a bias in the sampling procedure.
 
@@ -403,6 +480,8 @@ First, let's download our polygon:
 brasil <- getData("GADM", country = "BRA", level = 0)
 ```
 
+![Fig 7.4 A polygon of the brazil](07-sampleoccurrences_files/figure-html/samp7-1.png)
+
 Now, to limit the sampling area to our polygon, we simply provide it to the argument `sampling.area` of the function `sampleOccurrences`:
 
 
@@ -411,8 +490,42 @@ PA.points <- sampleOccurrences(my.first.species,
                                n = 30,
                                type = "presence-absence",
                                sampling.area = brasil)
+```
 
+![Fig 7.5 Points sampled within the Brazil polygon](07-sampleoccurrences_files/figure-html/samp8-1.png)
+
+```r
 PA.points
+```
+
+```
+## Occurrence points sampled from a virtual species
+## 
+## - Type: presence-absence
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0
+##    .Observed:0
+## - Multiple samples can occur in a single cell: No
+## 
+## First 10 lines: 
+##            x           y Real Observed
+## 1  -55.91667  -2.2500000    0        0
+## 2  -54.25000 -14.9166667    0        0
+## 3  -52.08333 -31.0833333    0        0
+## 4  -48.08333 -18.9166667    0        0
+## 5  -45.25000 -13.7500000    0        0
+## 6  -51.25000  -0.4166667    0        0
+## 7  -51.58333 -13.7500000    0        0
+## 8  -50.75000 -22.7500000    0        0
+## 9  -48.75000 -28.4166667    0        0
+## 10 -55.75000 -19.4166667    0        0
+## ... 20 more lines.
 ```
 
 It worked!
@@ -431,6 +544,8 @@ plot(brasil, add = TRUE)
 points(occ[occ$Observed == 1, c("x", "y")], pch = 16, cex = .8)
 points(occ[occ$Observed == 0, c("x", "y")], pch = 1, cex = .8)
 ```
+
+![Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom](07-sampleoccurrences_files/figure-html/samp9-1.png)
 
 ### 7.2.3. Providing an extent object
 
@@ -481,22 +596,22 @@ PA.points
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0
 ## - Sample prevalence: 
-##    .True:0.16
-##    .Observed:0.06
+##    .True:0.22
+##    .Observed:0.04
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -46.08333 -16.416667    0        0
-## 2  -52.91667 -15.416667    0        0
-## 3  -50.75000   0.250000    0        0
-## 4  -46.75000 -22.750000    0        0
-## 5  -63.08333  -7.916667    0        0
-## 6  -43.58333  -2.750000    0        0
-## 7  -53.41667 -17.083333    0        0
-## 8  -48.91667  -4.250000    0        0
-## 9  -64.58333  -0.750000    0        0
-## 10 -51.41667   3.250000    1        1
+##            x           y Real Observed
+## 1  -54.41667 -13.4166667    0        0
+## 2  -55.08333   0.4166667    0        0
+## 3  -66.08333  -7.7500000    1        0
+## 4  -45.75000 -19.2500000    0        0
+## 5  -60.25000 -10.2500000    0        0
+## 6  -62.58333   2.5833333    0        0
+## 7  -44.25000 -18.5833333    0        0
+## 8  -64.58333  -8.5833333    0        0
+## 9  -53.75000 -15.4166667    0        0
+## 10 -60.75000  -6.5833333    0        0
 ## ... 40 more lines.
 ```
 
@@ -533,16 +648,16 @@ PO.points
 ## 
 ## First 10 lines: 
 ##            x          y Real Observed
-## 1  -52.58333  2.0833333    1       NA
-## 2  -55.75000 -0.5833333    1       NA
-## 3  -55.75000 -1.0833333    1        1
-## 4  -69.75000 -7.9166667    1       NA
-## 5  -48.75000 -9.7500000    1       NA
-## 6  -55.25000 -5.2500000    1       NA
-## 7  -66.25000 -1.9166667    1        1
-## 8  -65.91667 -2.2500000    1       NA
-## 9  -52.08333 -9.7500000    1       NA
-## 10 -57.25000 -9.9166667    1       NA
+## 1  -53.75000 -12.083333    1        1
+## 2  -50.91667  -3.083333    1       NA
+## 3  -55.75000 -12.916667    1       NA
+## 4  -53.58333  -9.916667    1       NA
+## 5  -50.41667  -1.583333    1       NA
+## 6  -61.91667  -3.583333    1       NA
+## 7  -57.58333  -8.750000    1        1
+## 8  -65.91667  -0.250000    1       NA
+## 9  -51.58333  -4.750000    1       NA
+## 10 -52.91667  -9.250000    1        1
 ## ... 40 more lines.
 ```
 
@@ -558,7 +673,7 @@ $$P_d = P_{di} \times S$$
 
 Hence, if our species has a probability of detection of 0.5, the final probability of detection will be:
 
-* 1 if the cell has an environmental suitability of 1
+* 0.5 if the cell has an environmental suitability of 1
 * 0.25 if the cell has an environmental suitability of 0.5
 
 Of course, no occurrence points will be detected outside the distribution range, regardless of their environmental suitability.
@@ -622,21 +737,21 @@ PA.points
 ## - Probability of identification error (false positive): 0.3
 ## - Sample prevalence: 
 ##    .True:0.15
-##    .Observed:0.35
+##    .Observed:0.4
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -48.58333 -24.750000    0        0
-## 2  -56.91667   0.750000    0        1
-## 3  -46.41667 -21.250000    0        0
-## 4  -49.91667 -14.416667    0        1
-## 5  -51.91667  -9.916667    0        1
-## 6  -37.58333  -5.083333    0        0
-## 7  -49.41667  -2.583333    1        1
-## 8  -54.41667  -5.416667    1        1
-## 9  -55.58333 -15.416667    0        0
-## 10 -58.58333 -14.583333    0        0
+##            x           y Real Observed
+## 1  -48.41667 -24.9166667    0        1
+## 2  -46.75000 -23.4166667    0        0
+## 3  -64.25000   0.5833333    1        1
+## 4  -44.08333  -6.4166667    0        1
+## 5  -53.58333  -6.5833333    0        1
+## 6  -44.41667  -6.5833333    0        0
+## 7  -50.58333 -25.9166667    0        0
+## 8  -39.25000 -12.7500000    0        0
+## 9  -41.75000 -19.2500000    0        0
+## 10 -55.75000 -20.5833333    0        1
 ## ... 10 more lines.
 ```
 
@@ -673,22 +788,22 @@ PA.points
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0.8
 ## - Sample prevalence: 
-##    .True:0.35
-##    .Observed:0.7
+##    .True:0.2
+##    .Observed:0.8
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
 ##            x          y Real Observed
-## 1  -57.41667  -1.083333    0        1
-## 2  -46.25000  -4.416667    0        1
-## 3  -48.75000 -13.583333    0        0
-## 4  -40.58333 -14.083333    0        1
-## 5  -45.08333  -9.416667    0        1
-## 6  -44.75000 -10.583333    0        1
-## 7  -64.25000  -2.250000    1        1
-## 8  -69.08333  -3.416667    1        0
-## 9  -68.25000  -2.583333    1        1
-## 10 -68.75000  -6.916667    0        0
+## 1  -41.25000 -12.916667    0        0
+## 2  -42.75000 -14.250000    0        0
+## 3  -46.41667 -21.750000    0        1
+## 4  -49.08333 -13.416667    0        0
+## 5  -60.41667   3.583333    0        1
+## 6  -46.75000 -23.916667    0        1
+## 7  -53.75000 -21.583333    0        1
+## 8  -38.58333  -6.916667    0        1
+## 9  -37.75000  -6.250000    0        1
+## 10 -48.08333  -1.250000    1        1
 ## ... 10 more lines.
 ```
 
@@ -739,6 +854,14 @@ PO.points <- sampleOccurrences(my.first.species,
                                bias.strength = 50,
                                bias.area = philippines)
 ```
+
+```
+## Warning in sampleOccurrences(my.first.species, n = 100, bias = "polygon", : Polygon projection is not checked. Please make sure you have the 
+##             same projections between your polygon and your presence-absence
+##             raster
+```
+
+![Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon](07-sampleoccurrences_files/figure-html/samp18-1.png)
 
 * Using an extent object  
 Set `bias = "extent"`, and provide an extent to the argument `bias.area` ([see section 7.2.3. if you are not familiar with extents](#providing-an-extent-object)). You can also simply set `bias.area = polygon`, and click twice on the map when asked to:
@@ -803,7 +926,7 @@ length(which(duplicated(PO.points$sample.points[, c("x", "y")])))
 ```
 
 ```
-## [1] 24
+## [1] 22
 ```
 
 
@@ -844,16 +967,16 @@ PA.points
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  130.91667  -2.083333    1        1
-## 2  -58.75000  -7.250000    1        1
-## 3  120.58333  13.250000    1        1
-## 4  -51.41667  -1.083333    1        1
-## 5  -67.91667  -4.583333    1        1
-## 6  152.25000  -3.416667    1        1
-## 7  -48.58333  -2.083333    1        1
-## 8  142.58333  -6.916667    1        1
-## 9  167.41667 -16.416667    1        1
-## 10 138.91667  -5.916667    1        1
+##              x          y Real Observed
+## 1   138.250000  -5.583333    1        1
+## 2     9.583333   4.250000    1        1
+## 3   -79.416667   9.583333    1        1
+## 4   -48.250000  -2.083333    1        1
+## 5    94.750000  24.750000    1        1
+## 6   147.750000  -7.916667    1        1
+## 7    98.750000  10.583333    1        1
+## 8  -169.416667 -14.250000    1        1
+## 9   -73.916667  -9.750000    1        1
+## 10  121.916667   1.083333    1        1
 ## ... 20 more lines.
 ```

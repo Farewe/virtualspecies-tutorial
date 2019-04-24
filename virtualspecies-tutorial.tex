@@ -1,0 +1,3974 @@
+\documentclass[]{article}
+\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\hypersetup{unicode=true,
+            pdftitle={The virtualspecies R package: a complete tutorial},
+            pdfauthor={Boris Leroy - leroy.boris@gmail.com},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\usepackage{framed}
+\definecolor{shadecolor}{RGB}{248,248,248}
+\newenvironment{Shaded}{\begin{snugshade}}{\end{snugshade}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.00,0.00,0.81}{#1}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.31,0.60,0.02}{#1}}
+\newcommand{\ImportTok}[1]{#1}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.00,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.13,0.29,0.53}{\textbf{#1}}}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.81,0.36,0.00}{\textbf{#1}}}
+\newcommand{\BuiltInTok}[1]{#1}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textit{#1}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.77,0.63,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.56,0.35,0.01}{\textbf{\textit{#1}}}}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{0.94,0.16,0.16}{#1}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{0.64,0.00,0.00}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\usepackage{graphicx,grffile}
+\makeatletter
+\def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth\else\Gin@nat@width\fi}
+\def\maxheight{\ifdim\Gin@nat@height>\textheight\textheight\else\Gin@nat@height\fi}
+\makeatother
+% Scale images if necessary, so that they will not overflow the page
+% margins by default, and it is still possible to overwrite the defaults
+% using explicit options in \includegraphics[width, height, ...]{}
+\setkeys{Gin}{width=\maxwidth,height=\maxheight,keepaspectratio}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{0}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+
+%%% Use protect on footnotes to avoid problems with footnotes in titles
+\let\rmarkdownfootnote\footnote%
+\def\footnote{\protect\rmarkdownfootnote}
+
+%%% Change title format to be more compact
+\usepackage{titling}
+
+% Create subtitle command for use in maketitle
+\newcommand{\subtitle}[1]{
+  \posttitle{
+    \begin{center}\large#1\end{center}
+    }
+}
+
+\setlength{\droptitle}{-2em}
+  \title{The virtualspecies R package: a complete tutorial}
+  \pretitle{\vspace{\droptitle}\centering\huge}
+  \posttitle{\par}
+  \author{Boris Leroy -
+\href{mailto:leroy.boris@gmail.com}{\nolinkurl{leroy.boris@gmail.com}}}
+  \preauthor{\centering\large\emph}
+  \postauthor{\par}
+  \predate{\centering\large\emph}
+  \postdate{\par}
+  \date{October 2018}
+
+\usepackage{chngcntr}
+
+\begin{document}
+\maketitle
+
+{
+\setcounter{tocdepth}{2}
+\tableofcontents
+}
+\counterwithin{figure}{section}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\emph{Many thanks to \textbf{Céline Bellard} for commenting and
+correcting this tutorial}
+
+\section{Introduction}\label{introduction}
+
+This complete tutorial introduces all the possibilities of the
+\texttt{virtualspecies} package. It was written with the objective to be
+helpful for both beginners and experienced R users. You can read this
+tutorial in full or jump to the particular section you are looking for.
+In each section, you will find simple examples introducing each
+function, followed by detailed examples for almost every possible
+parametrisation in \texttt{virtualspecies}.
+
+After a small introduction on the spatial data used as input for the
+\texttt{virtualspecies} package (section 1.), you will be introduced to
+the basics of generating virtual species distributions: the two possible
+approaches to create species-environment relationships (sections 2. and
+3.), followed by the conversion of environmental suitability to
+presence-absence (section 4.). After that, you will see how to generate
+random virtual species (section 5.), and most importantly, how to
+explore, extract, and use the outputs of \texttt{virtualspecies}
+(section 6.). Then, you will see how to sample occurrence points
+(section 7.). If you are interested, you may also learn about the
+introduction of distribution limitations in section 8.
+
+I will make extensive use of climate data as an example here, but
+remember that you can use other types of data, as long as it is in the
+format described in section 1.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{1. Input data}\label{input-data}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{1} \setcounter{figure}{0}
+
+\texttt{virtualspecies} uses spatialised environmental data as an input.
+These data must be gridded spatial data in the \texttt{RasterStack}
+format of the package \texttt{raster}.
+
+\subsubsection{1.1. Small introduction to raster
+data}\label{small-introduction-to-raster-data}
+
+The input data for virtual species is gridded spatial data (\emph{i.e.},
+raster data).\\
+To summarise, a raster is a map regularly divided into small units,
+called pixels. Each pixel has its own value. These values can be, for
+example, temperature values, for a raster of temperature. Raster data
+can be imported into R using the package \texttt{raster}. The command
+\texttt{stack()} will allow you to import your own rasters (stored on
+your hard drive) into an object of class \texttt{RasterStack}. Below you
+will find some concrete examples.
+
+\subsubsection{1.2. Required format for
+virtualspecies}\label{required-format-for-virtualspecies}
+
+As stated above, the required format is a \texttt{RasterStack}
+containing all the environmental variables with which you want to
+generate a virtual species distribution. Note that I may use
+interchangeably the variables and layers in this tutorial, because they
+roughly refer to the same aspect: a layer is the spatial representation
+of an environmental variable.
+
+The most important part here is that every layer of your
+\texttt{RasterStack} must be correctly named, because these names will
+be used when generating virtual species.\\
+Hence, I strongly advise using explicit names for your layers. You can
+use ``variable1'', ``variable2'', etc. or ``layer1'', ``layer2'', etc.
+but names like ``bio1'', ``bio2'', ``bio3'',
+(\href{http://worldclim.org/bioclim}{bioclimatic variable names}) or
+``temp1'', ``temp2'', etc. will reduce confusion.\\
+You can access the names of the layers of your stack with
+\texttt{names(my.stack)}, and modify them with
+\texttt{names(my.stack)\ \textless{}-\ c("name1",\ "name2",\ etc.)}.
+
+\subsubsection{1.3. A quick and easy example using WorldClim
+data}\label{a-quick-and-easy-example-using-worldclim-data}
+
+WorldClim (www.worldclim.org) freely provides gridded climate data
+(temperature and precipitations) for the entire World. These data can be
+downloaded to your hard drive from the website above, and then imported
+into R using the stack command:
+\texttt{stack("my.path/MyWorldClimStack.bil")}.
+
+Otherwise, a much simpler solution is to directly download them into R
+using the function \texttt{getData()} (requires an internet connection).
+
+You have to provide the type of environmental variables you are looking
+for:
+
+\begin{itemize}
+\tightlist
+\item
+  tmean = average monthly mean temperature (°C * 10)
+\item
+  tmin = average monthly minimum temperature (°C * 10)
+\item
+  tmax = average monthly maximum temperature (°C * 10)
+\item
+  prec = average monthly precipitation (mm)
+\item
+  bio = bioclimatic variables derived from the tmean, tmin, tmax and
+  prec
+\item
+  alt = altitude (elevation above sea level) (m) (from SRTM)
+\end{itemize}
+
+And the resolution: 0.5, 2.5, 5, or 10 minutes of a degree. Note that at
+fine resolutions the files downloaded are very heavy and may take a long
+time; at the finest resolution (0.5) you cannot download the global
+file, and you have to provide a longitude and latitude to obtain a tile
+of the world (see \texttt{?getData} for help).
+
+Here is the example in practice:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(raster, }\DataTypeTok{quietly =}\NormalTok{ T)}
+\NormalTok{worldclim <-}\StringTok{ }\KeywordTok{getData}\NormalTok{(}\StringTok{"worldclim"}\NormalTok{, }\DataTypeTok{var =} \StringTok{"bio"}\NormalTok{, }\DataTypeTok{res =} \DecValTok{10}\NormalTok{)}
+\NormalTok{worldclim}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## class       : RasterStack 
+## dimensions  : 900, 2160, 1944000, 19  (nrow, ncol, ncell, nlayers)
+## resolution  : 0.1666667, 0.1666667  (x, y)
+## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## names       :  bio1,  bio2,  bio3,  bio4,  bio5,  bio6,  bio7,  bio8,  bio9, bio10, bio11, bio12, bio13, bio14, bio15, ... 
+## min values  :  -269,     9,     8,    72,   -59,  -547,    53,  -251,  -450,   -97,  -488,     0,     0,     0,     0, ... 
+## max values  :   314,   211,    95, 22673,   489,   258,   725,   375,   364,   380,   289,  9916,  2088,   652,   261, ...
+\end{verbatim}
+
+You can see that the object is of class \texttt{RasterStack}, ready to
+use for \texttt{virtualspecies}. The names of the layers are also
+convenient.
+
+We can easily access a subset of the layers with \texttt{{[}{[}{]}{]}}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# The first four layers}
+\NormalTok{worldclim[[}\DecValTok{1}\OperatorTok{:}\DecValTok{4}\NormalTok{]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## class       : RasterStack 
+## dimensions  : 900, 2160, 1944000, 4  (nrow, ncol, ncell, nlayers)
+## resolution  : 0.1666667, 0.1666667  (x, y)
+## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## names       :  bio1,  bio2,  bio3,  bio4 
+## min values  :  -269,     9,     8,    72 
+## max values  :   314,   211,    95, 22673
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Layers bio1 and bio12 (annual mean temperature and annual precipitation)}
+\NormalTok{worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]]}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## class       : RasterStack 
+## dimensions  : 900, 2160, 1944000, 2  (nrow, ncol, ncell, nlayers)
+## resolution  : 0.1666667, 0.1666667  (x, y)
+## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## names       : bio1, bio12 
+## min values  : -269,     0 
+## max values  :  314,  9916
+\end{verbatim}
+
+And we can plot our variables:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Plotting bio1 and bio12}
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{oma =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{0.1}\NormalTok{, }\FloatTok{2.1}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]])}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/wcex2-1.pdf}
+\caption{Fig. 1.1 Variables bio1 (annual mean temperature in °C * 10)
+and bio2 (annual precipitation)}
+\end{figure}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{2. First approach: generate virtual species distributions by
+defining response
+functions}\label{first-approach-generate-virtual-species-distributions-by-defining-response-functions}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{2} \setcounter{figure}{0}
+
+The first approach to generate a virtual species consists in defining
+its response functions to each of the environmental variables contained
+in our \texttt{RasterStack}. These responses are then combined to
+calculcate the environmental suitability of the virtual species.
+
+The function providing this approach is \texttt{generateSpFromFun}.
+
+\subsection{2.1. An introduction example}\label{an-introduction-example}
+
+Before we start using the package, let's prepare our first simulation of
+virtual species.
+
+We want to generate a virtual species with two environmental variables,
+the annual mean temperature \texttt{bio1} and annual mean precipitation
+\texttt{bio2}. We want to generate a tropical species, i.e., living in
+hot and humid environments. We can define bell-shaped response functions
+to these two variables, as in the following figure:
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/vspload-1.pdf}
+\caption{Fig. 2.1 Example of bell-shaped response functions to bio1 and
+bio2, suitable for a tropical species.}
+\end{figure}
+
+\emph{Note that bioclimatic temperature variables (here bio1) are is in
+°C * 10, \href{http://worldclim.org/bioclim}{as explained here.}}
+
+These bell-shaped functions are in fact gaussian distributions functions
+of the form:
+
+\[ f(x, \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2 \sigma^2}}\]
+
+If we take the example of bio1 above, the mean \(\mu\) is equal to 250
+(i.e., 25°C) and standard deviation \(\sigma\) is equal to 50 (5°C).
+Hence the response function for bio1 is:
+
+\[ f(bio1) = \frac{1}{50\sqrt{2\pi}}\, e^{-\frac{(bio1 - 250)^2}{2 \times 50^2}} \]
+
+In R, it is very simple to obtain the result of the equation above, with
+the function \texttt{dnorm}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Suitability of the environment for bio1 = 15 °C}
+\KeywordTok{dnorm}\NormalTok{(}\DataTypeTok{x =} \DecValTok{150}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{250}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 0.001079819
+\end{verbatim}
+
+The idea with \texttt{virtualspecies} is to keep the same simplicity
+when generating a species: we will use the \texttt{dnorm} function to
+generate our virtual species.
+
+Let's start with the package now: The first step is to provide to the
+helper function \texttt{formatFunctions} which responses you want for
+which variables:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(virtualspecies)}
+
+\NormalTok{my.parameters <-}\StringTok{ }\KeywordTok{formatFunctions}\NormalTok{(}\DataTypeTok{bio1 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{250}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{),}
+                                 \DataTypeTok{bio12 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{4000}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{2000}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+After that, the generation of the virtual species is fairly easy:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Generation of the virtual species}
+\NormalTok{my.first.species <-}\StringTok{ }\KeywordTok{generateSpFromFun}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]],}
+                                              \DataTypeTok{parameters =}\NormalTok{ my.parameters,}
+                                              \DataTypeTok{plot =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/resp4-1.pdf}
+\caption{Fig. 2.2 Environmental suitability of the generated virtual
+species}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.first.species}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+Congratulations! You have just generated your first virtual species
+distribution, with the default settings. In the next section you will
+learn about the simple, yet important settings of this function.
+
+\subsection{2.2. Customisation of
+parameters}\label{customisation-of-parameters}
+
+The function \texttt{generateSpFromFun} proceeds into four important
+steps:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  The response to each environmental variable is calculated according to
+  the user-chosen functions.
+\item
+  Each response is rescaled between 0 and 1. This step can be disabled.
+\item
+  The responses are combined together to compute the environmental
+  suitability. The user can choose how to combine the responses.
+\item
+  The environmental suitability is rescaled between 0 and 1. This step
+  can be disabled.
+\end{enumerate}
+
+\subsubsection{2.2.1. Response functions}\label{response-functions}
+
+You can use any existing function with \texttt{generateSpFromFun}, as
+long as you provide the necessary parameters. For example, you can use
+the function \texttt{dnorm} shown above, if you provide the parameters
+\texttt{mean} and \texttt{sd}:
+\texttt{formatFunctions(bio1\ =\ c(fun\ =\ \textquotesingle{}dnorm\textquotesingle{},\ mean\ =\ 250,\ sd\ =\ 50))}.
+Naturally you can change the values of \texttt{mean} and \texttt{sd} to
+your needs.
+
+You can also use the basic functions provided with the package:
+
+\begin{itemize}
+\tightlist
+\item
+  Linear function:
+  \texttt{formatFunctions(bio1\ =\ c(fun\ =\ \textquotesingle{}linearFun\textquotesingle{},\ a\ =\ 1,\ b\ =\ 0))}
+  \[ f(bio1) = a * bio1 + b \] \textbackslash{}begin\{figure\}
+\end{itemize}
+
+\{\centering \includegraphics{virtualspecies-tutorial_files/figure-latex/resp4.1-1}
+
+\}
+
+\caption{Fig. 2.3 Linear response function}\label{fig:resp4.1}
+
+\textbackslash{}end\{figure\}
+
+\begin{itemize}
+\tightlist
+\item
+  Quadratic function:
+  \texttt{formatFunctions(bio1\ =\ c(fun\ =\ \textquotesingle{}quadraticFun\textquotesingle{},\ a\ =\ -1,\ b\ =\ 2,\ c\ =\ 0))}
+  \[ f(bio1) = a \times bio1^2 + b \times bio1 + c\]
+  \textbackslash{}begin\{figure\}
+\end{itemize}
+
+\{\centering \includegraphics{virtualspecies-tutorial_files/figure-latex/resp4.2-1}
+
+\}
+
+\caption{Fig. 2.4 Quadratic response function}\label{fig:resp4.2}
+
+\textbackslash{}end\{figure\}
+
+\begin{itemize}
+\tightlist
+\item
+  Logistic function:
+  \texttt{formatFunctions(bio1\ =\ c(fun\ =\ \textquotesingle{}logisticFun\textquotesingle{},\ beta\ =\ 150,\ alpha\ =\ -5))}
+  \[ f(bio1) = \frac{1}{1 + e^{\frac{bio1 - \beta}{\alpha}}} \]
+  \textbackslash{}begin\{figure\}
+\end{itemize}
+
+\{\centering \includegraphics{virtualspecies-tutorial_files/figure-latex/resp4.3-1}
+
+\}
+
+\caption{Fig. 2.5 Logistic response function}\label{fig:resp4.3}
+
+\textbackslash{}end\{figure\} * Normal function defined by extremes:
+\texttt{formatFunctions(bio1\ =\ c(fun\ =\ \textquotesingle{}custnorm\textquotesingle{},\ mean\ =\ 250,\ diff\ =\ 50,\ prob\ =\ 0.99))}
+This function allows you to set extremum of a normal curve. In the
+example above, we define a response where the optimum is 25°C
+(\texttt{mean\ =\ 250}), and 99\% of the area under the curve
+(\texttt{prob\ =\ 0.99}) will be comprised between 20 and 30°C
+(\texttt{diff\ =\ 50}).
+
+\begin{figure}
+
+{\centering \includegraphics{virtualspecies-tutorial_files/figure-latex/resp4.4-1} 
+
+}
+
+\caption{Fig. 2.6 Normal function defined by extremes}\label{fig:resp4.4}
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  Beta response function (Oksanen \& Minchin, 2002, \emph{Ecological
+  Modelling} \textbf{157}:119-129):
+  \texttt{formatFunctions(bio1\ =\ c(fun\ =\ \textquotesingle{}betaFun\textquotesingle{},\ p1\ =\ 0,\ p2\ =\ 250,\ alpha\ =\ 0.9,\ gamma\ =\ 0.08))}
+  \[ f(bio1) = (bio1 - p1)^{\alpha} * (p2 - bio1)^{\gamma} \]
+  \textbackslash{}begin\{figure\}
+\end{itemize}
+
+\{\centering \includegraphics{virtualspecies-tutorial_files/figure-latex/resp4.5-1}
+
+\}
+
+\caption{Fig. 2.7 Beta response function}\label{fig:resp4.5}
+
+\textbackslash{}end\{figure\}
+
+\begin{itemize}
+\tightlist
+\item
+  Or you can create your own functions (see the section
+  \protect\hyperlink{how-to-create-and-use-your-own-response-functions}{How
+  to create your own response functions} if you need help for this).
+\end{itemize}
+
+\subsubsection{2.2.2. Rescaling of individual response
+functions}\label{rescaling-of-individual-response-functions}
+
+This rescaling is performed because if you use very different response
+function for different variables, (\emph{e.g.}, a Gaussian distribution
+function with a linear function), then the responses may be
+disproportionate among variables. By default this rescaling is enabled
+(\texttt{rescale.each.response\ =\ TRUE}), but it can be disabled
+(\texttt{rescale.each.response\ =\ FALSE}).
+
+\subsubsection{2.2.3. Combining response
+functions}\label{combining-response-functions}
+
+There are three main possibilities to combine response functions to
+calculate the environmental suitability, as defined by the parameters
+\texttt{species.type} and \texttt{formula}:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{species.type\ =\ "additive"}: the response functions are
+  added.
+\item
+  \texttt{species.type\ =\ "multiplicative"}: the response functions are
+  multiplied. This is the default behaviour of the function.
+\item
+  \texttt{formula\ =\ "bio1\ +\ 2\ *\ bio2\ +\ bio3"}: if you choose a
+  formula, then the response functions are combined according to your
+  formula (parameter \texttt{species.type} is then ignored).
+\end{itemize}
+
+For example, if you want to generate a species with the same partial
+responses as in 2.1, but with a strong importance for temperature, then
+you can specify the formula :
+\texttt{formula\ =\ "2\ *\ bio1\ +\ bio12"}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(virtualspecies)}
+
+\NormalTok{my.parameters <-}\StringTok{ }\KeywordTok{formatFunctions}\NormalTok{(}\DataTypeTok{bio1 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{250}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{),}
+                                 \DataTypeTok{bio12 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{4000}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{2000}\NormalTok{))}
+
+\CommentTok{# Generation of the virtual species}
+\NormalTok{new.species <-}\StringTok{ }\KeywordTok{generateSpFromFun}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]],}
+                                 \DataTypeTok{parameters =}\NormalTok{ my.parameters,}
+                                 \DataTypeTok{formula =} \StringTok{"2 * bio1 + bio12"}\NormalTok{,}
+                                 \DataTypeTok{plot =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "2 * bio1 + bio12"
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/resp5-1.pdf}
+\caption{Fig. 2.3 Environmental suitability of the generated virtual
+species}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{new.species}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = 2 * bio1 + bio12
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+One can even make complex interactions between partial responses:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(virtualspecies)}
+
+\NormalTok{my.parameters <-}\StringTok{ }\KeywordTok{formatFunctions}\NormalTok{(}\DataTypeTok{bio1 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{250}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{),}
+                                 \DataTypeTok{bio12 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{4000}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{2000}\NormalTok{))}
+
+\CommentTok{# Generation of the virtual species}
+\NormalTok{new.species <-}\StringTok{ }\KeywordTok{generateSpFromFun}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]],}
+                                 \DataTypeTok{parameters =}\NormalTok{ my.parameters,}
+                                 \DataTypeTok{formula =} \StringTok{"3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1"}\NormalTok{,}
+                                 \DataTypeTok{plot =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1"
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/resp6-1.pdf}
+\caption{Fig. 2.3 Environmental suitability of the generated virtual
+species}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{new.species}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = 3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+Note that this is an example to show the possibilities of the function;
+I have no idea of the relevance of such a relationship!
+
+\subsubsection{2.2.4. Rescaling of the final environmental
+suitability}\label{rescaling-of-the-final-environmental-suitability}
+
+This final rescaling is performed because the combination of the
+different responses can lead to very different range of values. It is
+therefore necessary to allow environmental suitabilities to be
+comparable among virtual species, and should not be disabled unless you
+have very precise reasons to do it. The argument \texttt{rescale}
+controls this rescaling (\texttt{TRUE} by default).
+
+\hypertarget{how-to-create-and-use-your-own-response-functions}{\subsection{2.3.
+How to create and use your own response
+functions}\label{how-to-create-and-use-your-own-response-functions}}
+
+An important aspect of \texttt{generateSpFromFun} is that you can create
+and use your own response functions. In this section we will see how we
+can do that in practice.\\
+We will take the example of a simple linear function:
+\[ f(x, a, b) = ax + b\]
+
+Our first step will be to create the function in R:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{linear.function <-}\StringTok{ }\ControlFlowTok{function}\NormalTok{(x, a, b)}
+\NormalTok{\{}
+\NormalTok{  a}\OperatorTok{*}\NormalTok{x }\OperatorTok{+}\StringTok{ }\NormalTok{b}
+\NormalTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+That's it! You created a function called \texttt{linear.function} in R.
+
+Let's try it now:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{linear.function}\NormalTok{(}\DataTypeTok{x =} \FloatTok{0.5}\NormalTok{, }\DataTypeTok{a =} \DecValTok{2}\NormalTok{, }\DataTypeTok{b =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 2
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{linear.function}\NormalTok{(}\DataTypeTok{x =} \DecValTok{3}\NormalTok{, }\DataTypeTok{a =} \DecValTok{4}\NormalTok{, }\DataTypeTok{b =} \DecValTok{1}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] 13
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{linear.function}\NormalTok{(}\DataTypeTok{x =} \OperatorTok{-}\DecValTok{20}\NormalTok{, }\DataTypeTok{a =} \DecValTok{2}\NormalTok{, }\DataTypeTok{b =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] -40
+\end{verbatim}
+
+It seems to work properly. Now we will use \texttt{linear.function} to
+generate a virtual species distribution. We want a species responding
+linearly to the annual mean temperature, and with a gaussian to the
+annual precipitations:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.responses <-}\StringTok{ }\KeywordTok{formatFunctions}\NormalTok{(}\DataTypeTok{bio1 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{"linear.function"}\NormalTok{, }\DataTypeTok{a =} \DecValTok{1}\NormalTok{, }\DataTypeTok{b =} \DecValTok{0}\NormalTok{),}
+                                \DataTypeTok{bio12 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{"dnorm"}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{1000}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{1000}\NormalTok{))}
+
+\KeywordTok{generateSpFromFun}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]],}
+                  \DataTypeTok{parameters =}\NormalTok{ my.responses, }\DataTypeTok{plot =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/custfun3-1.pdf}
+\caption{Fig 2.3 Environmental suitability of the generated virtual
+species}
+\end{figure}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : linear.function   (a=1; b=0)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=1000; sd=1000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+And it worked! Your turn now!
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\hypertarget{second-approach-generate-virtual-species-with-a-principal-components-analysis}{\section{3.
+Second approach: generate virtual species with a Principal Components
+Analysis}\label{second-approach-generate-virtual-species-with-a-principal-components-analysis}}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{3} \setcounter{figure}{0}
+
+If you try to use the first approach with a large number of variables,
+\emph{e.g.} 10, then you will rapidly hit the unextricable problem of
+unrealistic environmental requirements. When you have 2 environmental
+variables, it is easy to choose response functions that are compatible.
+For example, you know that you should not try to generate a species
+which requires a temperature of the warmest month at 35°C, and a
+temperature of the coldest month at -25°C, because such conditions are
+unlikely to exist on Earth. However, if you have 10 variables, the task
+is much more complicated: if you want to generate a species which is
+dependent on 5 different temperature variables, 3 precipitation
+variables, and 2 land use variables, then it is almost impossible to
+know if your response functions are realistic regarding environmental
+conditions.
+
+This is why we implemented the second approach, which consists in
+generating a Principal Component Analysis (PCA) of all the environmental
+variables in your \texttt{RasterStack}, and then define the response of
+the species to two axes (pricipal components). Using this approach will
+greatly help you to generate virtual species which have plausible
+environmental requirements, whil being dependent on all of your
+variables.
+
+The function providing this approach is \texttt{generateSpFromPCA}.
+
+\subsection{3.1. An introduction
+example}\label{an-introduction-example-1}
+
+We want to generate a species dependent on three temperature variables
+(\href{http://worldclim.org/bioclim}{bio2, bio5 and bio6}) and three
+precipitation variables (\href{http://worldclim.org/bioclim}{bio12,
+bio13, bio14} ).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.stack <-}\StringTok{ }\NormalTok{worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio2"}\NormalTok{, }\StringTok{"bio5"}\NormalTok{, }\StringTok{"bio6"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{, }\StringTok{"bio13"}\NormalTok{, }\StringTok{"bio14"}\NormalTok{)]]}
+\end{Highlighting}
+\end{Shaded}
+
+The generation of a virtual species is relatively straightforward:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.pca.species <-}\StringTok{ }\KeywordTok{generateSpFromPCA}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ my.stack)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Perfoming the pca
+\end{verbatim}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating suitability values
+\end{verbatim}
+
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca2-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.pca.species}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 6 variables:
+##  bio2, bio5, bio6, bio12, bio13, bio14
+## 
+## - Approach used: Response to axes of a PCA
+## - Axes:  1, 2 ;  83.24 % explained by these axes
+## - Responses to axes:
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=0.3720457; sd=6.184743)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-0.5949619; sd=6.922618)
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+Something very important to know here is that the PCA is performed on
+all the pixels of the raster stack. As a consequence, if you use large
+stacks (large spatial scales, fine resolutions), your computer may not
+be able to extract all the values. In this case, you can run the PCA on
+a random subset of values, by setting \texttt{sample.points\ =\ TRUE}
+and defining the number of pixels to sample with \texttt{nb.points}
+(default 10000, try less if your computer is struggling). \emph{Note
+that there is an automatic safety check if you don't set
+\texttt{sample.points\ =\ TRUE}, and the function will not run if your
+computer cannot handle it.}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# A safe run of the function}
+\NormalTok{my.pca.species <-}\StringTok{ }\KeywordTok{generateSpFromPCA}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ my.stack, }
+                                    \DataTypeTok{sample.points =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{nb.points =} \DecValTok{5000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Perfoming the pca
+\end{verbatim}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating suitability values
+\end{verbatim}
+
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca3-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.pca.species}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 6 variables:
+##  bio2, bio5, bio6, bio12, bio13, bio14
+## 
+## - Approach used: Response to axes of a PCA
+## - Axes:  1, 2 ;  83.45 % explained by these axes
+## - Responses to axes:
+##    .Axis 1  [min=-11.38; max=2.6] : dnorm (mean=-4.317695; sd=3.726139)
+##    .Axis 2  [min=-3.44; max=7.05] : dnorm (mean=0.8199387; sd=2.090436)
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+Congratulations! You have just generated your first virtual species with
+a PCA. You will probably have noticed that you have not entered any
+parameter, but the generation has still succeeded. Indeed, when no
+parameter is entered, the response of the species to PCA axes is
+randomly generated. The reason behind this choice is that you can hardly
+choose by yourself the parameters before you have seen the PCA! The next
+step is therefore to take a look at the PCA, using the function
+\texttt{plotResponse} (note that you can also use the argument
+\texttt{plot\ =\ TRUE} in \texttt{generateSpFromPCA})
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plotResponse}\NormalTok{(my.pca.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca4-1.pdf}
+\caption{Fig. 3.1 PCA used to generate the virtual species}
+\end{figure}
+
+On Fig. 3.1 you can see the PCA of environmental conditions, where each
+point is the representation of a pixel of your stack in the factorial
+space. On one of the corners is shown the projection of the variables on
+this PCA (the position varies for an easier reading, although it is not
+always perfect). Along each axis, you can see the response of the
+species: on my example, a wide tolerance to the axis 1, driven mostly by
+precipitation variables (bio12 and bio13), and an intermediate tolerance
+to the axis 2, driven mostly by temperature variables (bio2 and bio5).
+The resulting environmental suitability, as a product of responses to
+each axis, is illustrated by a coloration of the points, from red (high
+suitability), to yellow and grey (low/unsuitable pixels).
+
+Now that you have this information in hand, you will be able (in the
+next section) to define a narrower niche breadth for the species, or to
+choose a species living in hotter, colder, drier or wetter environments.
+But before that, you probably would like to see how the species'
+environmental suitability is distributed in space. Nothing's simpler:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(my.pca.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca5-1.pdf}
+\caption{Fig. 3.2 Environmental suitability of a species generated with
+a PCA approach}
+\end{figure}
+
+\subsection{3.2. Customisation of the
+parameters}\label{customisation-of-the-parameters}
+
+The function \texttt{generateSpFromPCA} proceeds into four important
+steps: 1. The PCA is computed on the basis of the input environmental
+conditions. You can also provide your own PCA. 2. The Gaussian responses
+to axes are randomly chosen (only if you did not provide precise
+parameters) and then computed. 3. The environmental suitability is
+calculated as a product of the responses to both axes. 4. The
+environmental suitability is rescaled between 0 and 1. This step can be
+disabled.
+
+\subsubsection{3.2.1. Customisation of the responses to
+axes}\label{customisation-of-the-responses-to-axes}
+
+\emph{First of all, note that at the moment, the choice is restricted to
+axes 1 and 2, and to the usage of gaussian functions. The reason behind
+that is the automatic random generation of parameters, which would
+become very difficult to automatise for numerous different functions.
+However, an upcoming version of this function is under developement,
+which should allow to use different axes and custom functions in the
+future. If you are interested to get it very soon please e-mail me.}
+
+You can customise the Gaussian response functions in two different ways:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  You can constrain the random generation of parameters by choosing
+  either a narrow-niche or a broad-niche species. To do this, specify
+  the argument
+  \texttt{niche.breadth\ =\ \textquotesingle{}narrow\textquotesingle{}}
+  or
+  \texttt{niche.breadth\ =\ \textquotesingle{}wide\textquotesingle{}}.
+  By default this argument is set to
+  \texttt{niche.breadth\ =\ \textquotesingle{}any\textquotesingle{}},
+  meaning that you can obtain species with any niche breadth.\\
+  This argument controls the standard deviation of the gaussian
+  distribution. The full details about this is available in the help of
+  the function (\texttt{?generateSpFromPCA})
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{narrow.species <-}\StringTok{ }\KeywordTok{generateSpFromPCA}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ my.stack, }\DataTypeTok{sample.points =} \OtherTok{TRUE}\NormalTok{,}
+                                    \DataTypeTok{nb.points =} \DecValTok{5000}\NormalTok{,}
+                                    \DataTypeTok{niche.breadth =} \StringTok{"narrow"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Perfoming the pca
+\end{verbatim}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating suitability values
+\end{verbatim}
+
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca6-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plotResponse}\NormalTok{(narrow.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca6b-1.pdf}
+\caption{Fig. 3.3 PCA of a species generated with rather narrow niche
+breadth}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(narrow.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca6c-1.pdf}
+\caption{Fig. 3.4 Environmental suitability of a species generated with
+rather narrow niche breadth}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{wide.species <-}\StringTok{ }\KeywordTok{generateSpFromPCA}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ my.stack, }\DataTypeTok{sample.points =} \OtherTok{TRUE}\NormalTok{,}
+                                    \DataTypeTok{nb.points =} \DecValTok{5000}\NormalTok{,}
+                                    \DataTypeTok{niche.breadth =} \StringTok{"wide"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Perfoming the pca
+\end{verbatim}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating suitability values
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca7-1.pdf}
+\caption{A species generated with rather wide niche breadth}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plotResponse}\NormalTok{(wide.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca7b-1.pdf}
+\caption{Fig. 3.5 PCA of a species generated with rather wide niche
+breadth}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(wide.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca7c-1.pdf}
+\caption{Fig. 3.6 Environmental suitability of a species generated with
+rather wide niche breadth}
+\end{figure}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\setcounter{enumi}{1}
+\tightlist
+\item
+  You can define by yourself the mean and standard deviations of the
+  Gaussian responses. To do this, use arguments \texttt{means} and
+  \texttt{sds} as in the following example.\\
+  Using the figure above, we know that the first axis is driven by
+  precipitation variables, and the second one by temperature variables.
+  To define a species living in colder and wetter environments, we will
+  move the means of Gaussian responses to the right of the first axis
+  (\emph{e.g.}, a mean of 0 or above) and to the top of the second axis
+  (\emph{e.g.}, a mean of 1 or above). In addition, if we want our
+  species to be stenotopic (narrow niche breadth), we will also define
+  lower standard deviations (\emph{e.g.}, standard deviations of 0.25).
+  The correct input will be : \texttt{means\ =\ c(0,\ 1)} (a mean of 0
+  for the first axis and 1 for the second) and
+  \texttt{sds\ =\ c(0.25,\ 0.5)} (standard deviations of 0.25 for axes 1
+  and 2):
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.custom.species <-}\StringTok{ }\KeywordTok{generateSpFromPCA}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ my.stack, }\DataTypeTok{sample.points =} \OtherTok{TRUE}\NormalTok{,}
+                                       \DataTypeTok{nb.points =} \DecValTok{5000}\NormalTok{,}
+                                       \DataTypeTok{means =} \KeywordTok{c}\NormalTok{(}\DecValTok{0}\NormalTok{, }\DecValTok{1}\NormalTok{), }\DataTypeTok{sds =} \KeywordTok{c}\NormalTok{(}\FloatTok{0.5}\NormalTok{, }\FloatTok{0.5}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Perfoming the pca
+\end{verbatim}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+\end{verbatim}
+
+\begin{verbatim}
+##     - You have provided standard deviations, so argument niche.breadth will be ignored.
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating suitability values
+\end{verbatim}
+
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca8-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plotResponse}\NormalTok{(my.custom.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca8b-1.pdf}
+\caption{Fig. 3.7 PCA of the species generated with custom responses to
+axes}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(my.custom.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca8c-1.pdf}
+\caption{Fig. 3.8 Environmental suitability of the species generated
+with custom responses to axes}
+\end{figure}
+
+\subsubsection{3.2.2. Rescaling of the final environmental
+suitability}\label{rescaling-of-the-final-environmental-suitability-1}
+
+The final rescaling is performed for the same reasons as in
+\texttt{generateSpFromFun}. It should not be disabled unless you have
+very precise reasons to do it. The argument \texttt{rescale} controls
+this rescaling (\texttt{TRUE} by default).
+
+\subsubsection{3.2.3. Using a custom PCA}\label{using-a-custom-pca}
+
+It is possible, if you need, to use your own PCA. In that case, make
+sure that the PCA was performed with the function \texttt{dudi.pca} of
+the package
+\href{http://cran.r-project.org/web/packages/ade4/index.html}{\texttt{ade4}}.
+You also need to perform the PCA on the same variables as in your
+\texttt{RasterStack}, entered in the \textbf{exact same order}.
+
+One reason why you would want to use a custom PCA is because you have a
+struggling computer, which requires to generate a PCA from a very
+reduced subset of your environmental stack (\emph{e.g.},
+\texttt{generateSpFromPCA(my.stack,\ sample.points\ =\ TRUE,\ nb.points\ =\ 250)}).
+In such a case, the PCA may vary substantially among runs, precluding
+any tentative to finely customise the responses to axes. It is easy to
+extract the PCA from a previous run, and use it in the next run(s):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.first.run <-}\StringTok{ }\KeywordTok{generateSpFromPCA}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ my.stack, }
+                                  \DataTypeTok{sample.points =} \OtherTok{TRUE}\NormalTok{, }\DataTypeTok{nb.points =} \DecValTok{250}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Perfoming the pca
+\end{verbatim}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating suitability values
+\end{verbatim}
+
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca10-1.pdf}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# You can access the PCA with the following command}
+\NormalTok{my.pca <-}\StringTok{ }\NormalTok{my.first.run}\OperatorTok{$}\NormalTok{details}\OperatorTok{$}\NormalTok{pca}
+
+\CommentTok{# And then provide it to your second run}
+\NormalTok{my.second.run <-}\StringTok{ }\KeywordTok{generateSpFromPCA}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ my.stack, }
+                                   \DataTypeTok{pca =}\NormalTok{ my.pca)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+## 
+##  - Calculating suitability values
+\end{verbatim}
+
+\includegraphics{virtualspecies-tutorial_files/figure-latex/pca10-2.pdf}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{4. Conversion of environmental suitability to
+presence-absence}\label{conversion-of-environmental-suitability-to-presence-absence}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{4} \setcounter{figure}{0}
+
+\subsection{4.1. Introduction: why should we avoid a threshold
+conversion?}\label{introduction-why-should-we-avoid-a-threshold-conversion}
+
+What we did so far was defining the relationship between the species and
+its environment. It was the most important part, but what it provides us
+is a spatial distribution of the species' environmental suitability, not
+a spatial distribution of the species' presences/absences. Hence we now
+have to convert the environmental suitability into presence-absence.
+
+The simplest approach, which was also the most widely used until 2014,
+consists in defining a threshold of environmental suitability, below
+which conditions are unsuitable, so absence is attributed; and above
+which conditions are suitable, so persence is attributed. However, you
+should completely avoid this approach which is \emph{pure evil}:
+
+\begin{itemize}
+\tightlist
+\item
+  Most importantly, this creates completely unrealistic species:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Real species are often absent from areas of high suitability,
+    because of factors acting at smaller spatial scales, such as biotic
+    pressure (competition, predation), disturbances, stochastic events.
+  \item
+    Real species often occur in unsuitable areas, because of very
+    particular conditions allowing their occurrence
+    (microclimatic/microhabitat conditions, climatic refugia).
+  \end{itemize}
+\item
+  The threshold almost completely removes the previously defined
+  relationship between the species and its environment. The gradual
+  aspect is lost: the above-threshold part of the environmental gradient
+  is always fully suitable, while the below-threshold part is always
+  fully unsuitable.
+\end{itemize}
+
+So, how can we convert our environmental suitability into
+presence-absence without a threshold?
+
+We use a probabilistic approach: the probability of getting a presence
+of the species in a given pixel is dependent on its suitability in that
+pixel:
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv1-1.pdf}
+\caption{Fig. 4.1 Logistic curve used for a probabilistic conversion
+into presence-absence}
+\end{figure}
+
+With the example above, a pixel with environmental suitability equal to
+0.6 has 88\% chance of having species presence, and 12\% chance of
+having species absence.
+
+This means that we convert the environmental suitability of each pixel
+into a probability of occurrence. This probability of occurrence is then
+used to sample presence or absence in each cell, i.e., we make a random
+draw of presence or absence weighted by the probability of occurrence.
+As a consequence, repeated realisation of the presence-absence
+conversion will produce different occupancy maps, each providing a valid
+realisation of the true species distribution map.
+
+This conversion is fully customisable, and can range from threshold
+conversion to logistic to linear conversion, by adjusting parameters
+(explained in section 4.2):
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv2-1.pdf}
+\caption{Fig. 4.2 Contrasting examples of conversion curves and their
+result on the distribution range of the same virtual species.}
+\end{figure}
+
+The logistic conversion looks much more like what a real species
+distribution is than the linear and threshold-like conversions.
+
+In the next section we will see how to perform the conversion, and how
+to customise it.
+
+\subsection{4.2. Customisation of the
+conversion}\label{customisation-of-the-conversion}
+
+At first you may be interested to see the function in action, before we
+try to customise it. Here it is!
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pa1 <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species, }\DataTypeTok{plot =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv3-1.pdf}
+\caption{Fig. 4.3 Maps of environmental suitability and presence-absence
+of the virtual species}
+\end{figure}
+
+You have probably noticed that the conversion was performed without you
+choosing any parameter. This is because by default, the function
+randomly assigns parameters to the conversion. What are these
+parameters?
+
+They are the parameters \(\alpha\) and \(\beta\) which determine the
+shape of the logistic curve:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\beta\) controls the inflexion point,
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv4-1.pdf}
+\caption{Fig. 4.4 Impact of beta on the conversion curve}
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  and \(\alpha\) drives the `slope' of the curve
+\end{itemize}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv5-1.pdf}
+\caption{Fig. 4.4 Impact of alpha on the conversion curve}
+\end{figure}
+
+The parameters are fairly simple to customise:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{pa2 <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species,}
+                   \DataTypeTok{beta =} \FloatTok{0.65}\NormalTok{, }\DataTypeTok{alpha =} \OperatorTok{-}\FloatTok{0.07}\NormalTok{,}
+                   \DataTypeTok{plot =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv6-1.pdf}
+\caption{Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# You can modify the conversion of your object if you did not like it:}
+\NormalTok{pa2 <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(pa2,}
+                   \DataTypeTok{beta =} \FloatTok{0.3}\NormalTok{, }\DataTypeTok{alpha =} \OperatorTok{-}\FloatTok{0.02}\NormalTok{,}
+                   \DataTypeTok{plot =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv7-1.pdf}
+\caption{Fig. 4.5 Conversion with beta = 0.65, alpha = -0.07}
+\end{figure}
+
+In the next sections I summarise how to choose appropriate values of
+\texttt{alpha} and \texttt{beta}, and also I introduce a third parameter
+which may be very useful to generate virtual species distributions: the
+species prevalence (i.e., the number of places occupied by the species,
+out of the total number of available places).
+
+\subsubsection{4.2.1. beta}\label{beta}
+
+\texttt{beta} is very simple to grasp, as it is the inflexion point of
+the curve. Hence, looking at the three beta curves above, we can see
+that a lower \texttt{beta} will increase the probability of finding
+suitable conditions for the species (wider distribution range). A higher
+\texttt{beta} will decrease the probability of finding suitable
+conditions (smaller distribution range).
+
+\subsubsection{4.2.2. alpha}\label{alpha}
+
+\texttt{alpha} may be more difficult to grasp, as it is dependent on the
+range of values of the \texttt{x} axis (in our case, the environmental
+suitability, ranging from 0 to 1):
+
+\begin{itemize}
+\tightlist
+\item
+  If \texttt{alpha} is approximately equal to the range of\texttt{x} or
+  greater (in absolute value), then the conversion will have a linear
+  shape. In our case, it means values of \texttt{alpha} below -.3).
+\item
+  If \texttt{alpha} is about 5-10\% of the range of \texttt{x}, then the
+  conversion will be logistic. In our case, you can have nice logistic
+  curves for values of \texttt{alpha} between -0.1 and -0.01.
+\item
+  If \texttt{alpha} is much smaller compared to \texttt{x} (in absolute
+  value), then the conversion will be threshold-like. In our case, if
+  means values of \texttt{alpha} in the range {[}-0.001, 0{[}.
+\end{itemize}
+
+\hypertarget{conversion-to-presence-absence-based-on-a-value-of-species-prevalence}{\subsubsection{4.2.3.
+Conversion to presence-absence based on a value of species
+prevalence}\label{conversion-to-presence-absence-based-on-a-value-of-species-prevalence}}
+
+\emph{The species prevalence is the number of places (here, pixels)
+actually occupied by the species out of the total number of places
+(pixels) available. Do not confuse the \textbf{SPECIES PREVALENCE} with
+the \protect\hyperlink{defining-the-sample-prevalence}{\textbf{SAMPLE
+PREVALENCE}}, which in turn is the proportion of samples in which you
+have found the species.}
+
+Numerous authors have shown the importance of the species prevalence in
+species distribution modelling, and how it can bias models. As a
+consequence, when generating virtual species distributions to test
+particular protocols or modelling techniques, you may be interested in
+testing different values of species prevalence. However, it is important
+to know that the species prevalence is dependent on \textbf{the
+species-environment relationship}, \textbf{the shape of the
+probabilistic conversion curve} AND \textbf{the spatial distribution of
+environmental conditions}. As a consequence, the function has to try
+different shapes of conversion curve to find a conversion according to
+your chosen value of species prevalence. Sometimes, it is not possible
+to reach a particular species prevalence, in that case the function will
+choose the conversion curve providing results closest to your species
+prevalence.
+
+If you want to generate a species with a particular species prevalence,
+then you also have to fix either \texttt{alpha} or \texttt{beta}. I
+strongly advise to fix a value of \texttt{alpha} (this is the default
+paramter, with \texttt{alpha\ =\ -0.05}), so that the function will try
+to find an appropriate conversion by testing different values of
+\texttt{beta}. If you prefer to fix the value of \texttt{beta}, then the
+function will try different values of \texttt{alpha}, but it is likely
+that it will not be able to find a conversion generating a species with
+the appropriate prevalence.
+
+Let's see it in practice:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Let's generate a species occupying 20% of the world}
+\CommentTok{# Default settings, alpha = -0.05}
+\NormalTok{sp.}\FloatTok{0.2}\NormalTok{ <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species,}
+                      \DataTypeTok{species.prevalence =} \FloatTok{0.2}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing beta automatically according to alpha and species.prevalence
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv8-1.pdf}
+\caption{Fig. 4.6 Conversion of a species with a prevalence of 0.2,
+\emph{i.e.} occupying 20\% of the world (which is quite large)}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sp.}\FloatTok{0.2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.05
+##    .beta  (inflexion point) = 0.234375
+##    .species prevalence      = 0.199
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Now, a species occupying 1.5% of the world}
+\CommentTok{# Change alpha to have a slightly more steep curve}
+\NormalTok{sp.}\FloatTok{0.015}\NormalTok{ <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species,}
+                        \DataTypeTok{species.prevalence =} \FloatTok{0.015}\NormalTok{,}
+                        \DataTypeTok{alpha =} \OperatorTok{-}\FloatTok{0.015}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing beta automatically according to alpha and species.prevalence
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv9-1.pdf}
+\caption{Fig. 4.7 Conversion of a species with a prevalence of 0.015,
+\emph{i.e.} occupying 1.5\% of the world}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sp.}\FloatTok{0.015}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.015
+##    .beta  (inflexion point) = 0.828125
+##    .species prevalence      = 0.014
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Let's try by fixing beta rather than alpha}
+\CommentTok{# We want a species occupying 10% of the world, with a high value of beta}
+\NormalTok{sp.}\DecValTok{10}\NormalTok{ <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species,}
+                     \DataTypeTok{species.prevalence =} \FloatTok{0.1}\NormalTok{,}
+                     \DataTypeTok{alpha =} \OtherTok{NULL}\NormalTok{,}
+                     \DataTypeTok{beta =} \FloatTok{0.9}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing alpha automatically according to beta and species.prevalence
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv10-1.pdf}
+\caption{Fig. 4.8 Conversion of a species with a prevalence of 0.1,
+\emph{i.e.} occupying 10\% of the world}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sp.}\DecValTok{10}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.31346875
+##    .beta  (inflexion point) = 0.9
+##    .species prevalence      = 0.092
+\end{verbatim}
+
+It worked, but the resulting species does not look realistic at all:
+alpha was below -0.3, which means that we had a quasi-linear conversion
+curve, producing this unrealistic presence-absence map.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Now an impossible task: a low value of beta for the same requirements:}
+\NormalTok{sp.10bis <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species,}
+                        \DataTypeTok{species.prevalence =} \FloatTok{0.1}\NormalTok{,}
+                        \DataTypeTok{alpha =} \OtherTok{NULL}\NormalTok{,}
+                        \DataTypeTok{beta =} \FloatTok{0.3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing alpha automatically according to beta and species.prevalence
+\end{verbatim}
+
+\begin{verbatim}
+## Warning in convertToPA(my.first.species, species.prevalence = 0.1, alpha = NULL, : Warning, the desired species prevalence cannot be obtained, because of the chosen beta and available environmental conditions (see details).
+##                         The closest possible estimate of prevalence was 0.15 
+## Perhaps you can try a higher beta value.
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/conv11-1.pdf}
+\caption{Fig. 4.9 Conversion of a species whose asked prevalence (0.1)
+cannot be reached because of a too low value of beta}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{sp.10bis}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.001
+##    .beta  (inflexion point) = 0.3
+##    .species prevalence      = 0.147
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{5. Generating random virtual
+species}\label{generating-random-virtual-species}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{5} \setcounter{figure}{0}
+
+The \texttt{virtualspecies} package embeds a function to randomly
+generate virtual species \texttt{generateRandomSp}, with many
+customisable options to constrain the randomisation process.
+
+Let's take a look:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.stack <-}\StringTok{ }\NormalTok{worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio2"}\NormalTok{, }\StringTok{"bio5"}\NormalTok{, }\StringTok{"bio6"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{, }\StringTok{"bio13"}\NormalTok{, }\StringTok{"bio14"}\NormalTok{)]]}
+\NormalTok{random.sp <-}\StringTok{ }\KeywordTok{generateRandomSp}\NormalTok{(my.stack)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Perfoming the pca
+\end{verbatim}
+
+\begin{verbatim}
+##  - Defining the response of the species along PCA axes
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating suitability values
+\end{verbatim}
+
+\begin{verbatim}
+##  - Converting into Presence - Absence
+\end{verbatim}
+
+\begin{verbatim}
+##    --- Determing species.prevalence automatically according to alpha and beta
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand1-1.pdf}
+\caption{Fig. 5.1 A species randomly generated with
+\texttt{generateRandomSp}}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{random.sp}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 6 variables:
+##  bio2, bio5, bio6, bio12, bio13, bio14
+## 
+## - Approach used: Response to axes of a PCA
+## - Axes:  1, 2 ;  83.24 % explained by these axes
+## - Responses to axes:
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=1.823034; sd=0.414158)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=1.243336; sd=0.7582759)
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.1
+##    .beta  (inflexion point) = 0.632632632632633
+##    .species prevalence      = 0.084
+\end{verbatim}
+
+We can see that the species was generated using a PCA approach. Indeed,
+\protect\hyperlink{second-approach-generate-virtual-species-with-a-principal-components-analysis}{as
+explained in the PCA section}, when you have a lot of variables, it
+becomes very difficult to generate a species with realistic
+environmental requirements. Hence, by default the function
+\texttt{generateRandomSp} uses a PCA approach if you have 6 or more
+variables, and a `response functions' approach if you have less than 6
+variables.
+
+In the next sections I detail the many possible customisations for the
+function \texttt{generateRandomSp}.
+
+\subsection{5.1. General parameters}\label{general-parameters}
+
+\subsubsection{5.1.1. Choosing the
+approach}\label{choosing-the-approach}
+
+You can choose \texttt{approach\ =}:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{"automatic"}: a `response' approach is used if you have less
+  than 6 variables and a `PCA' approach is used if you have 6 or more
+  variables
+\item
+  \texttt{"random"}: a random approach is chosen (response or PCA)
+\item
+  \texttt{"response"}: to use a response approach
+\item
+  \texttt{"pca"}: to use a pca approach
+\end{itemize}
+
+\subsubsection{5.1.2. Rescaling of the environmental
+suitability}\label{rescaling-of-the-environmental-suitability}
+
+By default, \texttt{rescale\ =\ TRUE}, which means that the
+environmental suitability is rescaled between 0 and 1.
+
+\subsubsection{5.1.3. Conversion to
+presence-absence}\label{conversion-to-presence-absence}
+
+You can choose to enable the conversion of environmental suitability to
+presence-absence. To do this, set \texttt{convert.to.PA\ =\ TRUE}. You
+can customise the conversion:
+
+\begin{itemize}
+\tightlist
+\item
+  choose the conversion method with \texttt{PA.method}. You should leave
+  it to \texttt{probability} unless you have a very particular reason to
+  use the \texttt{threshold} approach.
+\item
+  define the parameters \texttt{alpha}, \texttt{beta} and
+  \texttt{species.prevalence} exactly as explained in the convert to
+  presence-absence section, or leave them as they are to create a random
+  conversion into presence-absence
+\end{itemize}
+
+\subsection{\texorpdfstring{5.2. Parameters specific to a `response'
+approach}{5.2. Parameters specific to a response approach}}\label{parameters-specific-to-a-response-approach}
+
+\subsubsection{5.2.1. Define the possible response
+functions}\label{define-the-possible-response-functions}
+
+At the moment, four relations are possible for a random generation of
+virtual species: Gaussian (\texttt{gaussian}), linear (\texttt{linear}),
+logistic (\texttt{logistic}) and quadratic (\texttt{quadratic})
+relations. By default, all the relation types are used. You can choose
+to use any combination with the argument \texttt{relations}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# A species with gaussian and logistic response functions}
+\NormalTok{random.sp1 <-}\StringTok{ }\KeywordTok{generateRandomSp}\NormalTok{(worldclim[[}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{]], }
+                              \DataTypeTok{relations =} \KeywordTok{c}\NormalTok{(}\StringTok{"gaussian"}\NormalTok{, }\StringTok{"logistic"}\NormalTok{),}
+                              \DataTypeTok{convert.to.PA =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Determining species' response to predictor variables
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating species suitability
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand2-1.pdf}
+\caption{Fig. 5.2 A species randomly generated with
+\texttt{generateRandomSp}, with gaussian and logistic response
+functions}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{random.sp1}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 3 variables:
+##  bio1, bio3, bio2
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=187.137931379314; sd=256.621676216762)
+##    .bio3  [min=8; max=95] : dnorm   (mean=47.9460294602946; sd=1.57036570365704)
+##    .bio2  [min=9; max=211] : logisticFun   (alpha=13.0381818181818; beta=41.8678568678569)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio2 * bio3
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plotResponse}\NormalTok{(random.sp1)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand3-1.pdf}
+\caption{Response functions of the randomly generated species}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# A purely gaussian species}
+\NormalTok{random.sp2 <-}\StringTok{ }\KeywordTok{generateRandomSp}\NormalTok{(worldclim[[}\DecValTok{1}\OperatorTok{:}\DecValTok{3}\NormalTok{]], }
+                              \DataTypeTok{relations =} \StringTok{"gaussian"}\NormalTok{,}
+                              \DataTypeTok{convert.to.PA =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Determining species' response to predictor variables
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating species suitability
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand4-1.pdf}
+\caption{Fig. 5.4 A species randomly generated with
+\texttt{generateRandomSp}, with gaussian response functions only}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{random.sp2}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 3 variables:
+##  bio3, bio2, bio1
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio3  [min=8; max=95] : dnorm   (mean=75.8667686676867; sd=86.3231332313323)
+##    .bio2  [min=9; max=211] : dnorm   (mean=173.874178741787; sd=155.470854708547)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=230.555165551656; sd=469.360503605036)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio2 * bio3
+## - Environmental suitability was rescaled between 0 and 1
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plotResponse}\NormalTok{(random.sp2)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand5-1.pdf}
+\caption{Fig. 5.5 Response functions of the randomly generated species}
+\end{figure}
+
+\subsubsection{5.2.2. Rescale individual response
+functions}\label{rescale-individual-response-functions}
+
+As explained in the section on the `response' approach, you can choose
+to rescale or not each individual response function, with the argument
+\texttt{rescale.each.response}. \texttt{TRUE} by default.
+
+\subsubsection{5.2.3. Try to find a realistic
+species}\label{try-to-find-a-realistic-species}
+
+An important issue with the generation of random responses to the
+environment, is that you can obtain a species willing to live in summer
+temperatures of 35°C and winter temperature of -50°C. This may
+interesting for generating species from another planet, but you are
+probably more interested in generating species that can actually live on
+Earth. There is therefore an option to do that, activated by default:
+\texttt{realistic.sp}.
+
+When activating this argument, the function will proceed step-by-step to
+try defining a realistic species. At step one, one of the variable is
+chosen, and the program randomly determines a response function for this
+variable. Then, it will compute the environmental suitability of this
+species. At step two, the program will pick a second variable, and will
+constrain its random generation depending on the environmental
+suitability obtained at step one. For example, if at step 2 a gaussian
+response is picked, then the mean will be chosen in areas where the
+species had a high environmental suitability. Then, the environmental
+suitability is recalculated on the basis of the first two response
+functions. At step 3, another variable is picked, a response function
+randomly generated with respect to areas where the species already has a
+high suitability, and so on until there are no variables left. While
+this process can help, it does not always work, and can provide
+completely unrealistic results also. In this case, you should try
+different runs, or switch to a `PCA' approach.
+
+Let's see an example :
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{realistic.sp <-}\StringTok{ }\KeywordTok{generateRandomSp}\NormalTok{(worldclim[[}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{)]],}
+                                 \DataTypeTok{realistic.sp =} \OtherTok{TRUE}\NormalTok{,}
+                                 \DataTypeTok{convert.to.PA =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Determining species' response to predictor variables
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating species suitability
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand6-1.pdf}
+\caption{Fig. 5.6 A species randomly generated, constrained to find
+realistic environmental requirements}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{unrealistic.sp <-}\StringTok{ }\KeywordTok{generateRandomSp}\NormalTok{(worldclim[[}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{)]],}
+                                   \DataTypeTok{realistic.sp =} \OtherTok{FALSE}\NormalTok{,}
+                                   \DataTypeTok{convert.to.PA =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Determining species' response to predictor variables
+## 
+##  - Calculating species suitability
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand6-2.pdf}
+\caption{Fig. 5.7 A species randomly generated, with no constraints}
+\end{figure}
+
+Note that you can always let the function randomly determine the
+conversion to presence-absence by changing the argument
+\texttt{convert.to.PA\ =\ TRUE} (be careful: since parameters are
+defined randomly, the results can be bizarre), or you can do it by
+yourself later:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{realistic.sp <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(realistic.sp, }\DataTypeTok{beta =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing species.prevalence automatically according to alpha and beta
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand7-1.pdf}
+\caption{Fig. 5.8 Modification of the conversion threshold of the
+previously generated species in fig. 5.6}
+\end{figure}
+
+If, in spite of all your attempts, you are struggling to obtain
+satisfactory species, then perhaps you should try the `PCA' approach.
+
+\subsubsection{5.2.4. Define how response functions are combined to
+compute the environmental
+suitability}\label{define-how-response-functions-are-combined-to-compute-the-environmental-suitability}
+
+You can define how response functions are combined with the argument
+\texttt{sp.type}, exactly as explained in the `response' approach
+section:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{species.type\ =\ "additive"}: the response functions are
+  added.
+\item
+  \texttt{species.type\ =\ "multiplicative"}: the response functions are
+  multiplied (default value).
+\item
+  \texttt{species.type\ =\ "mixed"}: there is a mix of additions and
+  products to calculate the environmental suitability, randomly
+  generated.
+\end{itemize}
+
+\subsection{\texorpdfstring{5.3. Parameters specific to a `PCA'
+approach}{5.3. Parameters specific to a PCA approach}}\label{parameters-specific-to-a-pca-approach}
+
+\subsubsection{5.3.1. Generate a random species with a PCA approach on a
+low-memory
+computer}\label{generate-a-random-species-with-a-pca-approach-on-a-low-memory-computer}
+
+As explained in the PCA section, if you have low-memory computer, or are
+working with very large raster files (large extent, fine resolution),
+then you can still perform the PCA by using a sample of the pixels of
+your raster.
+
+To do this, set \texttt{sample.points\ =\ TRUE}, and choose the number
+of pixels to sample, depending on your computer's memory, with
+\texttt{nb.points}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# A safe run for a low memory computer}
+\NormalTok{safe.run.sp <-}\StringTok{ }\KeywordTok{generateRandomSp}\NormalTok{(worldclim[[}\KeywordTok{c}\NormalTok{(}\DecValTok{1}\NormalTok{, }\DecValTok{5}\NormalTok{, }\DecValTok{6}\NormalTok{)]], }
+                                \DataTypeTok{sample.points =} \OtherTok{TRUE}\NormalTok{,}
+                                \DataTypeTok{nb.points =} \DecValTok{1000}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##  - Determining species' response to predictor variables
+\end{verbatim}
+
+\begin{verbatim}
+##  - Calculating species suitability
+\end{verbatim}
+
+\begin{verbatim}
+##  - Converting into Presence - Absence
+\end{verbatim}
+
+\begin{verbatim}
+##    --- Determing species.prevalence automatically according to alpha and beta
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/rand8-1.pdf}
+\caption{Fig 5.9 A virtual species randomly generated from a PCA
+approach, with a memory-safe procedure}
+\end{figure}
+
+\subsubsection{5.3.2. Generate stenotopic or eurytopic
+species}\label{generate-stenotopic-or-eurytopic-species}
+
+You can modify the \texttt{niche.breadth} argument to generate
+stenotopic
+(\texttt{niche.breadth\ =\ \textquotesingle{}narrow\textquotesingle{}}),
+eurytopic
+(\texttt{niche.breadth\ =\ \textquotesingle{}wide\textquotesingle{}}),
+or any type of species
+(\texttt{niche.breadth\ =\ \textquotesingle{}any\textquotesingle{}}).
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{6. Exploring and using the outputs of
+virtualspecies}\label{exploring-and-using-the-outputs-of-virtualspecies}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{6} \setcounter{figure}{0}
+
+This section is mainly intended to users not very familiar with R. For
+example, if you are not sure how to obtain the maps of generated virtual
+species, read this section. If you simply want to extract (sample)
+occurrence points for your virtual species, then you should jump to the
+next section.
+
+\subsection{6.1. Consult the details of a generated virtual
+species}\label{consult-the-details-of-a-generated-virtual-species}
+
+Let's create a simple virtual species:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Formatting of the response functions}
+\NormalTok{my.parameters <-}\StringTok{ }\KeywordTok{formatFunctions}\NormalTok{(}\DataTypeTok{bio1 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{250}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{),}
+                                 \DataTypeTok{bio12 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{4000}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{2000}\NormalTok{))}
+
+\CommentTok{# Generation of the virtual species}
+\NormalTok{my.species <-}\StringTok{ }\KeywordTok{generateSpFromFun}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]],}
+                                \DataTypeTok{parameters =}\NormalTok{ my.parameters)}
+
+\CommentTok{# Conversion to presence-absence}
+\NormalTok{my.species <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.species,}
+                          \DataTypeTok{beta =} \FloatTok{0.7}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing species.prevalence automatically according to alpha and beta
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/output1-1.pdf}
+\caption{6.1 Automatic illustration of the randomly generated species}
+\end{figure}
+
+If we want to know how it was generated, we simply type the object name
+in the R console:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.species}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Virtual species generated from 2 variables:
+##  bio1, bio12
+## 
+## - Approach used: Responses to each variable
+## - Response functions:
+##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
+##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+## - Each response function was rescaled between 0 and 1
+## - Environmental suitability formula = bio1 * bio12
+## - Environmental suitability was rescaled between 0 and 1
+## 
+## - Converted into presence-absence:
+##    .Method = probability
+##    .alpha (slope)           = -0.05
+##    .beta  (inflexion point) = 0.7
+##    .species prevalence      = 0.034
+\end{verbatim}
+
+And a summary of how the virtual species was generated appears:
+
+\begin{itemize}
+\tightlist
+\item
+  It shows us the variables used.
+\item
+  It shows us the approach used and all the details of the approach, so
+  we can use it to reconstruct another virtual species with the exact
+  same parameters later on. It also provides us the range of values of
+  our environmental variables (bio1 (mean annual temperature) ranged
+  from -269 (-26.9°C) to 314 (31.4°C)). This is helpful to quickly get
+  an idea of the preferences of our species; for example here we see
+  that we have a species living in hot environments, with a peak at 250
+  (25°C).
+\item
+  If a conversion to presence-absence was performed, it shows us the
+  parameters of the conversion, and provides the species prevalence (the
+  species prevalence is always calculated and provided).
+\item
+  If you have introduced a distribution bias (will be seen in a later
+  section), it will provide information about this particular bias.
+\end{itemize}
+
+\subsection{6.2. Plot the virtual species
+map}\label{plot-the-virtual-species-map}
+
+Plotting the distribution maps of a virtual species is straightforward:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plot}\NormalTok{(my.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/output3-1.pdf}
+\caption{6.2 Maps obtained when using the function \texttt{plot()} on
+virtual species objects}
+\end{figure}
+
+If the environmental sutiability has been converted into
+presence-absence, then the plot will conveniently display both the
+environmental suitability and the presence-absence map.
+
+\subsection{6.3. Plot the species-environment
+relationship}\label{plot-the-species-environment-relationship}
+
+As illustrated several times in this tutorial, there is a function to
+automatically generate an appropriate plot for your virtual species:
+\texttt{plotResponse}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{plotResponse}\NormalTok{(my.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/output3bis-1.pdf}
+\caption{6.3 Example of figure obtained when running
+\texttt{plotResponse()} on a virtual species object}
+\end{figure}
+
+\subsection{6.4. Extracting elements of the virtual species, such as the
+rasters of environmental
+suitability}\label{extracting-elements-of-the-virtual-species-such-as-the-rasters-of-environmental-suitability}
+
+The virtual species object is structured as a \texttt{list} in R, which
+roughly means that it is an object containing many ``sub-objects''. When
+you run functions on your virtual species object, such as the conversion
+into presence-absence, then new sub-objects are added or replaced in the
+list.
+
+There is a function allowing you to see the content of the list:
+\texttt{str()}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(my.species)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## List of 5
+##  $ approach     : chr "response"
+##  $ details      :List of 5
+##   ..$ variables            : chr [1:2] "bio1" "bio12"
+##   ..$ formula              : chr "bio1 * bio12"
+##   ..$ rescale.each.response: logi TRUE
+##   ..$ rescale              : logi TRUE
+##   ..$ parameters           :List of 2
+##  $ suitab.raster:Formal class 'RasterLayer' [package "raster"] with 12 slots
+##  $ PA.conversion: Named chr [1:4] "probability" "-0.05" "0.7" "0.034"
+##   ..- attr(*, "names")= chr [1:4] "conversion.method" "alpha" "beta" "species.prevalence"
+##  $ pa.raster    :Formal class 'RasterLayer' [package "raster"] with 12 slots
+##  - attr(*, "class")= chr [1:2] "virtualspecies" "list"
+\end{verbatim}
+
+We are informed that the object is a \texttt{list} containing 5 elements
+(sub-objects), that you can read on the lines starting with a
+\texttt{\$}: \texttt{approach}, \texttt{details},
+\texttt{suitab.raster}, \texttt{PA.conversion} and \texttt{pa.raster}.
+
+You can extract each element using the \texttt{\$}: for example, to
+extract the suitability raster, type
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.species}\OperatorTok{$}\NormalTok{suitab.raster}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## class       : RasterLayer 
+## dimensions  : 900, 2160, 1944000  (nrow, ncol, ncell)
+## resolution  : 0.1666667, 0.1666667  (x, y)
+## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## data source : in memory
+## names       : layer 
+## values      : 0, 1  (min, max)
+\end{verbatim}
+
+If you are interested in the presence-absence raster, type
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.species}\OperatorTok{$}\NormalTok{pa.raster}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## class       : RasterLayer 
+## dimensions  : 900, 2160, 1944000  (nrow, ncol, ncell)
+## resolution  : 0.1666667, 0.1666667  (x, y)
+## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## data source : in memory
+## names       : layer 
+## values      : 0, 1  (min, max)
+\end{verbatim}
+
+You can also see that we have ``sub-sub-objects'', in the lines starting
+with \texttt{..\$}: these are objects contained within the sub-object
+\texttt{details}. You can also extract them easily:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.species}\OperatorTok{$}\NormalTok{details}\OperatorTok{$}\NormalTok{variables}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## [1] "bio1"  "bio12"
+\end{verbatim}
+
+However, the sub-sub-sub-objects (level 3 of depth and beyond) are not
+listed when you use \texttt{str()} on your virtual species object. For
+example, if we extract the \texttt{parameters} object from the details,
+we can see that it contains all the function names and their parameters:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.species}\OperatorTok{$}\NormalTok{details}\OperatorTok{$}\NormalTok{parameters}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## $bio1
+## $bio1$fun
+##     fun 
+## "dnorm" 
+## 
+## $bio1$args
+## mean   sd 
+##  250   50 
+## 
+## $bio1$min
+## [1] -269
+## 
+## $bio1$max
+## [1] 314
+## 
+## 
+## $bio12
+## $bio12$fun
+##     fun 
+## "dnorm" 
+## 
+## $bio12$args
+## mean   sd 
+## 4000 2000 
+## 
+## $bio12$min
+## [1] 0
+## 
+## $bio12$max
+## [1] 9916
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Looking at how it is structured:}
+\KeywordTok{str}\NormalTok{(my.species}\OperatorTok{$}\NormalTok{details}\OperatorTok{$}\NormalTok{parameters)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## List of 2
+##  $ bio1 :List of 4
+##   ..$ fun : Named chr "dnorm"
+##   .. ..- attr(*, "names")= chr "fun"
+##   ..$ args: Named num [1:2] 250 50
+##   .. ..- attr(*, "names")= chr [1:2] "mean" "sd"
+##   ..$ min : num -269
+##   ..$ max : num 314
+##  $ bio12:List of 4
+##   ..$ fun : Named chr "dnorm"
+##   .. ..- attr(*, "names")= chr "fun"
+##   ..$ args: Named num [1:2] 4000 2000
+##   .. ..- attr(*, "names")= chr [1:2] "mean" "sd"
+##   ..$ min : num 0
+##   ..$ max : num 9916
+\end{verbatim}
+
+Hence, the main message here is if you want to explore the content of
+the virtual species object, use the function \texttt{str()}, look at
+which sub-objects you are interested in, and extract them with
+\texttt{\$}.
+
+\subsection{6.5. Saving the virtual species objects for later
+use}\label{saving-the-virtual-species-objects-for-later-use}
+
+If you want to save a virtual species object, you can save it on your
+hard drive, using the R function \texttt{save()}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{save}\NormalTok{(my.species, }\DataTypeTok{file =} \StringTok{"MyVirtualSpecies"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+You can load it in a later session of R, using \texttt{load()}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{load}\NormalTok{(}\DataTypeTok{file =} \StringTok{"MyVirtualSpecies"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+The object will be restored in the memory of R, with its original name.
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{7. Sampling occurrence
+points}\label{sampling-occurrence-points}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{7} \setcounter{figure}{0}
+
+\subsection{7.1. Basic usage}\label{basic-usage}
+
+If you generated virtual species distributions with this package, there
+is a good chance that your objective is to test a particular modelling
+protocol or technique. Hence, there is one last step for you to perform:
+the sampling of species occurrences. This can be done with the function
+\texttt{sampleOccurrences}, with which you can sample either
+``presence-absence'' or ``presence only'' occurrence data. The function
+\texttt{sampleOccurrences} also provides the possibility to introduce a
+number of sampling biases, such as uneven spatial sampling intensity,
+probability of detection, and probability of error.
+
+Let's see an example in practice, using the same tropical species we
+generated in the beginning of this tutorial:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Formatting of the response functions}
+\NormalTok{my.parameters <-}\StringTok{ }\KeywordTok{formatFunctions}\NormalTok{(}\DataTypeTok{bio1 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{250}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{),}
+                                 \DataTypeTok{bio12 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{4000}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{2000}\NormalTok{))}
+
+\CommentTok{# Generation of the virtual species}
+\NormalTok{my.first.species <-}\StringTok{ }\KeywordTok{generateSpFromFun}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]],}
+                                      \DataTypeTok{parameters =}\NormalTok{ my.parameters)}
+
+\CommentTok{# Conversion to presence-absence}
+\NormalTok{my.first.species <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species,}
+                                \DataTypeTok{beta =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{plot =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing species.prevalence automatically according to alpha and beta
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Sampling of 'presence only' occurrences}
+\NormalTok{presence.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                                     \DataTypeTok{n =} \DecValTok{30}\NormalTok{, }\CommentTok{# The number of points to sample}
+                                     \DataTypeTok{type =} \StringTok{"presence only"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp1b-1.pdf}
+\caption{Fig 7.1 Illustration of the points sampled for our virtual
+species}
+\end{figure}
+
+We can see that a map was plotted, with the sampled presence points
+illustrated with black dots.
+
+Now let's see how our object \texttt{presence.points} looks like:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{str}\NormalTok{(presence.points)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## List of 7
+##  $ detection.probability       :List of 2
+##   ..$ detection.probability : num 1
+##   ..$ correct.by.suitability: logi FALSE
+##  $ error.probability           : num 0
+##  $ bias                        : NULL
+##  $ replacement                 : logi FALSE
+##  $ original.distribution.raster:Formal class 'RasterLayer' [package "raster"] with 12 slots
+##  $ sample.plot                 :List of 3
+##   ..$ :Dotted pair list of 23
+##   ..$ : raw [1:35992] 00 00 00 00 ...
+##   .. ..- attr(*, "pkgName")= chr "graphics"
+##   ..$ :List of 2
+##   .. ..- attr(*, "pkgName")= chr "grid"
+##   ..- attr(*, "engineVersion")= int 12
+##   ..- attr(*, "pid")= int 11300
+##   ..- attr(*, "Rversion")=Classes 'R_system_version', 'package_version', 'numeric_version'  hidden list of 1
+##   ..- attr(*, "load")= chr(0) 
+##   ..- attr(*, "attach")= chr(0) 
+##   ..- attr(*, "class")= chr "recordedplot"
+##  $ sample.points               :'data.frame':    30 obs. of  4 variables:
+##   ..$ x       : num [1:30] -69.9 134.9 -11.1 -63.4 119.4 ...
+##   ..$ y       : num [1:30] 3.25 -3.92 7.25 4.25 -1.92 ...
+##   ..$ Real    : num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
+##   ..$ Observed: num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
+##  - attr(*, "RNGkind")= chr [1:2] "Mersenne-Twister" "Inversion"
+##  - attr(*, "seed")= int [1:626] 403 509 -2062912714 -486049541 1113081784 1066641640 -108305749 -360143619 395336582 2070128724 ...
+##  - attr(*, "class")= chr [1:2] "VSSampledPoints" "list"
+\end{verbatim}
+
+This is a list containing three elements:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \texttt{sampled.points}: a data frame containing the sampled points
+\item
+  \texttt{detection.probability} : the detection probability of our
+  virtual species
+\item
+  \texttt{error.probability}: the probability of an erroneous detection
+  of our virtual species
+\end{enumerate}
+
+We can specifically access the data frame of sampled points:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{presence.points}\OperatorTok{$}\NormalTok{sampled.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## NULL
+\end{verbatim}
+
+The data frame has four colums: the pixel coordinates \texttt{x} and
+\texttt{y}, the real presence/absence (1/0) of the species in the
+sampled pixel \texttt{Real}, and the result of the sampling
+\texttt{Observed} (1 = presence, 0 = absence, NA = no information). The
+columns \texttt{Real} and \texttt{Observed} differ only if you have
+specified a detection probability and/or an error probability.
+
+Now, let's sample the other type of occurrence data: presence-absence.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Sampling of 'presence-absence' occurrences}
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{30}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp4-1.pdf}
+\caption{Fig 7.2 Illustration of the presence-absence points sampled for
+our virtual species. Black dots are presences, open dots are absences.}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0
+##    .Observed:0
+## - Multiple samples can occur in a single cell: No
+## 
+##              x           y Real Observed
+## 1    40.750000  13.7500000    0        0
+## 2  -117.750000  40.9166667    0        0
+## 3   -74.750000  45.9166667    0        0
+## 4   133.083333  -2.5833333    0        0
+## 5   129.916667  46.5833333    0        0
+## 6   -69.250000  53.7500000    0        0
+## 7    44.916667  36.0833333    0        0
+## 8   124.583333 -25.4166667    0        0
+## 9   117.416667  53.0833333    0        0
+## 10  138.750000 -26.4166667    0        0
+## 11   41.250000   0.4166667    0        0
+## 12   22.250000  -5.4166667    0        0
+## 13   85.250000  22.4166667    0        0
+## 14   12.583333  21.2500000    0        0
+## 15   -9.250000  29.5833333    0        0
+## 16    3.583333   6.7500000    0        0
+## 17   -8.250000   7.0833333    0        0
+## 18   33.750000  10.0833333    0        0
+## 19   38.916667  38.7500000    0        0
+## 20   88.416667  61.2500000    0        0
+## 21   57.416667  81.5833333    0        0
+## 22   32.083333 -12.7500000    0        0
+## 23  159.250000  65.7500000    0        0
+## 24 -100.750000  19.0833333    0        0
+## 25  -96.083333  67.5833333    0        0
+## 26  -87.083333  38.7500000    0        0
+## 27   -6.916667  33.0833333    0        0
+## 28 -100.083333  38.9166667    0        0
+## 29  106.416667  63.7500000    0        0
+## 30  -46.916667  -4.9166667    0        0
+\end{verbatim}
+
+You can see that the points are sampled randomly throughout the whole
+raster. However, we may have only a few or even no presence points at
+all because the samples are purely random at the moment. We can define
+the number of presences and the number of absences by using the
+parameter
+\protect\hyperlink{defining-the-sample-prevalence}{\texttt{sample.prevalence}}.
+
+In the next section you will see how to limit the sampling to a region
+in particular, and after that, how to introduce a bias in the sampling
+procedure.
+
+\subsection{7.2. Delimiting a sampling
+area}\label{delimiting-a-sampling-area}
+
+There are three main possibilities to delimit the sampling areas :
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Specifying the region(s) of the world (country, continent, region
+\item
+  Provide a polygon (of type \texttt{SpatialPolygons} or
+  \texttt{SpatialPolygonsDataFrame} of package \texttt{sp})
+\item
+  Provide an \texttt{extent} object (a rectangular area, from the
+  package \texttt{raster})
+\end{enumerate}
+
+\subsubsection{7.2.1. Specifying the region(s) of the
+world}\label{specifying-the-regions-of-the-world}
+
+You can specify any combination of countries, continents and regions of
+the world to restrict your sampling area, using the argument
+\texttt{sampling.area}. For example:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Sampling of 'presence-absence' occurrences}
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{30}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{sampling.area =} \KeywordTok{c}\NormalTok{(}\StringTok{"South America"}\NormalTok{, }\StringTok{"Mexico"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp5-1.pdf}
+\caption{Fig 7.3 Illustration of points sampled in a restricted area
+(here, South America + Mexico)}
+\end{figure}
+
+The only restriction is to provide the correct names.
+
+The correct region names are: ``Africa'', ``Antarctica'', ``Asia'',
+``Australia'', ``Europe'', ``North America'', ``South America''
+
+The correct continent names are: ``Africa'', ``Antarctica'',
+``Australia'', ``Eurasia'', ``North America'', ``South America''
+
+And you can consult the correct names with the following commands:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(rworldmap, }\DataTypeTok{quiet =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## ### Welcome to rworldmap ###
+\end{verbatim}
+
+\begin{verbatim}
+## For a short introduction type :   vignette('rworldmap')
+\end{verbatim}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Country names}
+\KeywordTok{levels}\NormalTok{(}\KeywordTok{getMap}\NormalTok{()}\OperatorTok{@}\NormalTok{data}\OperatorTok{$}\NormalTok{SOVEREIGNT)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##   [1] "Afghanistan"                      "Albania"                         
+##   [3] "Algeria"                          "Andorra"                         
+##   [5] "Angola"                           "Antarctica"                      
+##   [7] "Antigua and Barbuda"              "Argentina"                       
+##   [9] "Armenia"                          "Australia"                       
+##  [11] "Austria"                          "Azerbaijan"                      
+##  [13] "Bahrain"                          "Bangladesh"                      
+##  [15] "Barbados"                         "Belarus"                         
+##  [17] "Belgium"                          "Belize"                          
+##  [19] "Benin"                            "Bhutan"                          
+##  [21] "Bolivia"                          "Bosnia and Herzegovina"          
+##  [23] "Botswana"                         "Brazil"                          
+##  [25] "Brunei"                           "Bulgaria"                        
+##  [27] "Burkina Faso"                     "Burundi"                         
+##  [29] "Cambodia"                         "Cameroon"                        
+##  [31] "Canada"                           "Cape Verde"                      
+##  [33] "Central African Republic"         "Chad"                            
+##  [35] "Chile"                            "China"                           
+##  [37] "Colombia"                         "Comoros"                         
+##  [39] "Costa Rica"                       "Croatia"                         
+##  [41] "Cuba"                             "Cyprus"                          
+##  [43] "Czech Republic"                   "Democratic Republic of the Congo"
+##  [45] "Denmark"                          "Djibouti"                        
+##  [47] "Dominica"                         "Dominican Republic"              
+##  [49] "East Timor"                       "Ecuador"                         
+##  [51] "Egypt"                            "El Salvador"                     
+##  [53] "Equatorial Guinea"                "Eritrea"                         
+##  [55] "Estonia"                          "Ethiopia"                        
+##  [57] "Federated States of Micronesia"   "Fiji"                            
+##  [59] "Finland"                          "France"                          
+##  [61] "Gabon"                            "Gambia"                          
+##  [63] "Georgia"                          "Germany"                         
+##  [65] "Ghana"                            "Greece"                          
+##  [67] "Grenada"                          "Guatemala"                       
+##  [69] "Guinea"                           "Guinea Bissau"                   
+##  [71] "Guyana"                           "Haiti"                           
+##  [73] "Honduras"                         "Hungary"                         
+##  [75] "Iceland"                          "India"                           
+##  [77] "Indonesia"                        "Iran"                            
+##  [79] "Iraq"                             "Ireland"                         
+##  [81] "Israel"                           "Italy"                           
+##  [83] "Ivory Coast"                      "Jamaica"                         
+##  [85] "Japan"                            "Jordan"                          
+##  [87] "Kashmir"                          "Kazakhstan"                      
+##  [89] "Kenya"                            "Kiribati"                        
+##  [91] "Kosovo"                           "Kuwait"                          
+##  [93] "Kyrgyzstan"                       "Laos"                            
+##  [95] "Latvia"                           "Lebanon"                         
+##  [97] "Lesotho"                          "Liberia"                         
+##  [99] "Libya"                            "Liechtenstein"                   
+## [101] "Lithuania"                        "Luxembourg"                      
+## [103] "Macedonia"                        "Madagascar"                      
+## [105] "Malawi"                           "Malaysia"                        
+## [107] "Maldives"                         "Mali"                            
+## [109] "Malta"                            "Marshall Islands"                
+## [111] "Mauritania"                       "Mauritius"                       
+## [113] "Mexico"                           "Moldova"                         
+## [115] "Monaco"                           "Mongolia"                        
+## [117] "Montenegro"                       "Morocco"                         
+## [119] "Mozambique"                       "Myanmar"                         
+## [121] "Namibia"                          "Nauru"                           
+## [123] "Nepal"                            "Netherlands"                     
+## [125] "New Zealand"                      "Nicaragua"                       
+## [127] "Niger"                            "Nigeria"                         
+## [129] "North Korea"                      "Northern Cyprus"                 
+## [131] "Norway"                           "Oman"                            
+## [133] "Pakistan"                         "Palau"                           
+## [135] "Palestine"                        "Panama"                          
+## [137] "Papua New Guinea"                 "Paraguay"                        
+## [139] "Peru"                             "Philippines"                     
+## [141] "Poland"                           "Portugal"                        
+## [143] "Qatar"                            "Republic of Serbia"              
+## [145] "Republic of the Congo"            "Romania"                         
+## [147] "Russia"                           "Rwanda"                          
+## [149] "Saint Kitts and Nevis"            "Saint Lucia"                     
+## [151] "Saint Vincent and the Grenadines" "Samoa"                           
+## [153] "San Marino"                       "Sao Tome and Principe"           
+## [155] "Saudi Arabia"                     "Senegal"                         
+## [157] "Seychelles"                       "Sierra Leone"                    
+## [159] "Singapore"                        "Slovakia"                        
+## [161] "Slovenia"                         "Solomon Islands"                 
+## [163] "Somalia"                          "Somaliland"                      
+## [165] "South Africa"                     "South Korea"                     
+## [167] "South Sudan"                      "Spain"                           
+## [169] "Sri Lanka"                        "Sudan"                           
+## [171] "Suriname"                         "Swaziland"                       
+## [173] "Sweden"                           "Switzerland"                     
+## [175] "Syria"                            "Taiwan"                          
+## [177] "Tajikistan"                       "Thailand"                        
+## [179] "The Bahamas"                      "Togo"                            
+## [181] "Tonga"                            "Trinidad and Tobago"             
+## [183] "Tunisia"                          "Turkey"                          
+## [185] "Turkmenistan"                     "Tuvalu"                          
+## [187] "Uganda"                           "Ukraine"                         
+## [189] "United Arab Emirates"             "United Kingdom"                  
+## [191] "United Republic of Tanzania"      "United States of America"        
+## [193] "Uruguay"                          "Uzbekistan"                      
+## [195] "Vanuatu"                          "Vatican"                         
+## [197] "Venezuela"                        "Vietnam"                         
+## [199] "Western Sahara"                   "Yemen"                           
+## [201] "Zambia"                           "Zimbabwe"
+\end{verbatim}
+
+\subsubsection{7.2.2. Providing a polygon}\label{providing-a-polygon}
+
+In this case you have to import in R your own polygon, using commands of
+the package \texttt{sp}. The polygon has to be of type
+\texttt{SpatialPolygons} or \texttt{SpatialPolygonsDataFrame}.
+
+We will use here the example of a \texttt{SpatialPolygonsDataFrame}
+which we can download straight into R using the function
+\texttt{getData()} of the package \texttt{raster}. Since our species is
+a tropical species, let's assume we are working in Brasil only. Remember
+that this is an example, and that you can import your own polygons into
+R.
+
+First, let's download our polygon:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{brasil <-}\StringTok{ }\KeywordTok{getData}\NormalTok{(}\StringTok{"GADM"}\NormalTok{, }\DataTypeTok{country =} \StringTok{"BRA"}\NormalTok{, }\DataTypeTok{level =} \DecValTok{0}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp7-1.pdf}
+\caption{Fig 7.4 A polygon of the brazil}
+\end{figure}
+
+Now, to limit the sampling area to our polygon, we simply provide it to
+the argument \texttt{sampling.area} of the function
+\texttt{sampleOccurrences}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{30}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{sampling.area =}\NormalTok{ brasil)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp8-1.pdf}
+\caption{Fig 7.5 Points sampled within the Brazil polygon}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0.133333333333333
+##    .Observed:0.133333333333333
+## - Multiple samples can occur in a single cell: No
+## 
+##            x           y Real Observed
+## 1  -70.75000  -6.9166667    1        1
+## 2  -63.75000  -6.7500000    0        0
+## 3  -39.08333  -4.0833333    0        0
+## 4  -41.75000  -6.7500000    0        0
+## 5  -49.41667 -14.7500000    0        0
+## 6  -67.91667  -0.9166667    1        1
+## 7  -49.08333 -25.5833333    0        0
+## 8  -47.25000 -20.9166667    0        0
+## 9  -52.08333  -1.9166667    0        0
+## 10 -43.91667  -9.2500000    0        0
+## 11 -48.25000 -10.4166667    0        0
+## 12 -37.75000  -9.2500000    0        0
+## 13 -50.75000 -27.0833333    0        0
+## 14 -55.91667 -29.7500000    0        0
+## 15 -65.58333  -7.0833333    0        0
+## 16 -52.58333 -18.4166667    0        0
+## 17 -54.25000  -3.0833333    0        0
+## 18 -67.08333  -5.4166667    1        1
+## 19 -44.58333  -1.9166667    0        0
+## 20 -58.75000 -10.9166667    0        0
+## 21 -62.58333  -9.4166667    0        0
+## 22 -57.75000  -9.0833333    0        0
+## 23 -39.41667 -11.5833333    0        0
+## 24 -61.25000   4.2500000    0        0
+## 25 -47.91667  -2.7500000    0        0
+## 26 -57.58333  -0.4166667    0        0
+## 27 -51.91667  -3.4166667    0        0
+## 28 -57.58333 -10.5833333    0        0
+## 29 -54.08333 -25.0833333    0        0
+## 30 -60.41667  -5.2500000    1        1
+\end{verbatim}
+
+It worked!
+
+However, the plot is not very convenient because it kept the scale of
+our input raster, so we may be interested in manually restricting the
+plot region to Brasil:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# First we get our data frame of occurrence points}
+\NormalTok{occ <-}\StringTok{ }\NormalTok{PA.points}\OperatorTok{$}\NormalTok{sample.points}
+
+\KeywordTok{plot}\NormalTok{(my.first.species}\OperatorTok{$}\NormalTok{pa.raster, }
+     \DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{80}\NormalTok{, }\OperatorTok{-}\DecValTok{20}\NormalTok{),}
+     \DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{35}\NormalTok{, }\DecValTok{5}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(brasil, }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(occ[occ}\OperatorTok{$}\NormalTok{Observed }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{, }\KeywordTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{)], }\DataTypeTok{pch =} \DecValTok{16}\NormalTok{, }\DataTypeTok{cex =}\NormalTok{ .}\DecValTok{8}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(occ[occ}\OperatorTok{$}\NormalTok{Observed }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{, }\KeywordTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{)], }\DataTypeTok{pch =} \DecValTok{1}\NormalTok{, }\DataTypeTok{cex =}\NormalTok{ .}\DecValTok{8}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp9-1.pdf}
+\caption{Fig 7.6 Points sampled within the Brazil polygon, with a
+suitable zoom}
+\end{figure}
+
+\hypertarget{providing-an-extent-object}{\subsubsection{7.2.3. Providing
+an extent object}\label{providing-an-extent-object}}
+
+An extent object is a rectangular area defined by four coordinates
+xmin/xmax/ymin/ymax. You can easily create an extent object using the
+command \texttt{extent}, of the package \texttt{raster}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.extent <-}\StringTok{ }\KeywordTok{extent}\NormalTok{(}\OperatorTok{-}\DecValTok{80}\NormalTok{, }\OperatorTok{-}\DecValTok{20}\NormalTok{, }\OperatorTok{-}\DecValTok{35}\NormalTok{, }\OperatorTok{-}\DecValTok{5}\NormalTok{)}
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{30}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{sampling.area =}\NormalTok{ my.extent)}
+\KeywordTok{plot}\NormalTok{(my.extent, }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp10-1.pdf}
+\caption{Fig 7.7 Points sampled within our extent object}
+\end{figure}
+
+\subsection{7.3. Introducing a sampling
+bias}\label{introducing-a-sampling-bias}
+
+\subsubsection{7.3.1.Detection probability}\label{detection-probability}
+
+Detection probability has been shown to be influencial on SDM
+performance. Hence, you might be interested in generating species with
+varying degrees of detection probability. This can be done easily, using
+the argument \texttt{detection.probability}, ranging from 0 (species
+cannot be detected) to 1 (species is always detected):
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Let's try to find samples of a very cryptic species}
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{sampling.area =} \StringTok{"Brazil"}\NormalTok{,}
+                               \DataTypeTok{n =} \DecValTok{50}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{detection.probability =} \FloatTok{0.3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp11-1.pdf}
+\caption{Fig 7.8 Presence-absence points sampled with a low detection
+probability}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 50
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 0.3
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0.2
+##    .Observed:0.06
+## - Multiple samples can occur in a single cell: No
+## 
+##            x           y Real Observed
+## 1  -42.91667 -16.4166667    0        0
+## 2  -72.91667  -7.7500000    0        0
+## 3  -56.25000 -18.0833333    0        0
+## 4  -54.25000 -30.2500000    0        0
+## 5  -71.91667  -6.9166667    1        0
+## 6  -51.08333 -16.7500000    0        0
+## 7  -56.75000 -12.5833333    0        0
+## 8  -68.91667  -1.7500000    1        0
+## 9  -58.75000 -13.0833333    0        0
+## 10 -62.08333  -0.2500000    1        1
+## 11 -46.58333 -14.5833333    0        0
+## 12 -52.75000 -17.9166667    0        0
+## 13 -59.25000  -0.4166667    0        0
+## 14 -50.75000  -7.5833333    0        0
+## 15 -54.25000 -11.7500000    0        0
+## 16 -65.58333  -3.7500000    1        0
+## 17 -49.41667 -24.0833333    0        0
+## 18 -71.75000  -5.7500000    0        0
+## 19 -61.91667  -7.7500000    0        0
+## 20 -64.08333  -9.7500000    0        0
+## 21 -40.58333  -6.0833333    0        0
+## 22 -53.41667  -6.2500000    0        0
+## 23 -45.91667  -2.9166667    0        0
+## 24 -49.91667  -6.2500000    0        0
+## 25 -35.08333  -8.2500000    0        0
+## 26 -55.58333  -0.9166667    1        1
+## 27 -46.75000 -24.2500000    0        0
+## 28 -57.58333 -12.5833333    0        0
+## 29 -70.25000  -4.4166667    1        0
+## 30 -42.58333  -7.5833333    0        0
+## 31 -55.25000 -12.0833333    0        0
+## 32 -51.58333  -7.0833333    0        0
+## 33 -38.25000  -9.4166667    0        0
+## 34 -53.08333  -6.7500000    0        0
+## 35 -52.75000 -27.5833333    0        0
+## 36 -41.75000 -14.2500000    0        0
+## 37 -37.91667 -11.5833333    0        0
+## 38 -49.91667 -29.4166667    0        0
+## 39 -39.58333  -5.7500000    0        0
+## 40 -63.58333  -2.0833333    1        0
+## 41 -43.08333  -9.4166667    0        0
+## 42 -51.75000  -6.5833333    0        0
+## 43 -70.91667  -7.4166667    1        1
+## 44 -49.91667  -8.9166667    0        0
+## 45 -45.41667 -14.2500000    0        0
+## 46 -67.75000  -5.7500000    0        0
+## 47 -63.25000  -5.4166667    1        0
+## 48 -40.75000 -14.0833333    0        0
+## 49 -55.41667  -5.4166667    0        0
+## 50 -57.41667  -7.9166667    1        0
+\end{verbatim}
+
+You can see that some points sampled in its distribution range are
+classified as ``absences''.
+
+If you use this argument when sampling `presence only' occurrences, then
+this will result in a lower number of sampled points than asked:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PO.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{sampling.area =} \StringTok{"Brazil"}\NormalTok{,}
+                               \DataTypeTok{n =} \DecValTok{50}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence only"}\NormalTok{,}
+                               \DataTypeTok{detection.probability =} \FloatTok{0.3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp12-1.pdf}
+\caption{Fig 7.9 Presence only points sampled with a low detection
+probability}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PO.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 50
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 0.3
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Multiple samples can occur in a single cell: No
+## 
+##            x           y Real Observed
+## 1  -72.08333  -8.0833333    1       NA
+## 2  -72.08333  -7.9166667    1       NA
+## 3  -56.58333  -4.2500000    1       NA
+## 4  -65.91667  -5.9166667    1        1
+## 5  -49.58333  -2.5833333    1       NA
+## 6  -65.58333  -5.7500000    1       NA
+## 7  -51.08333   1.7500000    1       NA
+## 8  -50.58333  -1.4166667    1       NA
+## 9  -55.75000  -5.4166667    1       NA
+## 10 -69.91667   0.4166667    1       NA
+## 11 -54.25000  -8.9166667    1       NA
+## 12 -68.58333  -4.4166667    1       NA
+## 13 -69.58333  -3.9166667    1        1
+## 14 -53.41667   0.5833333    1        1
+## 15 -67.91667  -7.4166667    1       NA
+## 16 -53.58333 -11.7500000    1       NA
+## 17 -64.91667  -0.9166667    1       NA
+## 18 -67.25000  -0.4166667    1       NA
+## 19 -66.25000  -6.5833333    1       NA
+## 20 -51.58333   1.7500000    1       NA
+## 21 -48.91667  -2.5833333    1       NA
+## 22 -54.75000   0.2500000    1       NA
+## 23 -57.91667  -7.4166667    1        1
+## 24 -62.08333  -2.4166667    1        1
+## 25 -66.91667  -2.7500000    1        1
+## 26 -66.41667  -3.5833333    1        1
+## 27 -70.08333  -5.4166667    1        1
+## 28 -63.41667 -10.2500000    1        1
+## 29 -59.41667  -6.4166667    1       NA
+## 30 -64.91667  -2.4166667    1        1
+## 31 -55.58333  -4.4166667    1        1
+## 32 -52.25000   2.5833333    1       NA
+## 33 -68.41667  -5.9166667    1       NA
+## 34 -68.25000   1.2500000    1       NA
+## 35 -61.08333  -5.9166667    1       NA
+## 36 -51.08333  -7.2500000    1        1
+## 37 -69.41667  -1.5833333    1       NA
+## 38 -61.58333  -5.7500000    1       NA
+## 39 -62.58333 -10.0833333    1       NA
+## 40 -63.91667 -10.2500000    1       NA
+## 41 -69.25000   0.2500000    1       NA
+## 42 -67.91667  -4.4166667    1       NA
+## 43 -56.41667  -2.7500000    1        1
+## 44 -67.41667  -1.5833333    1       NA
+## 45 -57.91667  -7.5833333    1       NA
+## 46 -63.08333  -0.7500000    1        1
+## 47 -51.08333   3.4166667    1        1
+## 48 -56.08333   0.4166667    1        1
+## 49 -64.91667  -7.2500000    1        1
+## 50 -66.58333  -1.4166667    1       NA
+\end{verbatim}
+
+In this case, we see that out of all the possible sampling points, only
+a fraction are sampled as presence points.
+
+\subsubsection{7.3.2. Detection probability as a function of
+environmental
+suitability}\label{detection-probability-as-a-function-of-environmental-suitability}
+
+You can further complexify the detection probability by making it
+dependent on the environmental suitability. In this case, cells will be
+weighted by the environmental suitability: less suitable cells will have
+a lesser chance of detecting the species. This can be seen as an impact
+on the population size: a higher environmental suitability increases the
+population size, and thus the detection probability. How does this work
+in practice?
+
+The initial probability of detection (\(P_{di}\)) is multiplied by the
+environmental suitability (\(S\)) to obtain the final probability of
+detection (\(P_d\)):
+
+\[P_d = P_{di} \times S\]
+
+Hence, if our species has a probability of detection of 0.5, the final
+probability of detection will be:
+
+\begin{itemize}
+\tightlist
+\item
+  1 if the cell has an environmental suitability of 1
+\item
+  0.25 if the cell has an environmental suitability of 0.5
+\end{itemize}
+
+Of course, no occurrence points will be detected outside the
+distribution range, regardless of their environmental suitability.
+
+You can also keep the detection probability to 1, and set
+\texttt{correct.by.suitabilaty\ =\ TRUE}. In that case, the detection
+probability will be equal to the environmental suitability. This can be
+seen as a species whose detection probability is strictly dependent on
+its population size, which in turn is strictly dependent on the
+environmental suitability.
+
+An example in practice:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{sampling.area =} \StringTok{"Brazil"}\NormalTok{,}
+                               \DataTypeTok{n =} \DecValTok{100}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{detection.probability =} \DecValTok{1}\NormalTok{,}
+                               \DataTypeTok{correct.by.suitability =} \OtherTok{TRUE}\NormalTok{,}
+                               \DataTypeTok{plot =} \OtherTok{FALSE}\NormalTok{)}
+
+\CommentTok{# Below is a custom plot to show the sampled point above the map of environmental suitability}
+\NormalTok{occ <-}\StringTok{ }\NormalTok{PA.points}\OperatorTok{$}\NormalTok{sample.points}
+
+\KeywordTok{plot}\NormalTok{(my.first.species}\OperatorTok{$}\NormalTok{suitab.raster, }
+     \DataTypeTok{xlim =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{80}\NormalTok{, }\OperatorTok{-}\DecValTok{20}\NormalTok{),}
+     \DataTypeTok{ylim =} \KeywordTok{c}\NormalTok{(}\OperatorTok{-}\DecValTok{35}\NormalTok{, }\DecValTok{5}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(brasil, }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(occ[occ}\OperatorTok{$}\NormalTok{Observed }\OperatorTok{==}\StringTok{ }\DecValTok{1}\NormalTok{, }\KeywordTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{)], }\DataTypeTok{pch =} \DecValTok{16}\NormalTok{, }\DataTypeTok{cex =}\NormalTok{ .}\DecValTok{8}\NormalTok{)}
+\KeywordTok{points}\NormalTok{(occ[occ}\OperatorTok{$}\NormalTok{Observed }\OperatorTok{==}\StringTok{ }\DecValTok{0}\NormalTok{, }\KeywordTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{)], }\DataTypeTok{pch =} \DecValTok{1}\NormalTok{, }\DataTypeTok{cex =}\NormalTok{ .}\DecValTok{8}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp13-1.pdf}
+\caption{Fig 7.10 Presence-absence points sampled with a detection
+probability equal to the environmental suitability}
+\end{figure}
+
+\subsubsection{7.3.3. Error probability}\label{error-probability}
+
+You can also introduce an error probability, which is a probability of
+finding the species where it is absent. This is straightforward with the
+argument \texttt{error.probability}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{sampling.area =} \StringTok{"Brazil"}\NormalTok{,}
+                               \DataTypeTok{n =} \DecValTok{20}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{error.probability =} \FloatTok{0.3}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp14-1.pdf}
+\caption{Fig 7.11 Presence-absence points sampled with an error
+probability of 0.3}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 20
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0.3
+## - Sample prevalence: 
+##    .True:0.25
+##    .Observed:0.5
+## - Multiple samples can occur in a single cell: No
+## 
+##            x           y Real Observed
+## 1  -55.58333  -0.4166667    0        0
+## 2  -68.75000  -3.5833333    1        1
+## 3  -57.25000 -13.7500000    0        1
+## 4  -42.41667 -10.5833333    0        1
+## 5  -36.91667  -9.4166667    0        1
+## 6  -48.08333 -20.4166667    0        0
+## 7  -58.25000  -7.0833333    1        1
+## 8  -51.08333 -22.4166667    0        1
+## 9  -56.58333 -22.0833333    0        0
+## 10 -52.58333  -2.0833333    0        0
+## 11 -51.58333  -1.7500000    0        0
+## 12 -50.75000  -3.2500000    1        1
+## 13 -47.75000 -17.9166667    0        0
+## 14 -48.08333  -3.0833333    0        0
+## 15 -67.91667  -4.2500000    1        1
+## 16 -39.91667 -14.5833333    0        0
+## 17 -61.91667  -6.2500000    1        1
+## 18 -48.75000 -21.4166667    0        0
+## 19 -63.58333  -8.5833333    0        1
+## 20 -52.75000 -29.9166667    0        0
+\end{verbatim}
+
+Two important remarks with the error probability:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  The error probability is useless in a `presence only' sampling scheme,
+  because the sampling strictly occurs within the boundaries of the
+  species distribution range. Nevertheless, \textbf{if you still want to
+  introduce errors}, then make a sampling scheme `presence-absence', and
+  use only the `presence' points obtained.
+\item
+  \textbf{There is an interaction between the detection probability and
+  the error probability}: in a cell where the species is present, but
+  not detected, a presence can still be attributed because of an error.
+  See the following (extreme) example, for a species with a low
+  detection probability and high error probability:
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{sampling.area =} \StringTok{"Brazil"}\NormalTok{,}
+                               \DataTypeTok{n =} \DecValTok{20}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{detection.probability =} \FloatTok{0.2}\NormalTok{,}
+                               \DataTypeTok{error.probability =} \FloatTok{0.8}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp15-1.pdf}
+\caption{Fig 7.12 Presence-absence points sampled with a detection
+probability of 0.2, and an error probability of 0.8. In numerous pixels
+the species was not detected, but erroneous presences were nevertheless
+attributed.}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 20
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 0.2
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0.8
+## - Sample prevalence: 
+##    .True:0.15
+##    .Observed:0.9
+## - Multiple samples can occur in a single cell: No
+## 
+##            x            y Real Observed
+## 1  -55.91667  -3.41666667    0        0
+## 2  -72.75000  -7.08333333    0        1
+## 3  -72.08333  -9.75000000    0        1
+## 4  -62.91667  -1.08333333    0        1
+## 5  -52.08333  -8.41666667    0        1
+## 6  -73.58333  -7.75000000    0        1
+## 7  -63.58333   0.25000000    1        0
+## 8  -55.58333 -20.75000000    0        1
+## 9  -51.08333 -11.58333333    0        1
+## 10 -55.41667 -30.91666667    0        1
+## 11 -45.41667 -19.58333333    0        1
+## 12 -51.58333   0.08333333    0        1
+## 13 -49.58333 -26.75000000    0        1
+## 14 -35.41667  -8.41666667    0        1
+## 15 -40.58333 -17.25000000    0        1
+## 16 -40.91667 -16.41666667    0        1
+## 17 -68.75000  -2.91666667    1        1
+## 18 -43.25000  -5.75000000    0        1
+## 19 -67.58333  -7.41666667    1        1
+## 20 -62.08333 -12.75000000    0        1
+\end{verbatim}
+
+\hypertarget{uneven-sampling-intensity}{\subsubsection{7.3.4. Uneven
+sampling intensity}\label{uneven-sampling-intensity}}
+
+The \texttt{sampleOccurrences} also allows you to introduce a sampling
+bias such as uneven sampling intensity in space. How does it works?
+
+You will have to define a region in which the sampling is biased, with
+arguments \texttt{bias} and \texttt{area}. In this region, the sampling
+will be biased by a strength equal to the argument
+\texttt{bias.strength}. If \texttt{bias.strength} is equal to 50 for
+example, then the sampling will be 50 times more intense in the chosen
+area. If \texttt{bias.strength}is below 1, then the sampling will be
+less intense in the biased area than elsewhere.
+
+Let's see an example in practice before we go into the details:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PO.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{100}\NormalTok{, }
+                               \DataTypeTok{bias =} \StringTok{"region"}\NormalTok{,}
+                               \DataTypeTok{bias.strength =} \DecValTok{20}\NormalTok{,}
+                               \DataTypeTok{bias.area =} \StringTok{"South America"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp16-1.pdf}
+\caption{Fig 7.13 Presence only points sampled with a strong bias in
+South America (20 times more sample)}
+\end{figure}
+
+Now that you have grasped how the bias works, let's see the different
+possibilities:
+
+\begin{itemize}
+\tightlist
+\item
+  Introducing a bias using country, region or continent names\\
+  Set either \texttt{bias\ =\ "country"}, \texttt{bias\ =\ "region"} or
+  \texttt{bias\ =\ "continent"}, and provide to \texttt{bias.area} the
+  name(s) of the country(-ies), region(s) or continent(s).
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PO.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{100}\NormalTok{, }
+                               \DataTypeTok{bias =} \StringTok{"country"}\NormalTok{,}
+                               \DataTypeTok{bias.strength =} \DecValTok{20}\NormalTok{,}
+                               \DataTypeTok{bias.area =} \KeywordTok{c}\NormalTok{(}\StringTok{"Mexico"}\NormalTok{, }\StringTok{"Colombia"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp17-1.pdf}
+\caption{Fig 7.14 Presence only points sampled with a strong bias in
+Mexico and Colombia}
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  Using a polygon in which the sampling will be biased\\
+  Set \texttt{bias\ =\ "polygon"}, and provide a polygon (of type
+  \texttt{SpatialPolygons} or \texttt{SpatialPolygonsDataFrame} from
+  package \texttt{sp}) to the argument \texttt{bias.area}.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{philippines <-}\StringTok{ }\KeywordTok{getData}\NormalTok{(}\StringTok{"GADM"}\NormalTok{, }\DataTypeTok{country =} \StringTok{"PHL"}\NormalTok{, }\DataTypeTok{level =} \DecValTok{0}\NormalTok{)}
+\NormalTok{PO.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{100}\NormalTok{, }
+                               \DataTypeTok{bias =} \StringTok{"polygon"}\NormalTok{,}
+                               \DataTypeTok{bias.strength =} \DecValTok{50}\NormalTok{,}
+                               \DataTypeTok{bias.area =}\NormalTok{ philippines)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in sampleOccurrences(my.first.species, n = 100, bias = "polygon", : Polygon projection is not checked. Please make sure you have the 
+##             same projections between your polygon and your presence-absence
+##             raster
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp18-1.pdf}
+\caption{Fig 7.15 Presence only points sampled with strong bias for the
+Philippines, using a polygon}
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  Using an extent object\\
+  Set \texttt{bias\ =\ "extent"}, and provide an extent to the argument
+  \texttt{bias.area} (\protect\hyperlink{providing-an-extent-object}{see
+  section 7.2.3. if you are not familiar with extents}). You can also
+  simply set \texttt{bias.area\ =\ polygon}, and click twice on the map
+  when asked to:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PO.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{100}\NormalTok{, }
+                               \DataTypeTok{bias =} \StringTok{"extent"}\NormalTok{,}
+                               \DataTypeTok{bias.strength =} \DecValTok{50}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{itemize}
+\tightlist
+\item
+  Manually defining weights for all the cells\\
+  A last option is to manually define the weights with which the
+  sampling will be biased. This may be especially useful when you want
+  to precisely create a sampling bias. To do this, set
+  \texttt{bias\ =\ "manual"}, and provide a raster of weights to the
+  argument \texttt{weights}.\\
+  To clear things up, we will see an example together:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\KeywordTok{library}\NormalTok{(rworldmap)}
+\CommentTok{# First, we create a raster of weights}
+\CommentTok{# As an arbitrary example, we will use the area of each cell as a weight:}
+\CommentTok{# larger cells have more chance of being sampled}
+\NormalTok{weight.raster <-}\StringTok{ }\KeywordTok{area}\NormalTok{(worldclim)}
+
+\KeywordTok{plot}\NormalTok{(weight.raster)}
+\KeywordTok{plot}\NormalTok{(}\KeywordTok{getMap}\NormalTok{(), }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp20-1.pdf}
+\caption{Fig 7.16 Raster used to weight the sampling bias: a raster of
+cell areas}
+\end{figure}
+
+Now, let's weight our samplings using this raster:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PO.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{100}\NormalTok{, }
+                               \DataTypeTok{bias =} \StringTok{"manual"}\NormalTok{,}
+                               \DataTypeTok{weights =}\NormalTok{ weight.raster)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp21-1.pdf}
+\caption{Fig 7.16 Presence only points sampled with a sampling biased
+according to the area of each cell}
+\end{figure}
+
+Of course, the changes are not visible, because our species occurs
+mainly in pixels of relatively similar areas. Nevertheless, this example
+should be useful if you want to create a manual sampling bias later on.
+
+\textbf{Important note} Please note that when using rasters based on
+longitude-latitude, larger cells have \emph{automatically} more chance
+of being sampled than smaller cells, so you do not need to do it by
+yourself. See documentation of the \texttt{randomPoints} function of
+package \texttt{dismo} for more details.
+
+\subsubsection{7.3.5. Sampling multiple records in the same
+cells}\label{sampling-multiple-records-in-the-same-cells}
+
+In real datasets such as Museum datasets, it is frequent to have
+multiple records in the same cells. To mimic such datasets, it is
+possible to allow the function to sample repeatedly in the same cells:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PO.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{1000}\NormalTok{, }
+                               \DataTypeTok{replacement =} \OtherTok{TRUE}\NormalTok{,}
+                               \DataTypeTok{plot =} \OtherTok{FALSE}\NormalTok{)}
+
+\CommentTok{# Number of duplicated records: }
+\KeywordTok{length}\NormalTok{(}\KeywordTok{which}\NormalTok{(}\KeywordTok{duplicated}\NormalTok{(PO.points}\OperatorTok{$}\NormalTok{sample.points[, }\KeywordTok{c}\NormalTok{(}\StringTok{"x"}\NormalTok{, }\StringTok{"y"}\NormalTok{)])))}
+\end{Highlighting}
+\end{Shaded}
+
+\hypertarget{defining-the-sample-prevalence}{\subsection{7.4. Defining
+the sample prevalence}\label{defining-the-sample-prevalence}}
+
+\emph{The sample prevalence is the proportion of samples in which the
+species has been found. It is therefore different from the species
+prevalence which
+\protect\hyperlink{conversion-to-presence-absence-based-on-a-value-of-species-prevalence}{was
+mentionned earlier}.}
+
+You can define the desired sample prevalence when sampling presences and
+absences, with the parameter \texttt{sample.prevalence}:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points <-}\StringTok{ }\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species,}
+                               \DataTypeTok{n =} \DecValTok{30}\NormalTok{,}
+                               \DataTypeTok{type =} \StringTok{"presence-absence"}\NormalTok{,}
+                               \DataTypeTok{sample.prevalence =} \FloatTok{0.5}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/samp23-1.pdf}
+\caption{Fig 7.17 Presence-absence points sampled with a prevalence of
+0.5 (i.e., 50\% of presence points, 50\% of absence points)}
+\end{figure}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PA.points}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Sample prevalence: 
+##    .True:0.5
+##    .Observed:0.5
+## - Multiple samples can occur in a single cell: No
+## 
+##              x          y Real Observed
+## 1   112.416667  -2.250000    1        1
+## 2   147.250000  -5.416667    1        1
+## 3   147.916667  -6.583333    1        1
+## 4   -76.583333   4.583333    1        1
+## 5   121.416667  18.916667    1        1
+## 6   103.583333  -4.750000    1        1
+## 7   -65.083333   5.250000    1        1
+## 8   -61.250000  -3.083333    1        1
+## 9   -58.416667 -11.750000    1        1
+## 10  -50.916667   0.250000    1        1
+## 11  -77.750000  -1.750000    1        1
+## 12  142.083333  -5.750000    1        1
+## 13   99.083333  11.583333    1        1
+## 14  -62.916667  -9.750000    1        1
+## 15  -49.416667  -4.916667    1        1
+## 16 -124.083333  58.250000    0        0
+## 17  -82.750000  31.250000    0        0
+## 18  137.083333 -22.416667    0        0
+## 19  -59.083333 -29.916667    0        0
+## 20  -66.083333  49.250000    0        0
+## 21    4.416667  43.583333    0        0
+## 22   78.250000  67.916667    0        0
+## 23   83.750000  21.916667    0        0
+## 24  130.750000 -14.583333    0        0
+## 25   27.083333  49.083333    0        0
+## 26  107.750000  33.916667    0        0
+## 27   15.916667   7.916667    0        0
+## 28   89.916667  24.916667    0        0
+## 29   29.583333  23.583333    0        0
+## 30   25.916667  21.750000    0        0
+\end{verbatim}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\section{8. Introducing a dispersal
+bias}\label{introducing-a-dispersal-bias}
+
+\begin{center}\rule{0.5\linewidth}{\linethickness}\end{center}
+
+\setcounter{section}{8} \setcounter{figure}{0}
+
+One of the most disputed assumptions of species distribution models is
+that species are at equilibrium with their environment. This assumptions
+means that species are supposed to occupy their full range of suitable
+environmental conditions. In reality, it is unlikely, because of
+dispersal limitations, biotic interactions, etc., which precludes
+species to occupy areas which are theoretically suitable. As a
+consequence, it is worth testing how well modelling techniques perform
+when this assumption is violated.
+
+This is why we introduced the possibility of biasing the distribution of
+species, to simulate species which are not at equilibrium. This
+possibility is implemented in the function \texttt{limitDistribution}.
+
+\subsection{8.1. An introduction
+example}\label{an-introduction-example-2}
+
+Let's use the same virtual species we generated above:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{# Formatting of the response functions}
+\NormalTok{my.parameters <-}\StringTok{ }\KeywordTok{formatFunctions}\NormalTok{(}\DataTypeTok{bio1 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{250}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{50}\NormalTok{),}
+                                 \DataTypeTok{bio12 =} \KeywordTok{c}\NormalTok{(}\DataTypeTok{fun =} \StringTok{'dnorm'}\NormalTok{, }\DataTypeTok{mean =} \DecValTok{4000}\NormalTok{, }\DataTypeTok{sd =} \DecValTok{2000}\NormalTok{))}
+
+\CommentTok{# Generation of the virtual species}
+\NormalTok{my.first.species <-}\StringTok{ }\KeywordTok{generateSpFromFun}\NormalTok{(}\DataTypeTok{raster.stack =}\NormalTok{ worldclim[[}\KeywordTok{c}\NormalTok{(}\StringTok{"bio1"}\NormalTok{, }\StringTok{"bio12"}\NormalTok{)]],}
+                                      \DataTypeTok{parameters =}\NormalTok{ my.parameters)}
+
+\CommentTok{# Conversion to presence-absence}
+\NormalTok{my.first.species <-}\StringTok{ }\KeywordTok{convertToPA}\NormalTok{(my.first.species,}
+                                \DataTypeTok{beta =} \FloatTok{0.7}\NormalTok{, }\DataTypeTok{plot =} \OtherTok{FALSE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+##    --- Determing species.prevalence automatically according to alpha and beta
+\end{verbatim}
+
+Now, let's assume our species originates from South America, and has not
+been able to disperse through the oceans (result in figure 8.2).
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.first.species <-}\StringTok{ }\KeywordTok{limitDistribution}\NormalTok{(my.first.species, }
+                                      \DataTypeTok{geographical.limit =} \StringTok{"continent"}\NormalTok{,}
+                                      \DataTypeTok{area =} \StringTok{"South America"}\NormalTok{,}
+                                      \DataTypeTok{plot =} \OtherTok{FALSE}\NormalTok{)}
+
+\KeywordTok{par}\NormalTok{(}\DataTypeTok{mfrow =} \KeywordTok{c}\NormalTok{(}\DecValTok{2}\NormalTok{, }\DecValTok{1}\NormalTok{))}
+\KeywordTok{plot}\NormalTok{(my.first.species}\OperatorTok{$}\NormalTok{pa.raster, }\DataTypeTok{main =} \StringTok{"Theoretical distribution"}\NormalTok{)}
+\KeywordTok{plot}\NormalTok{(my.first.species}\OperatorTok{$}\NormalTok{occupied.area, }\DataTypeTok{main =} \StringTok{"Realised distribution"}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/dist2-1.pdf}
+\caption{Fig. 8.2 Distribution of a species limited to South America}
+\end{figure}
+
+In the following sections, we see how to customise this function, but
+\protect\hyperlink{uneven-sampling-intensity}{the usage is basically the
+same as when applying a sampling bias.}
+
+\subsection{8.2. Customisation of the
+parameters}\label{customisation-of-the-parameters-1}
+
+There are 5 main possibilities to limit the distribution to a particular
+area.
+
+\subsubsection{8.2.1. Using countries, regions or
+continents}\label{using-countries-regions-or-continents}
+
+As illustrated in the example above, use
+\texttt{geographical.limit\ =\ "country"},
+\texttt{geographical.limit\ =\ continent} or
+\texttt{geographical.limit\ =\ "region"} and provide the correct name(s)
+of the area to \texttt{area}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.sp1 <-}\StringTok{ }\KeywordTok{limitDistribution}\NormalTok{(my.first.species, }
+                            \DataTypeTok{geographical.limit =} \StringTok{"country"}\NormalTok{,}
+                            \DataTypeTok{area =} \KeywordTok{c}\NormalTok{(}\StringTok{"Brazil"}\NormalTok{, }\StringTok{"Venezuela"}\NormalTok{))}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/dist3-1.pdf}
+\caption{Fig. 8.3 Distribution of a species arbitrary limited to Brazil
+and Venezuela}
+\end{figure}
+
+\subsubsection{8.2.2. Using a polygon}\label{using-a-polygon}
+
+Set \texttt{geographical.limit\ =\ "polygon"}, and provide a polygon (of
+type \texttt{SpatialPolygons} or \texttt{SpatialPolygonsDataFrame} from
+package \texttt{sp}) to the argument \texttt{area}.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{philippines <-}\StringTok{ }\KeywordTok{getData}\NormalTok{(}\StringTok{"GADM"}\NormalTok{, }\DataTypeTok{country =} \StringTok{"PHL"}\NormalTok{, }\DataTypeTok{level =} \DecValTok{0}\NormalTok{)}
+\NormalTok{my.sp2 <-}\StringTok{ }\KeywordTok{limitDistribution}\NormalTok{(my.first.species, }
+                            \DataTypeTok{geographical.limit =} \StringTok{"polygon"}\NormalTok{,}
+                            \DataTypeTok{area =}\NormalTok{ philippines)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{verbatim}
+## Warning in limitDistribution(my.first.species, geographical.limit =
+## "polygon", : Polygon projection is not checked. Please make sure you have
+## the same projections between your polygon and your presence-absence raster
+\end{verbatim}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/dist4-1.pdf}
+\caption{Fig. 8.4 Distribution of a species limited to the Philippines}
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  Using an extent object\\
+  Set \texttt{geographical.limit\ =\ "extent"}, and provide an extent to
+  the argument \texttt{area}
+  (\protect\hyperlink{providing-an-extent-object}{see section 7.2.3. if
+  you are not familiar with extents}). You can also simply set
+  \texttt{geographical.limit\ =\ "extent"}, and click twice on the map
+  when asked to:
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.extent <-}\StringTok{ }\KeywordTok{extent}\NormalTok{(}\OperatorTok{-}\DecValTok{80}\NormalTok{, }\OperatorTok{-}\DecValTok{20}\NormalTok{, }\OperatorTok{-}\DecValTok{35}\NormalTok{, }\OperatorTok{-}\DecValTok{5}\NormalTok{)}
+\NormalTok{my.sp2 <-}\StringTok{ }\KeywordTok{limitDistribution}\NormalTok{(my.first.species, }
+                            \DataTypeTok{geographical.limit =} \StringTok{"extent"}\NormalTok{,}
+                            \DataTypeTok{area =}\NormalTok{ my.extent)}
+\KeywordTok{plot}\NormalTok{(my.extent, }\DataTypeTok{add =} \OtherTok{TRUE}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/dist5-1.pdf}
+\caption{Fig. 8.5 Distribution of a species limited to a particular
+extent}
+\end{figure}
+
+\subsection{8.3. Sampling occurrence points in the dispersal-limited
+distribution}\label{sampling-occurrence-points-in-the-dispersal-limited-distribution}
+
+Once the distribution of a species has been limited with
+\texttt{limitDistribution()}, you just have to apply
+\texttt{sampleOccurrences} on this species: it will automatically sample
+from the realised distribution of the species.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{my.first.species <-}\StringTok{ }\KeywordTok{limitDistribution}\NormalTok{(my.first.species, }
+                                      \DataTypeTok{geographical.limit =} \StringTok{"continent"}\NormalTok{,}
+                                      \DataTypeTok{area =} \StringTok{"South America"}\NormalTok{,}
+                                      \DataTypeTok{plot =} \OtherTok{FALSE}\NormalTok{)}
+
+\KeywordTok{sampleOccurrences}\NormalTok{(my.first.species, }\DataTypeTok{n =} \DecValTok{30}\NormalTok{)}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{figure}
+\centering
+\includegraphics{virtualspecies-tutorial_files/figure-latex/dist6-1.pdf}
+\caption{Fig. 8.6 Occurrence sampled in the distribution of a species
+limited to South America}
+\end{figure}
+
+\begin{verbatim}
+## Occurrence points sampled from a virtual species
+## 
+## - Number of points: 30
+## - No sampling bias
+## - Detection probability: 
+##    .Probability: 1
+##    .Corrected by suitability: FALSE
+## - Probability of identification error (false positive): 0
+## - Multiple samples can occur in a single cell: No
+## 
+##            x           y Real Observed
+## 1  -54.41667 -11.0833333    1        1
+## 2  -73.41667   0.4166667    1        1
+## 3  -71.91667   5.9166667    1        1
+## 4  -75.41667  -9.4166667    1        1
+## 5  -74.75000   6.9166667    1        1
+## 6  -72.25000  -1.5833333    1        1
+## 7  -70.25000   1.5833333    1        1
+## 8  -64.91667 -16.4166667    1        1
+## 9  -64.75000  -2.7500000    1        1
+## 10 -69.08333   4.0833333    1        1
+## 11 -78.91667   1.5833333    1        1
+## 12 -60.58333  -7.0833333    1        1
+## 13 -76.25000  -3.2500000    1        1
+## 14 -67.75000   1.7500000    1        1
+## 15 -72.58333  -3.5833333    1        1
+## 16 -53.08333   1.9166667    1        1
+## 17 -67.08333  -0.7500000    1        1
+## 18 -66.75000   2.5833333    1        1
+## 19 -85.25000  10.9166667    1        1
+## 20 -65.08333  -2.9166667    1        1
+## 21 -64.91667  -3.2500000    1        1
+## 22 -68.58333   2.0833333    1        1
+## 23 -69.41667  -6.5833333    1        1
+## 24 -72.41667   2.9166667    1        1
+## 25 -63.75000  -2.0833333    1        1
+## 26 -76.58333  -0.4166667    1        1
+## 27 -66.08333  -2.2500000    1        1
+## 28 -67.91667   4.4166667    1        1
+## 29 -64.75000  -6.2500000    1        1
+## 30 -71.08333   3.0833333    1        1
+\end{verbatim}
+
+\emph{Thank you for reading this tutoral, good luck on your work with
+virtualspecies!!}
+
+And do not hesitate if you have a question, find a bug, or would like to
+add a feature in virtualspecies: \emph{mail me at
+\href{mailto:leroy.boris@gmail.com}{\nolinkurl{leroy.boris@gmail.com}}}
+
+
+\end{document}

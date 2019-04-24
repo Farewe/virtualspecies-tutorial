@@ -73,9 +73,7 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -94,8 +92,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -111,7 +115,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -131,6 +134,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -152,18 +192,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -251,6 +348,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -345,12 +452,21 @@ my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, 
 
 # Generation of the virtual species
 my.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
-                                parameters = my.parameters)
-
-# Conversion to presence-absence
+                                parameters = my.parameters)</code></pre>
+<pre><code>## Generating virtual species environmental suitability...</code></pre>
+<pre><code>##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE</code></pre>
+<pre class="r"><code># Conversion to presence-absence
 my.species &lt;- convertToPA(my.species,
                           beta = 0.7)</code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
+<pre><code>##    Logistic conversion finished:
+##               
+## - beta = 0.7
+## - alpha = -0.05
+## - species prevalence =0.0338995519408199</code></pre>
 <div class="figure">
 <img src="06-virtualspeciesobjects_files/figure-html/output1-1.png" alt="Fig. 6.1 Automatic illustration of the randomly generated species" />
 <p class="caption">Fig. 6.1 Automatic illustration of the randomly generated species</p>
@@ -370,9 +486,10 @@ my.species &lt;- convertToPA(my.species,
 ## 
 ## - Converted into presence-absence:
 ##    .Method = probability
+##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
 ##    .beta  (inflexion point) = 0.7
-##    .species prevalence      = 0.034</code></pre>
+##    .species prevalence      = 0.0338995519408199</code></pre>
 <p>And a summary of how the virtual species was generated appears:</p>
 <ul>
 <li>It shows us the variables used.</li>
@@ -400,23 +517,33 @@ my.species &lt;- convertToPA(my.species,
 <p class="caption">Fig. 6.3 Example of figure obtained when running <code>plotResponse()</code> on a virtual species object</p>
 </div>
 </div>
+<div id="plot-the-relationship-between-suitability-and-probability-of-occurrence" class="section level2">
+<h2>6.4. Plot the relationship between suitability and probability of occurrence</h2>
+<p>If you converted your environmental suitability into presence-absence with a probabilistic approach, chances are that you modified the environmental suitability function, e.g. if you used a logistic method or if you wanted to reach a specific prevalence. You may be interested in the relationship between environmental suitability and probability of occurrence, which can be plotted with <code>plotSuitabilityToProba</code></p>
+<pre class="r"><code>plotSuitabilityToProba(my.species)</code></pre>
+<div class="figure">
+<img src="06-virtualspeciesobjects_files/figure-html/output3ter-1.png" alt="Fig. 6.4 Example of figure obtained when running plotSuitabilityToProba() on a virtual species object" />
+<p class="caption">Fig. 6.4 Example of figure obtained when running <code>plotSuitabilityToProba()</code> on a virtual species object</p>
+</div>
+</div>
 <div id="extracting-elements-of-the-virtual-species-such-as-the-rasters-of-environmental-suitability" class="section level2">
-<h2>6.4. Extracting elements of the virtual species, such as the rasters of environmental suitability</h2>
+<h2>6.5. Extracting elements of the virtual species, such as the rasters of environmental suitability</h2>
 <p>The virtual species object is structured as a <code>list</code> in R, which roughly means that it is an object containing many “sub-objects”. When you run functions on your virtual species object, such as the conversion into presence-absence, then new sub-objects are added or replaced in the list.</p>
 <p>There is a function allowing you to see the content of the list: <code>str()</code></p>
 <pre class="r"><code>str(my.species)</code></pre>
-<pre><code>## List of 5
-##  $ approach     : chr &quot;response&quot;
-##  $ details      :List of 5
+<pre><code>## List of 6
+##  $ approach                 : chr &quot;response&quot;
+##  $ details                  :List of 5
 ##   ..$ variables            : chr [1:2] &quot;bio1&quot; &quot;bio12&quot;
 ##   ..$ formula              : chr &quot;bio1 * bio12&quot;
 ##   ..$ rescale.each.response: logi TRUE
 ##   ..$ rescale              : logi TRUE
 ##   ..$ parameters           :List of 2
-##  $ suitab.raster:Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
-##  $ PA.conversion: Named chr [1:4] &quot;probability&quot; &quot;-0.05&quot; &quot;0.7&quot; &quot;0.034&quot;
-##   ..- attr(*, &quot;names&quot;)= chr [1:4] &quot;conversion.method&quot; &quot;alpha&quot; &quot;beta&quot; &quot;species.prevalence&quot;
-##  $ pa.raster    :Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
+##  $ suitab.raster            :Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
+##  $ PA.conversion            : Named chr [1:5] &quot;probability&quot; &quot;logistic&quot; &quot;-0.05&quot; &quot;0.7&quot; ...
+##   ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;conversion.method&quot; &quot;probabilistic.method&quot; &quot;alpha&quot; &quot;beta&quot; ...
+##  $ probability.of.occurrence:Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
+##  $ pa.raster                :Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;virtualspecies&quot; &quot;list&quot;</code></pre>
 <p>We are informed that the object is a <code>list</code> containing 5 elements (sub-objects), that you can read on the lines starting with a <code>$</code>: <code>approach</code>, <code>details</code>, <code>suitab.raster</code>, <code>PA.conversion</code> and <code>pa.raster</code>.</p>
 <p>You can extract each element using the <code>$</code>: for example, to extract the suitability raster, type</p>
@@ -429,6 +556,16 @@ my.species &lt;- convertToPA(my.species,
 ## data source : in memory
 ## names       : layer 
 ## values      : 0, 1  (min, max)</code></pre>
+<p>If you are interested in the probability of occurrence raster, type</p>
+<pre class="r"><code>my.species$probability.of.occurrence</code></pre>
+<pre><code>## class       : RasterLayer 
+## dimensions  : 900, 2160, 1944000  (nrow, ncol, ncell)
+## resolution  : 0.1666667, 0.1666667  (x, y)
+## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## data source : in memory
+## names       : layer 
+## values      : 8.31528e-07, 0.9975274  (min, max)</code></pre>
 <p>If you are interested in the presence-absence raster, type</p>
 <pre class="r"><code>my.species$pa.raster</code></pre>
 <pre><code>## class       : RasterLayer 
@@ -442,7 +579,7 @@ my.species &lt;- convertToPA(my.species,
 <p>You can also see that we have “sub-sub-objects”, in the lines starting with <code>..$</code>: these are objects contained within the sub-object <code>details</code>. You can also extract them easily:</p>
 <pre class="r"><code>my.species$details$variables</code></pre>
 <pre><code>## [1] &quot;bio1&quot;  &quot;bio12&quot;</code></pre>
-<p>However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use <code>str()</code> on your virtual species object. For example, if we extract the <code>parameters</code> object from the details, we can see that it contains all the function names and their parameters:</p>
+<p>However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use <code>str()</code> on the entire virtual species object. For example, if we extract the <code>parameters</code> object from the details, we can see that it contains all the function names and their parameters:</p>
 <pre class="r"><code>my.species$details$parameters</code></pre>
 <pre><code>## $bio1
 ## $bio1$fun
@@ -494,7 +631,7 @@ str(my.species$details$parameters)</code></pre>
 <p>Hence, the main message here is if you want to explore the content of the virtual species object, use the function <code>str()</code>, look at which sub-objects you are interested in, and extract them with <code>$</code>.</p>
 </div>
 <div id="saving-the-virtual-species-objects-for-later-use" class="section level2">
-<h2>6.5. Saving the virtual species objects for later use</h2>
+<h2>6.6. Saving the virtual species objects for later use</h2>
 <p>If you want to save a virtual species object, you can save it on your hard drive, using the R function <code>saveRDS()</code>:</p>
 <pre class="r"><code>saveRDS(my.species, file = &quot;MyVirtualSpecies.RDS&quot;)</code></pre>
 <p>You can load it in a later session of R, using <code>readRDS()</code>:</p>

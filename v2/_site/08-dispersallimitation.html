@@ -73,9 +73,7 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -94,8 +92,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -111,7 +115,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -131,6 +134,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -152,18 +192,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -251,6 +348,16 @@ div.tocify {
 
 
 </style>
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
@@ -347,12 +454,21 @@ my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, 
 
 # Generation of the virtual species
 my.first.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
-                                      parameters = my.parameters)
-
-# Conversion to presence-absence
+                                      parameters = my.parameters)</code></pre>
+<pre><code>## Generating virtual species environmental suitability...</code></pre>
+<pre><code>##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE</code></pre>
+<pre class="r"><code># Conversion to presence-absence
 my.first.species &lt;- convertToPA(my.first.species,
                                 beta = 0.7, plot = FALSE)</code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
+<pre><code>##    Logistic conversion finished:
+##               
+## - beta = 0.7
+## - alpha = -0.05
+## - species prevalence =0.0337387365039066</code></pre>
 <p>Now, let’s assume our species originates from South America, and has not been able to disperse through the oceans (result in figure 8.2).</p>
 <pre class="r"><code>my.first.species &lt;- limitDistribution(my.first.species, 
                                       geographical.limit = &quot;continent&quot;,
@@ -389,6 +505,13 @@ plot(my.first.species$occupied.area, main = &quot;Realised distribution&quot;)</
 my.sp2 &lt;- limitDistribution(my.first.species, 
                             geographical.limit = &quot;polygon&quot;,
                             area = philippines)</code></pre>
+<pre><code>## Warning in limitDistribution(my.first.species, geographical.limit =
+## &quot;polygon&quot;, : Polygon projection is not checked. Please make sure you have
+## the same projections between your polygon and your presence-absence raster</code></pre>
+<div class="figure">
+<img src="08-dispersallimitation_files/figure-html/dist4-1.png" alt="Fig. 8.4 Distribution of a species limited to the Philippines" />
+<p class="caption">Fig. 8.4 Distribution of a species limited to the Philippines</p>
+</div>
 </div>
 <div id="using-an-extent-object" class="section level3">
 <h3>8.2.3. Using an extent object</h3>
@@ -443,17 +566,17 @@ sampleOccurrences(my.first.species, n = 30)</code></pre>
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x           y Real Observed
-## 1  -45.75000 -2.25000000    1        1
-## 2  -46.58333 -1.75000000    1        1
-## 3  -72.91667 -2.25000000    1        1
-## 4  -61.58333 -5.41666667    1        1
-## 5  -74.91667 -0.25000000    1        1
-## 6  -70.91667 -4.41666667    1        1
-## 7  -61.25000 -7.91666667    1        1
-## 8  -49.75000 -1.08333333    1        1
-## 9  -73.75000  0.08333333    1        1
-## 10 -62.75000  4.08333333    1        1
+##            x          y Real Observed
+## 1  -66.08333  3.9166667    1        1
+## 2  -71.08333 -0.9166667    1        1
+## 3  -77.75000 -4.4166667    1        1
+## 4  -68.25000 -1.5833333    1        1
+## 5  -67.25000  2.9166667    1        1
+## 6  -71.41667  2.2500000    1        1
+## 7  -59.91667  6.9166667    1        1
+## 8  -54.75000 -0.4166667    1        1
+## 9  -72.08333  5.5833333    1        1
+## 10 -84.58333 15.7500000    1        1
 ## ... 20 more lines.</code></pre>
 </div>
 

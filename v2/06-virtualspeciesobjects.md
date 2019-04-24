@@ -29,7 +29,23 @@ my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
 # Generation of the virtual species
 my.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
                                 parameters = my.parameters)
+```
 
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
+```r
 # Conversion to presence-absence
 my.species <- convertToPA(my.species,
                           beta = 0.7)
@@ -37,6 +53,14 @@ my.species <- convertToPA(my.species,
 
 ```
 ##    --- Determing species.prevalence automatically according to alpha and beta
+```
+
+```
+##    Logistic conversion finished:
+##               
+## - beta = 0.7
+## - alpha = -0.05
+## - species prevalence =0.0338995519408199
 ```
 
 ![Fig. 6.1 Automatic illustration of the randomly generated species](06-virtualspeciesobjects_files/figure-html/output1-1.png)
@@ -62,15 +86,16 @@ my.species
 ## 
 ## - Converted into presence-absence:
 ##    .Method = probability
+##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
 ##    .beta  (inflexion point) = 0.7
-##    .species prevalence      = 0.034
+##    .species prevalence      = 0.0338995519408199
 ```
 
 And a summary of how the virtual species was generated appears:
 
 * It shows us the variables used.
-* It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9°C) to 314 (31.4°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25°C).
+* It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9Â°C) to 314 (31.4Â°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25Â°C).
 * If a conversion to presence-absence was performed, it shows us the parameters of the conversion, and provides the species prevalence (the species prevalence is always calculated and provided).
 * If you have introduced a distribution bias (will be seen in a later section), it will provide information about this particular bias.
 
@@ -98,7 +123,19 @@ plotResponse(my.species)
 
 ![Fig. 6.3 Example of figure obtained when running `plotResponse()` on a virtual species object](06-virtualspeciesobjects_files/figure-html/output3bis-1.png)
 
-## 6.4. Extracting elements of the virtual species, such as the rasters of environmental suitability
+## 6.4. Plot the relationship between suitability and probability of occurrence
+
+If you converted your environmental suitability into presence-absence with a probabilistic approach, chances are that you modified the environmental suitability function, e.g. if you used a logistic method or if you wanted to reach a specific prevalence. You may be interested in the relationship between environmental suitability and probability of occurrence, which can be plotted with `plotSuitabilityToProba`
+
+
+```r
+plotSuitabilityToProba(my.species)
+```
+
+![Fig. 6.4 Example of figure obtained when running `plotSuitabilityToProba()` on a virtual species object](06-virtualspeciesobjects_files/figure-html/output3ter-1.png)
+
+
+## 6.5. Extracting elements of the virtual species, such as the rasters of environmental suitability
 
 The virtual species object is structured as a `list` in R, which roughly means that it is an object containing many "sub-objects". When you run functions on your virtual species object, such as the conversion into presence-absence, then new sub-objects are added or replaced in the list.
 
@@ -110,18 +147,19 @@ str(my.species)
 ```
 
 ```
-## List of 5
-##  $ approach     : chr "response"
-##  $ details      :List of 5
+## List of 6
+##  $ approach                 : chr "response"
+##  $ details                  :List of 5
 ##   ..$ variables            : chr [1:2] "bio1" "bio12"
 ##   ..$ formula              : chr "bio1 * bio12"
 ##   ..$ rescale.each.response: logi TRUE
 ##   ..$ rescale              : logi TRUE
 ##   ..$ parameters           :List of 2
-##  $ suitab.raster:Formal class 'RasterLayer' [package "raster"] with 12 slots
-##  $ PA.conversion: Named chr [1:4] "probability" "-0.05" "0.7" "0.034"
-##   ..- attr(*, "names")= chr [1:4] "conversion.method" "alpha" "beta" "species.prevalence"
-##  $ pa.raster    :Formal class 'RasterLayer' [package "raster"] with 12 slots
+##  $ suitab.raster            :Formal class 'RasterLayer' [package "raster"] with 12 slots
+##  $ PA.conversion            : Named chr [1:5] "probability" "logistic" "-0.05" "0.7" ...
+##   ..- attr(*, "names")= chr [1:5] "conversion.method" "probabilistic.method" "alpha" "beta" ...
+##  $ probability.of.occurrence:Formal class 'RasterLayer' [package "raster"] with 12 slots
+##  $ pa.raster                :Formal class 'RasterLayer' [package "raster"] with 12 slots
 ##  - attr(*, "class")= chr [1:2] "virtualspecies" "list"
 ```
 
@@ -143,6 +181,24 @@ my.species$suitab.raster
 ## data source : in memory
 ## names       : layer 
 ## values      : 0, 1  (min, max)
+```
+
+If you are interested in the probability of occurrence raster, type
+
+
+```r
+my.species$probability.of.occurrence
+```
+
+```
+## class       : RasterLayer 
+## dimensions  : 900, 2160, 1944000  (nrow, ncol, ncell)
+## resolution  : 0.1666667, 0.1666667  (x, y)
+## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
+## data source : in memory
+## names       : layer 
+## values      : 8.31528e-07, 0.9975274  (min, max)
 ```
 
 If you are interested in the presence-absence raster, type
@@ -175,7 +231,7 @@ my.species$details$variables
 ## [1] "bio1"  "bio12"
 ```
 
-However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use `str()` on your virtual species object. For example, if we extract the `parameters` object from the details, we can see that it contains all the function names and their parameters:
+However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use `str()` on the entire virtual species object. For example, if we extract the `parameters` object from the details, we can see that it contains all the function names and their parameters:
 
 
 ```r
@@ -243,7 +299,7 @@ Hence, the main message here is if you want to explore the content of the virtua
 
 
 
-## 6.5. Saving the virtual species objects for later use
+## 6.6. Saving the virtual species objects for later use
 
 
 

@@ -36,11 +36,28 @@ random.sp <- generateRandomSp(my.stack)
 ```
 
 ```
+##    The final environmental suitability was rescaled between 0 and 1.
+##                   To disable, set argument rescale = FALSE
+```
+
+```
 ##  - Converting into Presence - Absence
 ```
 
 ```
+##    --- Generating a random value of beta for the logistic conversion
+```
+
+```
 ##    --- Determing species.prevalence automatically according to alpha and beta
+```
+
+```
+##    Logistic conversion finished:
+##               
+## - beta = 0.751751751751752
+## - alpha = -0.1
+## - species prevalence =0.468641845203166
 ```
 
 ![Fig. 5.1 A species randomly generated with `generateRandomSp`](05-randomspecies_files/figure-html/rand1-1.png)
@@ -56,15 +73,16 @@ random.sp
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=2.236413; sd=5.367503)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=1.883838; sd=2.361146)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=1.463498; sd=2.522761)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-0.9127507; sd=3.039012)
 ## - Environmental suitability was rescaled between 0 and 1
 ## 
 ## - Converted into presence-absence:
 ##    .Method = probability
+##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.1
-##    .beta  (inflexion point) = 0.376376376376376
-##    .species prevalence      = 0.731
+##    .beta  (inflexion point) = 0.751751751751752
+##    .species prevalence      = 0.468641845203166
 ```
 
 We can see that the species was generated using a PCA approach. Indeed, [as explained in the PCA section](#second-approach-generate-virtual-species-with-a-principal-components-analysis), when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function `generateRandomSp` uses a PCA approach if you have 6 or more variables, and a 'response functions' approach if you have less than 6 variables.
@@ -115,6 +133,20 @@ random.sp1 <- generateRandomSp(worldclim[[1:3]],
 ##  - Calculating species suitability
 ```
 
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
 ![Fig. 5.2 A species randomly generated with `generateRandomSp`, with gaussian and logistic response functions](05-randomspecies_files/figure-html/rand2-1.png)
 
 ```r
@@ -123,13 +155,13 @@ random.sp1
 
 ```
 ## Virtual species generated from 3 variables:
-##  bio1, bio2, bio3
+##  bio2, bio1, bio3
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=-265.770147701477; sd=488.337343373434)
-##    .bio2  [min=9; max=211] : logisticFun   (alpha=-11.2018181818182; beta=129.430096430096)
-##    .bio3  [min=8; max=95] : dnorm   (mean=54.1680416804168; sd=49.4008340083401)
+##    .bio2  [min=9; max=211] : dnorm   (mean=98.3515535155352; sd=183.070390703907)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=-98.0277102771028; sd=445.807068070681)
+##    .bio3  [min=8; max=95] : dnorm   (mean=12.7006770067701; sd=57.7729277292773)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1
@@ -159,6 +191,20 @@ random.sp2 <- generateRandomSp(worldclim[[1:3]],
 ##  - Calculating species suitability
 ```
 
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
 ![Fig. 5.4 A species randomly generated with `generateRandomSp`, with gaussian response functions only](05-randomspecies_files/figure-html/rand4-1.png)
 
 ```r
@@ -171,9 +217,9 @@ random.sp2
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=256.218292182922; sd=279.213152131521)
-##    .bio2  [min=9; max=211] : dnorm   (mean=79.8495284952849; sd=153.210452104521)
-##    .bio3  [min=8; max=95] : dnorm   (mean=54.2474424744247; sd=33.8990189901899)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=-190.69648696487; sd=515.143951439514)
+##    .bio2  [min=9; max=211] : dnorm   (mean=152.368843688437; sd=145.988879888799)
+##    .bio3  [min=8; max=95] : dnorm   (mean=78.2047820478205; sd=59.2032220322203)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1
@@ -214,6 +260,20 @@ realistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
 ##  - Calculating species suitability
 ```
 
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
 ![Fig. 5.6 A species randomly generated, constrained to find realistic environmental requirements](05-randomspecies_files/figure-html/rand6-1.png)
 
 ```r
@@ -224,8 +284,24 @@ unrealistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
 
 ```
 ##  - Determining species' response to predictor variables
-## 
+```
+
+```
 ##  - Calculating species suitability
+```
+
+```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
 ```
 
 ![Fig. 5.7 A species randomly generated, with no constraints](05-randomspecies_files/figure-html/rand6-2.png)
@@ -239,6 +315,14 @@ realistic.sp <- convertToPA(realistic.sp, beta = 0.5)
 
 ```
 ##    --- Determing species.prevalence automatically according to alpha and beta
+```
+
+```
+##    Logistic conversion finished:
+##               
+## - beta = 0.5
+## - alpha = -0.05
+## - species prevalence =0.436056189597979
 ```
 
 ![Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6](05-randomspecies_files/figure-html/rand7-1.png)
@@ -278,11 +362,37 @@ safe.run.sp <- generateRandomSp(worldclim[[c(1, 5, 6)]],
 ```
 
 ```
+## Generating virtual species environmental suitability...
+```
+
+```
+##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE
+```
+
+```
+##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE
+```
+
+```
 ##  - Converting into Presence - Absence
 ```
 
 ```
+##    --- Generating a random value of beta for the logistic conversion
+```
+
+```
 ##    --- Determing species.prevalence automatically according to alpha and beta
+```
+
+```
+##    Logistic conversion finished:
+##               
+## - beta = 0.757757757757758
+## - alpha = -0.1
+## - species prevalence =0.155667632129556
 ```
 
 ![Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure](05-randomspecies_files/figure-html/rand8-1.png)

@@ -73,9 +73,7 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
-</head>
 
-<body>
 
 <style type = "text/css">
 .main-container {
@@ -94,8 +92,14 @@ img {
 .tabbed-pane {
   padding-top: 12px;
 }
+.html-widget {
+  margin-bottom: 20px;
+}
 button.code-folding-btn:focus {
   outline: none;
+}
+summary {
+  display: list-item;
 }
 </style>
 
@@ -111,7 +115,6 @@ body {
   padding-top: 56px;
   margin-top: -56px;
 }
-
 .section h2 {
   padding-top: 56px;
   margin-top: -56px;
@@ -131,6 +134,43 @@ body {
 .section h6 {
   padding-top: 56px;
   margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
 }
 </style>
 
@@ -152,18 +192,75 @@ $(document).ready(function () {
 });
 </script>
 
-
-<div class="container-fluid main-container">
-
 <!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
 <script>
 $(document).ready(function () {
   window.buildTabsets("TOC");
 });
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
 </script>
 
 <!-- code folding -->
-
 
 
 
@@ -252,6 +349,16 @@ div.tocify {
 
 </style>
 
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -337,6 +444,8 @@ div.tocify {
 <h2>2.1. An introduction example</h2>
 <p>Before we start using the package, let’s prepare our first simulation of virtual species.</p>
 <p>We want to generate a virtual species with two environmental variables, the annual mean temperature <code>bio1</code> and annual mean precipitation <code>bio2</code>. We want to generate a tropical species, i.e., living in hot and humid environments. We can define bell-shaped response functions to these two variables, as in the following figure:</p>
+<pre><code>## Loading required package: raster</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
 <div class="figure">
 <img src="02-response_files/figure-html/vspload-1.png" alt="Fig. 2.1 Example of bell-shaped response functions to bio1 and bio2, suitable for a tropical species." />
 <p class="caption">Fig. 2.1 Example of bell-shaped response functions to bio1 and bio2, suitable for a tropical species.</p>
@@ -361,6 +470,11 @@ my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, 
 my.first.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
                                               parameters = my.parameters,
                                               plot = TRUE)</code></pre>
+<pre><code>## Generating virtual species environmental suitability...</code></pre>
+<pre><code>##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE</code></pre>
 <div class="figure">
 <img src="02-response_files/figure-html/resp4-1.png" alt="Fig. 2.2 Environmental suitability of the generated virtual species" />
 <p class="caption">Fig. 2.2 Environmental suitability of the generated virtual species</p>
@@ -453,6 +567,11 @@ new.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;
                                  parameters = my.parameters,
                                  formula = &quot;2 * bio1 + bio12&quot;,
                                  plot = TRUE)</code></pre>
+<pre><code>## Generating virtual species environmental suitability...</code></pre>
+<pre><code>##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE</code></pre>
 <pre><code>## [1] &quot;2 * bio1 + bio12&quot;</code></pre>
 <div class="figure">
 <img src="02-response_files/figure-html/resp5-1.png" alt="Fig. 2.3 Environmental suitability of the generated virtual species" />
@@ -480,6 +599,11 @@ new.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;
                                  parameters = my.parameters,
                                  formula = &quot;3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1&quot;,
                                  plot = TRUE)</code></pre>
+<pre><code>## Generating virtual species environmental suitability...</code></pre>
+<pre><code>##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE</code></pre>
 <pre><code>## [1] &quot;3.1 * bio1^2 - 1.4 * sqrt(bio12) * bio1&quot;</code></pre>
 <div class="figure">
 <img src="02-response_files/figure-html/resp6-1.png" alt="Fig. 2.3 Environmental suitability of the generated virtual species" />
@@ -526,6 +650,11 @@ We will take the example of a simple linear function: <span class="math display"
 
 generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]],
                   parameters = my.responses, plot = TRUE)</code></pre>
+<pre><code>## Generating virtual species environmental suitability...</code></pre>
+<pre><code>##  - The response to each variable was rescaled between 0 and 1. To
+##             disable, set argument rescale.each.response = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
+##             To disable, set argument rescale = FALSE</code></pre>
 <div class="figure">
 <img src="02-response_files/figure-html/custfun3-1.png" alt="Fig 2.3 Environmental suitability of the generated virtual species" />
 <p class="caption">Fig 2.3 Environmental suitability of the generated virtual species</p>
