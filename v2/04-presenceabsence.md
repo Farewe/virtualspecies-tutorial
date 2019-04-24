@@ -41,6 +41,7 @@ With the package, the probability of presence can be defined as a linear transfo
 ```
 
 ![Fig. 4.1 Conversion of environmental suitability into probability of occurrence](04-presenceabsence_files/figure-html/conv1-1.png)
+
 In the example above, two linear conversions are illustrated (left panel), and one logistic conversion (right panel). The simplest method is to use environmental suitability as a probability of occurrence (left panel, plain line). In this case, a pixel with environmental suitability equal to 0.6 has 60% chance of having species presence, and 40% chance of having species absence. A linear conversion with a slope different from 1 may be chosen, e.g. to change the species prevalence (left panel, dashed line). In this example (slope = 0.5, intercept = 0), a pixel with environmental suitability equal to 0.6 has 30% chance of having species presence, and 70% chance of having species absence.
 
 A logistic function on the other hand, will ensure that the simulated probability is within the 0-1 range and allow easycontrol of species prevalence. However, the logistic function will also flatten out the relationship at the extreme  suitability values, and narrow or broaden the intermediate probability values depending on the slope of the logistic curve. In the example above (right panel), a pixel with environmental suitability equal to 0.6 has 88% chance of having species presence, and 12% chance of having species absence.
