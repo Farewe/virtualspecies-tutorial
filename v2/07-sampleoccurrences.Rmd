@@ -228,7 +228,7 @@ $$P_d = P_{di} \times S$$
 
 Hence, if our species has a probability of detection of 0.5, the final probability of detection will be:
 
-* 1 if the cell has an environmental suitability of 1
+* 0.5 if the cell has an environmental suitability of 1
 * 0.25 if the cell has an environmental suitability of 0.5
 
 Of course, no occurrence points will be detected outside the distribution range, regardless of their environmental suitability.
