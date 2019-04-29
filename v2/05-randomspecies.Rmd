@@ -90,7 +90,7 @@ As explained in the section on the 'response' approach, you can choose to rescal
 
 ### 5.2.3. Try to find a realistic species
 
-An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35°C and winter temperature of -50°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: `realistic.sp`.
+An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35Â°C and winter temperature of -50Â°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: `realistic.sp`.
 
 When activating this argument, the function will proceed step-by-step to try defining a realistic species. At step one, one of the variable is chosen, and the program randomly determines a response function for this variable. Then, it will compute the environmental suitability of this species. At step two, the program will pick a second variable, and will constrain its random generation depending on the environmental suitability obtained at step one. For example, if at step 2 a gaussian response is picked, then the mean will be chosen in areas where the species had a high environmental suitability. Then, the environmental suitability is recalculated on the basis of the first two response functions. At step 3, another variable is picked, a response function randomly generated with respect to areas where the species already has a high suitability, and so on until there are no variables left. While this process can help, it does not always work, and can provide completely unrealistic results also. In this case, you should try different runs, or switch to a 'PCA' approach.
 
@@ -99,9 +99,9 @@ Let's see an example :
 ```{r rand6, eval = T, cache = TRUE, fig.cap = c("Fig. 5.6 A species randomly generated, constrained to find realistic environmental requirements", "Fig. 5.7 A species randomly generated, with no constraints")}
 realistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
                                  realistic.sp = TRUE,
-                                 convert.to.PA = FALSE)
-
-
+                                 convert.to.PA = FALSE) 
+ 
+ 
 
 unrealistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
                                    realistic.sp = FALSE,
@@ -111,7 +111,7 @@ unrealistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
 Note that you can always let the function randomly determine the conversion to presence-absence by changing the argument `convert.to.PA = TRUE` (be careful: since parameters are defined randomly, the results can be bizarre), or you can do it by yourself later:
 
 ```{r rand7, fig.width = 10, fig.height = 6, eval = T, cache = TRUE, fig.cap = "Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6", cache = TRUE}
-realistic.sp <- convertToPA(realistic.sp, beta = 0.5)
+realistic.sp <- convertToPA(realistic.sp, beta = 0.5) 
 ```
 
 If, in spite of all your attempts, you are struggling to obtain satisfactory species, then perhaps you should try the 'PCA' approach.

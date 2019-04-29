@@ -19,6 +19,17 @@ Let's create a simple virtual species:
 
 ```r
 library(virtualspecies)
+```
+
+```
+## Loading required package: raster
+```
+
+```
+## Loading required package: sp
+```
+
+```r
 # Worldclim data
 worldclim <- getData("worldclim", var = "bio", res = 10)
 
@@ -60,7 +71,7 @@ my.species <- convertToPA(my.species,
 ##               
 ## - beta = 0.7
 ## - alpha = -0.05
-## - species prevalence =0.0338995519408199
+## - species prevalence =0.0338978411382996
 ```
 
 ![Fig. 6.1 Automatic illustration of the randomly generated species](06-virtualspeciesobjects_files/figure-html/output1-1.png)
@@ -89,13 +100,13 @@ my.species
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
 ##    .beta  (inflexion point) = 0.7
-##    .species prevalence      = 0.0338995519408199
+##    .species prevalence      = 0.0338978411382996
 ```
 
 And a summary of how the virtual species was generated appears:
 
 * It shows us the variables used.
-* It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9°C) to 314 (31.4°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25°C).
+* It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9Â°C) to 314 (31.4Â°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25Â°C).
 * If a conversion to presence-absence was performed, it shows us the parameters of the conversion, and provides the species prevalence (the species prevalence is always calculated and provided).
 * If you have introduced a distribution bias (will be seen in a later section), it will provide information about this particular bias.
 

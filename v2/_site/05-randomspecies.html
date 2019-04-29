@@ -11,7 +11,7 @@
 
 
 
-<title></title>
+<title>5. Generating random species</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -431,17 +431,17 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><ol start="5" style="list-style-type: decimal">
-<li>Generating random species</li>
-</ol></h1>
+<h1 class="title toc-ignore">5. Generating random species</h1>
 
 </div>
 
 
 <p>The <code>virtualspecies</code> package embeds a function to randomly generate virtual species <code>generateRandomSp</code>, with many customisable options to constrain the randomisation process.</p>
 <p>Let’s take a look:</p>
-<pre class="r"><code>library(virtualspecies)
-worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
+<pre class="r"><code>library(virtualspecies)</code></pre>
+<pre><code>## Loading required package: raster</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
+<pre class="r"><code>worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
 
 my.stack &lt;- worldclim[[c(&quot;bio2&quot;, &quot;bio5&quot;, &quot;bio6&quot;, &quot;bio12&quot;, &quot;bio13&quot;, &quot;bio14&quot;)]]
 random.sp &lt;- generateRandomSp(my.stack)</code></pre>
@@ -455,9 +455,9 @@ random.sp &lt;- generateRandomSp(my.stack)</code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
 <pre><code>##    Logistic conversion finished:
 ##               
-## - beta = 0.751751751751752
+## - beta = 0.585585585585586
 ## - alpha = -0.1
-## - species prevalence =0.468641845203166</code></pre>
+## - species prevalence =0.174187069412391</code></pre>
 <div class="figure">
 <img src="05-randomspecies_files/figure-html/rand1-1.png" alt="Fig. 5.1 A species randomly generated with generateRandomSp" />
 <p class="caption">Fig. 5.1 A species randomly generated with <code>generateRandomSp</code></p>
@@ -469,16 +469,16 @@ random.sp &lt;- generateRandomSp(my.stack)</code></pre>
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=1.463498; sd=2.522761)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-0.9127507; sd=3.039012)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=1.136441; sd=0.3143425)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=0.2830632; sd=4.88196)
 ## - Environmental suitability was rescaled between 0 and 1
 ## 
 ## - Converted into presence-absence:
 ##    .Method = probability
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.1
-##    .beta  (inflexion point) = 0.751751751751752
-##    .species prevalence      = 0.468641845203166</code></pre>
+##    .beta  (inflexion point) = 0.585585585585586
+##    .species prevalence      = 0.174187069412391</code></pre>
 <p>We can see that the species was generated using a PCA approach. Indeed, <a href="#second-approach-generate-virtual-species-with-a-principal-components-analysis">as explained in the PCA section</a>, when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function <code>generateRandomSp</code> uses a PCA approach if you have 6 or more variables, and a ‘response functions’ approach if you have less than 6 variables.</p>
 <p>In the next sections I detail the many possible customisations for the function <code>generateRandomSp</code>.</p>
 <div id="general-parameters" class="section level2">
@@ -487,10 +487,10 @@ random.sp &lt;- generateRandomSp(my.stack)</code></pre>
 <h3>5.1.1. Choosing the approach</h3>
 <p>You can choose <code>approach =</code>:</p>
 <ul>
-<li><code>&quot;automatic&quot;</code>: a ‘response’ approach is used if you have less than 6 variables and a ‘PCA’ approach is used if you have 6 or more variables</li>
-<li><code>&quot;random&quot;</code>: a random approach is chosen (response or PCA)</li>
-<li><code>&quot;response&quot;</code>: to use a response approach</li>
-<li><code>&quot;pca&quot;</code>: to use a pca approach</li>
+<li><code>"automatic"</code>: a ‘response’ approach is used if you have less than 6 variables and a ‘PCA’ approach is used if you have 6 or more variables</li>
+<li><code>"random"</code>: a random approach is chosen (response or PCA)</li>
+<li><code>"response"</code>: to use a response approach</li>
+<li><code>"pca"</code>: to use a pca approach</li>
 </ul>
 </div>
 <div id="rescaling-of-the-environmental-suitability" class="section level3">
@@ -532,9 +532,9 @@ random.sp1 &lt;- generateRandomSp(worldclim[[1:3]],
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio2  [min=9; max=211] : dnorm   (mean=98.3515535155352; sd=183.070390703907)
-##    .bio1  [min=-269; max=314] : dnorm   (mean=-98.0277102771028; sd=445.807068070681)
-##    .bio3  [min=8; max=95] : dnorm   (mean=12.7006770067701; sd=57.7729277292773)
+##    .bio2  [min=9; max=211] : logisticFun   (alpha=8.99818181818182; beta=81.4302024302024)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=202.375273752738; sd=157.190031900319)
+##    .bio3  [min=8; max=95] : logisticFun   (alpha=-295.8; beta=29.2549042549043)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
@@ -560,13 +560,13 @@ random.sp2 &lt;- generateRandomSp(worldclim[[1:3]],
 </div>
 <pre class="r"><code>random.sp2</code></pre>
 <pre><code>## Virtual species generated from 3 variables:
-##  bio1, bio2, bio3
+##  bio1, bio3, bio2
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=-190.69648696487; sd=515.143951439514)
-##    .bio2  [min=9; max=211] : dnorm   (mean=152.368843688437; sd=145.988879888799)
-##    .bio3  [min=8; max=95] : dnorm   (mean=78.2047820478205; sd=59.2032220322203)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=-170.437034370344; sd=100.247852478525)
+##    .bio3  [min=8; max=95] : dnorm   (mean=63.5163351633516; sd=29.9352593525935)
+##    .bio2  [min=9; max=211] : dnorm   (mean=56.4954449544495; sd=119.932639326393)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
@@ -582,12 +582,12 @@ random.sp2 &lt;- generateRandomSp(worldclim[[1:3]],
 </div>
 <div id="try-to-find-a-realistic-species" class="section level3">
 <h3>5.2.3. Try to find a realistic species</h3>
-<p>An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35°C and winter temperature of -50°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: <code>realistic.sp</code>.</p>
+<p>An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35Â°C and winter temperature of -50Â°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: <code>realistic.sp</code>.</p>
 <p>When activating this argument, the function will proceed step-by-step to try defining a realistic species. At step one, one of the variable is chosen, and the program randomly determines a response function for this variable. Then, it will compute the environmental suitability of this species. At step two, the program will pick a second variable, and will constrain its random generation depending on the environmental suitability obtained at step one. For example, if at step 2 a gaussian response is picked, then the mean will be chosen in areas where the species had a high environmental suitability. Then, the environmental suitability is recalculated on the basis of the first two response functions. At step 3, another variable is picked, a response function randomly generated with respect to areas where the species already has a high suitability, and so on until there are no variables left. While this process can help, it does not always work, and can provide completely unrealistic results also. In this case, you should try different runs, or switch to a ‘PCA’ approach.</p>
 <p>Let’s see an example :</p>
 <pre class="r"><code>realistic.sp &lt;- generateRandomSp(worldclim[[c(1, 5)]],
                                  realistic.sp = TRUE,
-                                 convert.to.PA = FALSE)</code></pre>
+                                 convert.to.PA = FALSE) </code></pre>
 <pre><code>##  - Determining species&#39; response to predictor variables</code></pre>
 <pre><code>##  - Calculating species suitability</code></pre>
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
@@ -614,16 +614,16 @@ random.sp2 &lt;- generateRandomSp(worldclim[[1:3]],
 <p class="caption">Fig. 5.7 A species randomly generated, with no constraints</p>
 </div>
 <p>Note that you can always let the function randomly determine the conversion to presence-absence by changing the argument <code>convert.to.PA = TRUE</code> (be careful: since parameters are defined randomly, the results can be bizarre), or you can do it by yourself later:</p>
-<pre class="r"><code>realistic.sp &lt;- convertToPA(realistic.sp, beta = 0.5)</code></pre>
+<pre class="r"><code>realistic.sp &lt;- convertToPA(realistic.sp, beta = 0.5) </code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
 <pre><code>##    Logistic conversion finished:
 ##               
 ## - beta = 0.5
 ## - alpha = -0.05
-## - species prevalence =0.436056189597979</code></pre>
+## - species prevalence =0.491698330769981</code></pre>
 <div class="figure">
-<img src="05-randomspecies_files/figure-html/rand7-1.png" alt="Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6" />
-<p class="caption">Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6</p>
+<img src="05-randomspecies_files/figure-html/rand7-1.png" alt="Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6" />
+<p class="caption">Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6</p>
 </div>
 <p>If, in spite of all your attempts, you are struggling to obtain satisfactory species, then perhaps you should try the ‘PCA’ approach.</p>
 </div>
@@ -631,9 +631,9 @@ random.sp2 &lt;- generateRandomSp(worldclim[[1:3]],
 <h3>5.2.4. Define how response functions are combined to compute the environmental suitability</h3>
 <p>You can define how response functions are combined with the argument <code>sp.type</code>, exactly as explained in the ‘response’ approach section:</p>
 <ul>
-<li><code>species.type = &quot;additive&quot;</code>: the response functions are added.</li>
-<li><code>species.type = &quot;multiplicative&quot;</code>: the response functions are multiplied (default value).</li>
-<li><code>species.type = &quot;mixed&quot;</code>: there is a mix of additions and products to calculate the environmental suitability, randomly generated.</li>
+<li><code>species.type = "additive"</code>: the response functions are added.</li>
+<li><code>species.type = "multiplicative"</code>: the response functions are multiplied (default value).</li>
+<li><code>species.type = "mixed"</code>: there is a mix of additions and products to calculate the environmental suitability, randomly generated.</li>
 </ul>
 </div>
 </div>
@@ -659,9 +659,9 @@ safe.run.sp &lt;- generateRandomSp(worldclim[[c(1, 5, 6)]],
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
 <pre><code>##    Logistic conversion finished:
 ##               
-## - beta = 0.757757757757758
+## - beta = 0.0940940940940941
 ## - alpha = -0.1
-## - species prevalence =0.155667632129556</code></pre>
+## - species prevalence =0.904424306397888</code></pre>
 <div class="figure">
 <img src="05-randomspecies_files/figure-html/rand8-1.png" alt="Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure" />
 <p class="caption">Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure</p>

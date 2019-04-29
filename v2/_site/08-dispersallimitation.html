@@ -11,7 +11,7 @@
 
 
 
-<title></title>
+<title>8. Dispersal limitation</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -431,9 +431,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><ol start="8" style="list-style-type: decimal">
-<li>Dispersal limitation</li>
-</ol></h1>
+<h1 class="title toc-ignore">8. Dispersal limitation</h1>
 
 </div>
 
@@ -468,7 +466,7 @@ my.first.species &lt;- convertToPA(my.first.species,
 ##               
 ## - beta = 0.7
 ## - alpha = -0.05
-## - species prevalence =0.0337387365039066</code></pre>
+## - species prevalence =0.0337370257013863</code></pre>
 <p>Now, let’s assume our species originates from South America, and has not been able to disperse through the oceans (result in figure 8.2).</p>
 <pre class="r"><code>my.first.species &lt;- limitDistribution(my.first.species, 
                                       geographical.limit = &quot;continent&quot;,
@@ -489,7 +487,7 @@ plot(my.first.species$occupied.area, main = &quot;Realised distribution&quot;)</
 <p>There are six main possibilities to limit the distribution to a particular area.</p>
 <div id="using-countries-regions-or-continents" class="section level3">
 <h3>8.2.1. Using countries, regions or continents</h3>
-<p>As illustrated in the example above, use <code>geographical.limit = &quot;country&quot;</code>, <code>geographical.limit = continent</code> or <code>geographical.limit = &quot;region&quot;</code> and provide the correct name(s) of the area to <code>area</code></p>
+<p>As illustrated in the example above, use <code>geographical.limit = "country"</code>, <code>geographical.limit = continent</code> or <code>geographical.limit = "region"</code> and provide the correct name(s) of the area to <code>area</code></p>
 <pre class="r"><code>my.sp1 &lt;- limitDistribution(my.first.species, 
                             geographical.limit = &quot;country&quot;,
                             area = c(&quot;Brazil&quot;, &quot;Venezuela&quot;))</code></pre>
@@ -500,7 +498,7 @@ plot(my.first.species$occupied.area, main = &quot;Realised distribution&quot;)</
 </div>
 <div id="using-a-polygon" class="section level3">
 <h3>8.2.2. Using a polygon</h3>
-<p>Set <code>geographical.limit = &quot;polygon&quot;</code>, and provide a polygon (of type <code>SpatialPolygons</code> or <code>SpatialPolygonsDataFrame</code> from package <code>sp</code>) to the argument <code>area</code>.</p>
+<p>Set <code>geographical.limit = "polygon"</code>, and provide a polygon (of type <code>SpatialPolygons</code> or <code>SpatialPolygonsDataFrame</code> from package <code>sp</code>) to the argument <code>area</code>.</p>
 <pre class="r"><code>philippines &lt;- getData(&quot;GADM&quot;, country = &quot;PHL&quot;, level = 0)
 my.sp2 &lt;- limitDistribution(my.first.species, 
                             geographical.limit = &quot;polygon&quot;,
@@ -515,7 +513,7 @@ my.sp2 &lt;- limitDistribution(my.first.species,
 </div>
 <div id="using-an-extent-object" class="section level3">
 <h3>8.2.3. Using an extent object</h3>
-<p>Set <code>geographical.limit = &quot;extent&quot;</code>, and provide an extent to the argument <code>area</code> (<a href="07-sampleoccurrences.html#providing-an-extent-object">see section 7.2.3. if you are not familiar with extents</a>). You can also simply set <code>geographical.limit = &quot;extent&quot;</code>, and click twice on the map when asked to:</p>
+<p>Set <code>geographical.limit = "extent"</code>, and provide an extent to the argument <code>area</code> (<a href="07-sampleoccurrences.html#providing-an-extent-object">see section 7.2.3. if you are not familiar with extents</a>). You can also simply set <code>geographical.limit = "extent"</code>, and click twice on the map when asked to:</p>
 <pre class="r"><code>my.extent &lt;- extent(-80, -20, -35, -5)
 my.sp2 &lt;- limitDistribution(my.first.species, 
                             geographical.limit = &quot;extent&quot;,
@@ -566,17 +564,17 @@ sampleOccurrences(my.first.species, n = 30)</code></pre>
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -66.08333  3.9166667    1        1
-## 2  -71.08333 -0.9166667    1        1
-## 3  -77.75000 -4.4166667    1        1
-## 4  -68.25000 -1.5833333    1        1
-## 5  -67.25000  2.9166667    1        1
-## 6  -71.41667  2.2500000    1        1
-## 7  -59.91667  6.9166667    1        1
-## 8  -54.75000 -0.4166667    1        1
-## 9  -72.08333  5.5833333    1        1
-## 10 -84.58333 15.7500000    1        1
+##            x           y Real Observed
+## 1  -77.08333  -0.2500000    1        1
+## 2  -64.08333   3.9166667    1        1
+## 3  -66.75000  -5.5833333    1        1
+## 4  -74.75000  -3.0833333    1        1
+## 5  -68.25000  -3.9166667    1        1
+## 6  -70.41667  -3.4166667    1        1
+## 7  -73.25000   1.7500000    1        1
+## 8  -70.25000  -0.4166667    1        1
+## 9  -54.91667  -9.0833333    1        1
+## 10 -71.41667 -11.0833333    1        1
 ## ... 20 more lines.</code></pre>
 </div>
 

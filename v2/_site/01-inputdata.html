@@ -11,7 +11,7 @@
 
 
 
-<title></title>
+<title>1. Input data</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -431,9 +431,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><ol style="list-style-type: decimal">
-<li>Input data</li>
-</ol></h1>
+<h1 class="title toc-ignore">1. Input data</h1>
 
 </div>
 
@@ -449,11 +447,11 @@ To summarise, a raster is a map regularly divided into small units, called pixel
 <p>As stated above, the required format is a <code>RasterStack</code> containing all the environmental variables with which you want to generate a virtual species distribution. Note that I may use interchangeably the variables and layers in this tutorial, because they roughly refer to the same aspect: a layer is the spatial representation of an environmental variable.</p>
 <p>The most important part here is that every layer of your <code>RasterStack</code> must be correctly named, because these names will be used when generating virtual species.<br />
 Hence, I strongly advise using explicit names for your layers. You can use “variable1”, “variable2”, etc. or “layer1”, “layer2”, etc. but names like “bio1”, “bio2”, “bio3”, (<a href="http://worldclim.org/bioclim">bioclimatic variable names</a>) or “temp1”, “temp2”, etc. will reduce confusion.<br />
-You can access the names of the layers of your stack with <code>names(my.stack)</code>, and modify them with <code>names(my.stack) &lt;- c(&quot;name1&quot;, &quot;name2&quot;, etc.)</code>.</p>
+You can access the names of the layers of your stack with <code>names(my.stack)</code>, and modify them with <code>names(my.stack) &lt;- c("name1", "name2", etc.)</code>.</p>
 </div>
 <div id="a-quick-and-easy-example-using-worldclim-data" class="section level3">
 <h3>1.3. A quick and easy example using WorldClim data</h3>
-<p>WorldClim (www.worldclim.org) freely provides gridded climate data (temperature and precipitations) for the entire World. These data can be downloaded to your hard drive from the website above, and then imported into R using the stack command: <code>stack(&quot;my.path/MyWorldClimStack.bil&quot;)</code>.</p>
+<p>WorldClim (www.worldclim.org) freely provides gridded climate data (temperature and precipitations) for the entire World. These data can be downloaded to your hard drive from the website above, and then imported into R using the stack command: <code>stack("my.path/MyWorldClimStack.bil")</code>.</p>
 <p>Otherwise, a much simpler solution is to directly download them into R using the function <code>getData()</code> (requires an internet connection).</p>
 <p>You have to provide the type of environmental variables you are looking for:</p>
 <ul>

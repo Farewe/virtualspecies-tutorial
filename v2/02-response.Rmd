@@ -30,20 +30,20 @@ rm(a)
 
 ```
 
-_Note that bioclimatic temperature variables (here bio1) are is in 캜 * 10, [as explained here.](http://worldclim.org/bioclim)_
+_Note that bioclimatic temperature variables (here bio1) are is in 째C * 10, [as explained here.](http://worldclim.org/bioclim)_
 
 These bell-shaped functions are in fact gaussian distributions functions of the form:
 
 $$ f(x, \mu, \sigma) = \frac{1}{\sigma\sqrt{2\pi}}\, e^{-\frac{(x - \mu)^2}{2 \sigma^2}}$$
 
-If we take the example of bio1 above, the mean $\mu$ is equal to 250 (i.e., 25캜) and standard deviation $\sigma$ is equal to 50 (5캜). Hence the response function for bio1 is:
+If we take the example of bio1 above, the mean $\mu$ is equal to 250 (i.e., 25째C) and standard deviation $\sigma$ is equal to 50 (5째C). Hence the response function for bio1 is:
 
 $$ f(bio1) = \frac{1}{50\sqrt{2\pi}}\, e^{-\frac{(bio1 - 250)^2}{2 \times 50^2}} $$
 
 In R, it is very simple to obtain the result of the equation above, with the function `dnorm`: 
 
 ```{r resp2, cache = TRUE}
-# Suitability of the environment for bio1 = 15 캜
+# Suitability of the environment for bio1 = 15 째C
 dnorm(x = 150, mean = 250, sd = 50)
 ```
 
@@ -106,7 +106,7 @@ par(mar = c(3.1, 3.1, 0.1, 0.1))
 formatFunctions(bio1 = c(fun = 'logisticFun', beta = 150, alpha = -5), x = worldclim[["bio1"]])
 ```
 * Normal function defined by extremes: `formatFunctions(bio1 = c(fun = 'custnorm', mean = 250, diff = 50, prob = 0.99))`
-This function allows you to set extremum of a normal curve. In the example above, we define a response where the optimum is 25캜 (`mean = 250`), and 99% of the area under the curve (`prob = 0.99`) will be comprised between 20 and 30캜 (`diff = 50`).
+This function allows you to set extremum of a normal curve. In the example above, we define a response where the optimum is 25째C (`mean = 250`), and 99% of the area under the curve (`prob = 0.99`) will be comprised between 20 and 30째C (`diff = 50`).
 ```{r resp4.4, echo = FALSE, cache = TRUE, fig.cap = "Fig. 2.6 Normal function defined by extremes", fig.width = 3, fig.height = 2.5, results = "hide", fig.align = 'center'}
 par(mar = c(3.1, 3.1, 0.1, 0.1))
 formatFunctions(bio1 = c(fun = 'custnorm', mean = 250, diff = 50, prob = 0.99), x = worldclim[["bio1"]])

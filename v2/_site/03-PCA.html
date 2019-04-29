@@ -11,7 +11,7 @@
 
 
 
-<title></title>
+<title>3. Virtual species defined by response to a PCA of the environment</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -431,9 +431,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><ol start="3" style="list-style-type: decimal">
-<li>Virtual species defined by response to a PCA of the environment</li>
-</ol></h1>
+<h1 class="title toc-ignore">3. Virtual species defined by response to a PCA of the environment</h1>
 
 </div>
 
@@ -464,8 +462,8 @@ my.stack &lt;- worldclim[[c(&quot;bio2&quot;, &quot;bio5&quot;, &quot;bio6&quot;
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=-1.533744; sd=3.882747)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-1.497914; sd=1.93748)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=0.5271664; sd=1.349929)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=4.036709; sd=4.613638)
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
 <p>Something very important to know here is that the PCA is performed on all the pixels of the raster stack. As a consequence, if you use large stacks (large spatial scales, fine resolutions), your computer may not be able to extract all the values. In this case, you can run the PCA on a random subset of values, by setting <code>sample.points = TRUE</code> and defining the number of pixels to sample with <code>nb.points</code> (default 10000, try less if your computer is struggling). <em>Note that there is an automatic safety check if you don’t set <code>sample.points = TRUE</code>, and the function will not run if your computer cannot handle it.</em></p>
 <pre class="r"><code># A safe run of the function
@@ -482,10 +480,10 @@ my.pca.species &lt;- generateSpFromPCA(raster.stack = my.stack,
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.15 % explained by these axes
+## - Axes:  1, 2 ;  83.38 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-2.51; max=11.11] : dnorm (mean=-1.818115; sd=1.895758)
-##    .Axis 2  [min=-3.33; max=6.76] : dnorm (mean=1.307395; sd=1.239453)
+##    .Axis 1  [min=-13.43; max=2.56] : dnorm (mean=-0.8975715; sd=3.053737)
+##    .Axis 2  [min=-3.42; max=6.76] : dnorm (mean=-2.002075; sd=4.954154)
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
 <p>Congratulations! You have just generated your first virtual species with a PCA. You will probably have noticed that you have not entered any parameter, but the generation has still succeeded. Indeed, when no parameter is entered, the response of the species to PCA axes is randomly generated. The reason behind this choice is that you can hardly choose by yourself the parameters before you have seen the PCA! The next step is therefore to take a look at the PCA, using the function <code>plotResponse</code> (note that you can also use the argument <code>plot = TRUE</code> in <code>generateSpFromPCA</code>)</p>
 <pre class="r"><code>plotResponse(my.pca.species)</code></pre>

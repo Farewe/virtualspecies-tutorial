@@ -11,7 +11,7 @@
 
 
 
-<title></title>
+<title>6. Exploring virtual species</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -431,9 +431,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><ol start="6" style="list-style-type: decimal">
-<li>Exploring virtual species</li>
-</ol></h1>
+<h1 class="title toc-ignore">6. Exploring virtual species</h1>
 
 </div>
 
@@ -442,8 +440,10 @@ div.tocify {
 <div id="consult-the-details-of-a-generated-virtual-species" class="section level2">
 <h2>6.1. Consult the details of a generated virtual species</h2>
 <p>Let’s create a simple virtual species:</p>
-<pre class="r"><code>library(virtualspecies)
-# Worldclim data
+<pre class="r"><code>library(virtualspecies)</code></pre>
+<pre><code>## Loading required package: raster</code></pre>
+<pre><code>## Loading required package: sp</code></pre>
+<pre class="r"><code># Worldclim data
 worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
 
 # Formatting of the response functions
@@ -466,7 +466,7 @@ my.species &lt;- convertToPA(my.species,
 ##               
 ## - beta = 0.7
 ## - alpha = -0.05
-## - species prevalence =0.0338995519408199</code></pre>
+## - species prevalence =0.0338978411382996</code></pre>
 <div class="figure">
 <img src="06-virtualspeciesobjects_files/figure-html/output1-1.png" alt="Fig. 6.1 Automatic illustration of the randomly generated species" />
 <p class="caption">Fig. 6.1 Automatic illustration of the randomly generated species</p>
@@ -489,11 +489,11 @@ my.species &lt;- convertToPA(my.species,
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
 ##    .beta  (inflexion point) = 0.7
-##    .species prevalence      = 0.0338995519408199</code></pre>
+##    .species prevalence      = 0.0338978411382996</code></pre>
 <p>And a summary of how the virtual species was generated appears:</p>
 <ul>
 <li>It shows us the variables used.</li>
-<li>It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9°C) to 314 (31.4°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25°C).</li>
+<li>It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9Â°C) to 314 (31.4Â°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25Â°C).</li>
 <li>If a conversion to presence-absence was performed, it shows us the parameters of the conversion, and provides the species prevalence (the species prevalence is always calculated and provided).</li>
 <li>If you have introduced a distribution bias (will be seen in a later section), it will provide information about this particular bias.</li>
 </ul>

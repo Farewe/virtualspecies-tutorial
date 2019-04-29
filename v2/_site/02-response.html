@@ -11,7 +11,7 @@
 
 
 
-<title></title>
+<title>2. Virtual species defined by response to environmental variables</title>
 
 <script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -431,9 +431,7 @@ div.tocify {
 
 
 
-<h1 class="title toc-ignore"><ol start="2" style="list-style-type: decimal">
-<li>Virtual species defined by response to environmental variables</li>
-</ol></h1>
+<h1 class="title toc-ignore">2. Virtual species defined by response to environmental variables</h1>
 
 </div>
 
@@ -552,11 +550,11 @@ Fig. 2.7 Beta response function
 <h3>2.2.3. Combining response functions</h3>
 <p>There are three main possibilities to combine response functions to calculate the environmental suitability, as defined by the parameters <code>species.type</code> and <code>formula</code>:</p>
 <ul>
-<li><code>species.type = &quot;additive&quot;</code>: the response functions are added.</li>
-<li><code>species.type = &quot;multiplicative&quot;</code>: the response functions are multiplied. This is the default behaviour of the function.</li>
-<li><code>formula = &quot;bio1 + 2 * bio2 + bio3&quot;</code>: if you choose a formula, then the response functions are combined according to your formula (parameter <code>species.type</code> is then ignored).</li>
+<li><code>species.type = "additive"</code>: the response functions are added.</li>
+<li><code>species.type = "multiplicative"</code>: the response functions are multiplied. This is the default behaviour of the function.</li>
+<li><code>formula = "bio1 + 2 * bio2 + bio3"</code>: if you choose a formula, then the response functions are combined according to your formula (parameter <code>species.type</code> is then ignored).</li>
 </ul>
-<p>For example, if you want to generate a species with the same partial responses as in 2.1, but with a strong importance for temperature, then you can specify the formula : <code>formula = &quot;2 * bio1 + bio12&quot;</code></p>
+<p>For example, if you want to generate a species with the same partial responses as in 2.1, but with a strong importance for temperature, then you can specify the formula : <code>formula = "2 * bio1 + bio12"</code></p>
 <pre class="r"><code>library(virtualspecies)
 
 my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),

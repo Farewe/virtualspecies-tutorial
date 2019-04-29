@@ -17,6 +17,17 @@ Let's take a look:
 
 ```r
 library(virtualspecies)
+```
+
+```
+## Loading required package: raster
+```
+
+```
+## Loading required package: sp
+```
+
+```r
 worldclim <- getData("worldclim", var = "bio", res = 10)
 
 my.stack <- worldclim[[c("bio2", "bio5", "bio6", "bio12", "bio13", "bio14")]]
@@ -55,9 +66,9 @@ random.sp <- generateRandomSp(my.stack)
 ```
 ##    Logistic conversion finished:
 ##               
-## - beta = 0.751751751751752
+## - beta = 0.585585585585586
 ## - alpha = -0.1
-## - species prevalence =0.468641845203166
+## - species prevalence =0.174187069412391
 ```
 
 ![Fig. 5.1 A species randomly generated with `generateRandomSp`](05-randomspecies_files/figure-html/rand1-1.png)
@@ -73,16 +84,16 @@ random.sp
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=1.463498; sd=2.522761)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-0.9127507; sd=3.039012)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=1.136441; sd=0.3143425)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=0.2830632; sd=4.88196)
 ## - Environmental suitability was rescaled between 0 and 1
 ## 
 ## - Converted into presence-absence:
 ##    .Method = probability
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.1
-##    .beta  (inflexion point) = 0.751751751751752
-##    .species prevalence      = 0.468641845203166
+##    .beta  (inflexion point) = 0.585585585585586
+##    .species prevalence      = 0.174187069412391
 ```
 
 We can see that the species was generated using a PCA approach. Indeed, [as explained in the PCA section](#second-approach-generate-virtual-species-with-a-principal-components-analysis), when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function `generateRandomSp` uses a PCA approach if you have 6 or more variables, and a 'response functions' approach if you have less than 6 variables.
@@ -159,9 +170,9 @@ random.sp1
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio2  [min=9; max=211] : dnorm   (mean=98.3515535155352; sd=183.070390703907)
-##    .bio1  [min=-269; max=314] : dnorm   (mean=-98.0277102771028; sd=445.807068070681)
-##    .bio3  [min=8; max=95] : dnorm   (mean=12.7006770067701; sd=57.7729277292773)
+##    .bio2  [min=9; max=211] : logisticFun   (alpha=8.99818181818182; beta=81.4302024302024)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=202.375273752738; sd=157.190031900319)
+##    .bio3  [min=8; max=95] : logisticFun   (alpha=-295.8; beta=29.2549042549043)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1
@@ -213,13 +224,13 @@ random.sp2
 
 ```
 ## Virtual species generated from 3 variables:
-##  bio1, bio2, bio3
+##  bio1, bio3, bio2
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=-190.69648696487; sd=515.143951439514)
-##    .bio2  [min=9; max=211] : dnorm   (mean=152.368843688437; sd=145.988879888799)
-##    .bio3  [min=8; max=95] : dnorm   (mean=78.2047820478205; sd=59.2032220322203)
+##    .bio1  [min=-269; max=314] : dnorm   (mean=-170.437034370344; sd=100.247852478525)
+##    .bio3  [min=8; max=95] : dnorm   (mean=63.5163351633516; sd=29.9352593525935)
+##    .bio2  [min=9; max=211] : dnorm   (mean=56.4954449544495; sd=119.932639326393)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1
@@ -239,7 +250,7 @@ As explained in the section on the 'response' approach, you can choose to rescal
 
 ### 5.2.3. Try to find a realistic species
 
-An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35°C and winter temperature of -50°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: `realistic.sp`.
+An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35Â°C and winter temperature of -50Â°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: `realistic.sp`.
 
 When activating this argument, the function will proceed step-by-step to try defining a realistic species. At step one, one of the variable is chosen, and the program randomly determines a response function for this variable. Then, it will compute the environmental suitability of this species. At step two, the program will pick a second variable, and will constrain its random generation depending on the environmental suitability obtained at step one. For example, if at step 2 a gaussian response is picked, then the mean will be chosen in areas where the species had a high environmental suitability. Then, the environmental suitability is recalculated on the basis of the first two response functions. At step 3, another variable is picked, a response function randomly generated with respect to areas where the species already has a high suitability, and so on until there are no variables left. While this process can help, it does not always work, and can provide completely unrealistic results also. In this case, you should try different runs, or switch to a 'PCA' approach.
 
@@ -249,7 +260,7 @@ Let's see an example :
 ```r
 realistic.sp <- generateRandomSp(worldclim[[c(1, 5)]],
                                  realistic.sp = TRUE,
-                                 convert.to.PA = FALSE)
+                                 convert.to.PA = FALSE) 
 ```
 
 ```
@@ -310,7 +321,7 @@ Note that you can always let the function randomly determine the conversion to p
 
 
 ```r
-realistic.sp <- convertToPA(realistic.sp, beta = 0.5)
+realistic.sp <- convertToPA(realistic.sp, beta = 0.5) 
 ```
 
 ```
@@ -322,7 +333,7 @@ realistic.sp <- convertToPA(realistic.sp, beta = 0.5)
 ##               
 ## - beta = 0.5
 ## - alpha = -0.05
-## - species prevalence =0.436056189597979
+## - species prevalence =0.491698330769981
 ```
 
 ![Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6](05-randomspecies_files/figure-html/rand7-1.png)
@@ -390,9 +401,9 @@ safe.run.sp <- generateRandomSp(worldclim[[c(1, 5, 6)]],
 ```
 ##    Logistic conversion finished:
 ##               
-## - beta = 0.757757757757758
+## - beta = 0.0940940940940941
 ## - alpha = -0.1
-## - species prevalence =0.155667632129556
+## - species prevalence =0.904424306397888
 ```
 
 ![Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure](05-randomspecies_files/figure-html/rand8-1.png)

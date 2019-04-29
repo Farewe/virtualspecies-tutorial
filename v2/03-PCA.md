@@ -75,8 +75,8 @@ my.pca.species
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  83.24 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=-1.533744; sd=3.882747)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=-1.497914; sd=1.93748)
+##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=0.5271664; sd=1.349929)
+##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=4.036709; sd=4.613638)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
@@ -117,10 +117,10 @@ my.pca.species
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.15 % explained by these axes
+## - Axes:  1, 2 ;  83.38 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-2.51; max=11.11] : dnorm (mean=-1.818115; sd=1.895758)
-##    .Axis 2  [min=-3.33; max=6.76] : dnorm (mean=1.307395; sd=1.239453)
+##    .Axis 1  [min=-13.43; max=2.56] : dnorm (mean=-0.8975715; sd=3.053737)
+##    .Axis 2  [min=-3.42; max=6.76] : dnorm (mean=-2.002075; sd=4.954154)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
