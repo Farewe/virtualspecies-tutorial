@@ -73,7 +73,9 @@ h6 {
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
+</head>
 
+<body>
 
 <style type = "text/css">
 .main-container {
@@ -191,6 +193,8 @@ $(document).ready(function () {
   menuAnchor.closest('li.dropdown').addClass('active');
 });
 </script>
+
+<div class="container-fluid main-container">
 
 <!-- tabsets -->
 
@@ -349,16 +353,6 @@ div.tocify {
 
 </style>
 
-
-
-</head>
-
-<body>
-
-
-<div class="container-fluid main-container">
-
-
 <!-- setup 3col/9col grid for toc_float and main content  -->
 <div class="row-fluid">
 <div class="col-xs-12 col-sm-4 col-md-3">
@@ -512,7 +506,7 @@ pa1 &lt;- convertToPA(my.first.species, plot = TRUE)</code></pre>
 ##               
 ## - slope (a) = 1
 ## - intercept (b) = 0
-## - species prevalence =0.117787042723871</code></pre>
+## - species prevalence =0.117027446404834</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv4.2-1.png" alt="Fig. 4.5 Linear conversion," />
 <p class="caption">Fig. 4.5 Linear conversion,</p>
@@ -527,7 +521,7 @@ pa1 &lt;- convertToPA(my.first.species, plot = TRUE)</code></pre>
 ##               
 ## - slope (a) = 0.5
 ## - intercept (b) = 0
-## - species prevalence =0.0584033764398542</code></pre>
+## - species prevalence =0.0589029307757976</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv4.3-1.png" alt="Fig. 4.6 Linear conversion" />
 <p class="caption">Fig. 4.6 Linear conversion</p>
@@ -632,8 +626,8 @@ sp.0.2 &lt;- convertToPA(my.first.species,
 ##    .threshold           = 0.203386126930749
 ##    .species prevalence  = 0.199999657839496</code></pre>
 </div>
-<div id="threshold-conversion-2" class="section level3">
-<h3>4.4.2 Threshold conversion</h3>
+<div id="linear-conversion-1" class="section level3">
+<h3>4.4.2 Linear conversion</h3>
 <p>In this case again, you just specify your value of species prevalence without any other parameter, and the function will try to find a conversion that respects the chosen prevalence, and does not result in probabilities below 0 or above 1.</p>
 <pre class="r"><code># Let&#39;s generate a species occupying 20% of the world
 sp.0.2 &lt;- convertToPA(my.first.species,
@@ -647,7 +641,7 @@ sp.0.2 &lt;- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.906510955920892
 ## - intercept (b) = 0.0934890440791084
-## - species prevalence =0.20026312142763</code></pre>
+## - species prevalence =0.200039006297464</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv8.2-1.png" alt="Fig. 4.14 Linear conversion of a species with a prevalence of 0.2" />
 <p class="caption">Fig. 4.14 Linear conversion of a species with a prevalence of 0.2</p>
@@ -669,7 +663,7 @@ sp.0.2 &lt;- convertToPA(my.first.species,
 ##    .probabilistic method    = linear
 ##    .a (slope)               = 0.906510955920892
 ##    .b (intercept)           = 0.0934890440791084
-##    .species prevalence      = 0.20026312142763</code></pre>
+##    .species prevalence      = 0.200039006297464</code></pre>
 <pre class="r"><code># And two others covering 5 and 50% of the world
 sp.0.05 &lt;- convertToPA(my.first.species,
                       PA.method = &quot;probability&quot;,
@@ -682,7 +676,7 @@ sp.0.05 &lt;- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.425548220877006
 ## - intercept (b) = 0
-## - species prevalence =0.0499554335943448</code></pre>
+## - species prevalence =0.0502017891572758</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv8.4-1.png" alt="Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5" />
 <p class="caption">Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5</p>
@@ -698,7 +692,7 @@ sp.0.05 &lt;- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.566569347450557
 ## - intercept (b) = 0.433430652549443
-## - species prevalence =0.499742524220687</code></pre>
+## - species prevalence =0.499480771435072</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv8.4-2.png" alt="Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5" />
 <p class="caption">Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5</p>
@@ -723,9 +717,9 @@ sp.0.2 &lt;- convertToPA(my.first.species,
 <pre><code>##    --- Determing beta automatically according to alpha and species.prevalence</code></pre>
 <pre><code>##    Logistic conversion finished:
 ##               
-## - beta = 0.232421875
+## - beta = 0.234375
 ## - alpha = -0.05
-## - species prevalence =0.200429069272105</code></pre>
+## - species prevalence =0.199236639915418</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv8-1.png" alt="Fig. 4.17 Conversion of a species with a prevalence of 0.2, i.e. occupying 20% of the world (which is quite large)" />
 <p class="caption">Fig. 4.17 Conversion of a species with a prevalence of 0.2, <em>i.e.</em> occupying 20% of the world (which is quite large)</p>
@@ -746,8 +740,8 @@ sp.0.2 &lt;- convertToPA(my.first.species,
 ##    .Method = probability
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
-##    .beta  (inflexion point) = 0.232421875
-##    .species prevalence      = 0.200429069272105</code></pre>
+##    .beta  (inflexion point) = 0.234375
+##    .species prevalence      = 0.199236639915418</code></pre>
 <pre class="r"><code># Now, a species occupying 1.5% of the world
 # Change alpha to have a slightly more steep curve
 sp.0.015 &lt;- convertToPA(my.first.species,
@@ -758,7 +752,7 @@ sp.0.015 &lt;- convertToPA(my.first.species,
 ##               
 ## - beta = 0.828125
 ## - alpha = -0.015
-## - species prevalence =0.0143108630827635</code></pre>
+## - species prevalence =0.0144066680239033</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv9-1.png" alt="Fig. 4.18 Conversion of a species with a prevalence of 0.015, i.e. occupying 1.5% of the world" />
 <p class="caption">Fig. 4.18 Conversion of a species with a prevalence of 0.015, <em>i.e.</em> occupying 1.5% of the world</p>
@@ -780,7 +774,7 @@ sp.0.015 &lt;- convertToPA(my.first.species,
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.015
 ##    .beta  (inflexion point) = 0.828125
-##    .species prevalence      = 0.0143108630827635</code></pre>
+##    .species prevalence      = 0.0144066680239033</code></pre>
 <pre class="r"><code># Let&#39;s try by fixing beta rather than alpha
 # We want a species occupying 10% of the world, with a high value of beta
 sp.10 &lt;- convertToPA(my.first.species,
@@ -792,7 +786,7 @@ sp.10 &lt;- convertToPA(my.first.species,
 ##               
 ## - beta = 0.9
 ## - alpha = -0.31346875
-## - species prevalence =0.0913346141541536</code></pre>
+## - species prevalence =0.0904467076460897</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv10-1.png" alt="Fig. 4.19 Conversion of a species with a prevalence of 0.1, i.e. occupying 10% of the world" />
 <p class="caption">Fig. 4.19 Conversion of a species with a prevalence of 0.1, <em>i.e.</em> occupying 10% of the world</p>
@@ -814,7 +808,7 @@ sp.10 &lt;- convertToPA(my.first.species,
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.31346875
 ##    .beta  (inflexion point) = 0.9
-##    .species prevalence      = 0.0913346141541536</code></pre>
+##    .species prevalence      = 0.0904467076460897</code></pre>
 <p>It worked, but the resulting species does not look realistic at all: alpha was below -0.3, which means that we had a quasi-linear conversion curve, producing this unrealistic presence-absence map.</p>
 <pre class="r"><code># Now an impossible task: a low value of beta for the same requirements:
 sp.10bis &lt;- convertToPA(my.first.species,
@@ -829,7 +823,7 @@ sp.10bis &lt;- convertToPA(my.first.species,
 ##               
 ## - beta = 0.3
 ## - alpha = -0.001
-## - species prevalence =0.147243640519331</code></pre>
+## - species prevalence =0.147229954099168</code></pre>
 <div class="figure">
 <img src="04-presenceabsence_files/figure-html/conv11-1.png" alt="Fig. 4.20 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta" />
 <p class="caption">Fig. 4.20 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta</p>
@@ -851,7 +845,7 @@ sp.10bis &lt;- convertToPA(my.first.species,
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.001
 ##    .beta  (inflexion point) = 0.3
-##    .species prevalence      = 0.147243640519331</code></pre>
+##    .species prevalence      = 0.147229954099168</code></pre>
 <p>Let’s see how the conversion curves look like:</p>
 <pre class="r"><code>plotSuitabilityToProba(sp.0.015)
 plotSuitabilityToProba(sp.0.2, add = TRUE, lty = 2)

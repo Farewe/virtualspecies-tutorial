@@ -300,7 +300,7 @@ sp.0.2
 ```
 
 
-### 4.4.2 Threshold conversion
+### 4.4.2 Linear conversion
 
 In this case again, you just specify your value of species prevalence without any other parameter, and the function will try to find a conversion that respects the chosen prevalence, and does not result in probabilities below 0 or above 1.
 

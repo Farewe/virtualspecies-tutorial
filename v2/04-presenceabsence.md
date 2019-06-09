@@ -114,7 +114,7 @@ pa3 <- convertToPA(my.first.species, PA.method = "probability",
 ##               
 ## - slope (a) = 1
 ## - intercept (b) = 0
-## - species prevalence =0.117787042723871
+## - species prevalence =0.117027446404834
 ```
 
 ![Fig. 4.5 Linear conversion, ](04-presenceabsence_files/figure-html/conv4.2-1.png)
@@ -138,7 +138,7 @@ pa4 <- convertToPA(my.first.species, PA.method = "probability",
 ##               
 ## - slope (a) = 0.5
 ## - intercept (b) = 0
-## - species prevalence =0.0584033764398542
+## - species prevalence =0.0589029307757976
 ```
 
 ![Fig. 4.6 Linear conversion](04-presenceabsence_files/figure-html/conv4.3-1.png)
@@ -264,7 +264,7 @@ sp.0.2
 ```
 
 
-### 4.4.2 Threshold conversion
+### 4.4.2 Linear conversion
 
 In this case again, you just specify your value of species prevalence without any other parameter, and the function will try to find a conversion that respects the chosen prevalence, and does not result in probabilities below 0 or above 1.
 
@@ -288,7 +288,7 @@ sp.0.2 <- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.906510955920892
 ## - intercept (b) = 0.0934890440791084
-## - species prevalence =0.20026312142763
+## - species prevalence =0.200039006297464
 ```
 
 ![Fig. 4.14 Linear conversion of a species with a prevalence of 0.2](04-presenceabsence_files/figure-html/conv8.2-1.png)
@@ -314,7 +314,7 @@ sp.0.2
 ##    .probabilistic method    = linear
 ##    .a (slope)               = 0.906510955920892
 ##    .b (intercept)           = 0.0934890440791084
-##    .species prevalence      = 0.20026312142763
+##    .species prevalence      = 0.200039006297464
 ```
 
 ```r
@@ -336,7 +336,7 @@ sp.0.05 <- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.425548220877006
 ## - intercept (b) = 0
-## - species prevalence =0.0499554335943448
+## - species prevalence =0.0502017891572758
 ```
 
 ![Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5](04-presenceabsence_files/figure-html/conv8.4-1.png)
@@ -359,7 +359,7 @@ sp.0.5 <- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.566569347450557
 ## - intercept (b) = 0.433430652549443
-## - species prevalence =0.499742524220687
+## - species prevalence =0.499480771435072
 ```
 
 ![Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5](04-presenceabsence_files/figure-html/conv8.4-2.png)
@@ -395,9 +395,9 @@ sp.0.2 <- convertToPA(my.first.species,
 ```
 ##    Logistic conversion finished:
 ##               
-## - beta = 0.232421875
+## - beta = 0.234375
 ## - alpha = -0.05
-## - species prevalence =0.200429069272105
+## - species prevalence =0.199236639915418
 ```
 
 ![Fig. 4.17 Conversion of a species with a prevalence of 0.2, _i.e._ occupying 20% of the world (which is quite large)](04-presenceabsence_files/figure-html/conv8-1.png)
@@ -422,8 +422,8 @@ sp.0.2
 ##    .Method = probability
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
-##    .beta  (inflexion point) = 0.232421875
-##    .species prevalence      = 0.200429069272105
+##    .beta  (inflexion point) = 0.234375
+##    .species prevalence      = 0.199236639915418
 ```
 
 
@@ -444,7 +444,7 @@ sp.0.015 <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.828125
 ## - alpha = -0.015
-## - species prevalence =0.0143108630827635
+## - species prevalence =0.0144066680239033
 ```
 
 ![Fig. 4.18 Conversion of a species with a prevalence of 0.015, _i.e._ occupying 1.5% of the world](04-presenceabsence_files/figure-html/conv9-1.png)
@@ -470,7 +470,7 @@ sp.0.015
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.015
 ##    .beta  (inflexion point) = 0.828125
-##    .species prevalence      = 0.0143108630827635
+##    .species prevalence      = 0.0144066680239033
 ```
 
 
@@ -492,7 +492,7 @@ sp.10 <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.9
 ## - alpha = -0.31346875
-## - species prevalence =0.0913346141541536
+## - species prevalence =0.0904467076460897
 ```
 
 ![Fig. 4.19 Conversion of a species with a prevalence of 0.1, _i.e._ occupying 10% of the world](04-presenceabsence_files/figure-html/conv10-1.png)
@@ -518,7 +518,7 @@ sp.10
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.31346875
 ##    .beta  (inflexion point) = 0.9
-##    .species prevalence      = 0.0913346141541536
+##    .species prevalence      = 0.0904467076460897
 ```
 
 It worked, but the resulting species does not look realistic at all: alpha was below -0.3, which means that we had a quasi-linear conversion curve, producing this unrealistic presence-absence map.
@@ -548,7 +548,7 @@ sp.10bis <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.3
 ## - alpha = -0.001
-## - species prevalence =0.147243640519331
+## - species prevalence =0.147229954099168
 ```
 
 ![Fig. 4.20 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta](04-presenceabsence_files/figure-html/conv11-1.png)
@@ -574,7 +574,7 @@ sp.10bis
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.001
 ##    .beta  (inflexion point) = 0.3
-##    .species prevalence      = 0.147243640519331
+##    .species prevalence      = 0.147229954099168
 ```
 
 
