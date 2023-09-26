@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>6. Exploring virtual species</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -44,32 +58,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -81,13 +71,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -101,40 +86,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -162,7 +123,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -174,7 +135,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -184,11 +145,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -200,13 +178,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -214,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -236,6 +206,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -248,48 +219,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -303,6 +235,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -338,8 +276,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -360,7 +296,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -374,7 +310,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -390,7 +326,7 @@ div.tocify {
   <a href="01-inputdata.html">1. Input data</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Simulating virtual species
      
     <span class="caret"></span>
@@ -427,7 +363,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -436,18 +372,34 @@ div.tocify {
 </div>
 
 
-<p>This section is mainly intended to users not very familiar with R. For example, if you are not sure how to obtain the maps of generated virtual species, read this section. If you simply want to extract (sample) occurrence points for your virtual species, then you should jump to the next section.</p>
-<div id="consult-the-details-of-a-generated-virtual-species" class="section level2">
+<p>This section is mainly intended to users not very familiar with R.
+For example, if you are not sure how to obtain the maps of generated
+virtual species, read this section. If you simply want to extract
+(sample) occurrence points for your virtual species, then you should
+jump to the next section.</p>
+<div id="consult-the-details-of-a-generated-virtual-species"
+class="section level2">
 <h2>6.1. Consult the details of a generated virtual species</h2>
 <p>Let’s create a simple virtual species:</p>
 <pre class="r"><code>library(virtualspecies)</code></pre>
-<pre><code>## Loading required package: raster</code></pre>
-<pre><code>## Loading required package: sp</code></pre>
-<pre class="r"><code># Worldclim data
-worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
+<pre><code>## Le chargement a nécessité le package : terra</code></pre>
+<pre><code>## terra 1.7.46</code></pre>
+<pre><code>## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+## which was just loaded, will retire in October 2023.
+## Please refer to R-spatial evolution reports for details, especially
+## https://r-spatial.org/r/2023/05/15/evolution4.html.
+## It may be desirable to make the sf package available;
+## package maintainers should consider adding sf to Suggests:.
+## The sp package is now running under evolution status 2
+##      (status 2 uses the sf package in place of rgdal)</code></pre>
+<pre class="r"><code>library(geodata)
+# Worldclim data
+worldclim &lt;- worldclim_global(var = &quot;bio&quot;, res = 10,
+                              path = tempdir())
+names(worldclim) &lt;- paste0(&quot;bio&quot;, 1:19)
 
 # Formatting of the response functions
-my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),
+my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 25, sd = 5),
                                  bio12 = c(fun = &#39;dnorm&#39;, mean = 4000, sd = 2000))
 
 # Generation of the virtual species
@@ -456,8 +408,7 @@ my.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&quot;,
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
 <pre><code>##  - The response to each variable was rescaled between 0 and 1. To
 ##             disable, set argument rescale.each.response = FALSE</code></pre>
-<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE</code></pre>
 <pre class="r"><code># Conversion to presence-absence
 my.species &lt;- convertToPA(my.species,
                           beta = 0.7)</code></pre>
@@ -466,20 +417,23 @@ my.species &lt;- convertToPA(my.species,
 ##               
 ## - beta = 0.7
 ## - alpha = -0.05
-## - species prevalence =0.0338978411382996</code></pre>
-<div class="figure">
-<img src="06-virtualspeciesobjects_files/figure-html/output1-1.png" alt="Fig. 6.1 Automatic illustration of the randomly generated species" />
-<p class="caption">Fig. 6.1 Automatic illustration of the randomly generated species</p>
+## - species prevalence =0.024759514536794</code></pre>
+<div class="float">
+<img src="06-virtualspeciesobjects_files/figure-html/output1-1.png"
+alt="Fig. 6.1 Automatic illustration of the randomly generated species" />
+<div class="figcaption">Fig. 6.1 Automatic illustration of the randomly
+generated species</div>
 </div>
-<p>If we want to know how it was generated, we simply type the object name in the R console:</p>
+<p>If we want to know how it was generated, we simply type the object
+name in the R console:</p>
 <pre class="r"><code>my.species</code></pre>
 <pre><code>## Virtual species generated from 2 variables:
 ##  bio1, bio12
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
-##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=25; sd=5)
+##    .bio12  [min=0; max=11191] : dnorm   (mean=4000; sd=2000)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio12
 ## - Environmental suitability was rescaled between 0 and 1
@@ -489,47 +443,85 @@ my.species &lt;- convertToPA(my.species,
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
 ##    .beta  (inflexion point) = 0.7
-##    .species prevalence      = 0.0338978411382996</code></pre>
+##    .species prevalence      = 0.024759514536794</code></pre>
 <p>And a summary of how the virtual species was generated appears:</p>
 <ul>
 <li>It shows us the variables used.</li>
-<li>It shows us the approach used and all the details of the approach, so we can use it to reconstruct another virtual species with the exact same parameters later on. It also provides us the range of values of our environmental variables (bio1 (mean annual temperature) ranged from -269 (-26.9Â°C) to 314 (31.4Â°C)). This is helpful to quickly get an idea of the preferences of our species; for example here we see that we have a species living in hot environments, with a peak at 250 (25Â°C).</li>
-<li>If a conversion to presence-absence was performed, it shows us the parameters of the conversion, and provides the species prevalence (the species prevalence is always calculated and provided).</li>
-<li>If you have introduced a distribution bias (will be seen in a later section), it will provide information about this particular bias.</li>
+<li>It shows us the approach used and all the details of the approach,
+so we can use it to reconstruct another virtual species with the exact
+same parameters later on. It also provides us the range of values of our
+environmental variables (bio1 (mean annual temperature) ranged from
+-54.72°C to 30.99°C). This is helpful to quickly get an idea of the
+preferences of our species; for example here we see that we have a
+species living in hot environments, with a peak at 25°C.</li>
+<li>If a conversion to presence-absence was performed, it shows us the
+parameters of the conversion, and provides the species prevalence (the
+species prevalence is always calculated and provided).</li>
+<li>If you have introduced a distribution bias (will be seen in a later
+section), it will provide information about this particular bias.</li>
 </ul>
 </div>
 <div id="plot-the-virtual-species-map" class="section level2">
 <h2>6.2. Plot the virtual species map</h2>
-<p>Plotting the distribution maps of a virtual species is straightforward:</p>
+<p>Plotting the distribution maps of a virtual species is
+straightforward:</p>
 <pre class="r"><code>plot(my.species)</code></pre>
-<div class="figure">
-<img src="06-virtualspeciesobjects_files/figure-html/output3-1.png" alt="Fig. 6.2 Maps obtained when using the function plot() on virtual species objects" />
-<p class="caption">Fig. 6.2 Maps obtained when using the function <code>plot()</code> on virtual species objects</p>
+<div class="float">
+<img src="06-virtualspeciesobjects_files/figure-html/output3-1.png"
+alt="Fig. 6.2 Maps obtained when using the function plot() on virtual species objects" />
+<div class="figcaption">Fig. 6.2 Maps obtained when using the function
+<code>plot()</code> on virtual species objects</div>
 </div>
-<p>If the environmental sutiability has been converted into presence-absence, then the plot will conveniently display both the environmental suitability and the presence-absence map.</p>
+<p>If the environmental suitability has been converted into
+presence-absence, then the plot will conveniently display both the
+environmental suitability and the presence-absence map.</p>
 </div>
-<div id="plot-the-species-environment-relationship" class="section level2">
+<div id="plot-the-species-environment-relationship"
+class="section level2">
 <h2>6.3. Plot the species-environment relationship</h2>
-<p>As illustrated several times in this tutorial, there is a function to automatically generate an appropriate plot for your virtual species: <code>plotResponse</code></p>
+<p>As illustrated several times in this tutorial, there is a function to
+automatically generate an appropriate plot for your virtual species:
+<code>plotResponse</code></p>
 <pre class="r"><code>plotResponse(my.species)</code></pre>
-<div class="figure">
-<img src="06-virtualspeciesobjects_files/figure-html/output3bis-1.png" alt="Fig. 6.3 Example of figure obtained when running plotResponse() on a virtual species object" />
-<p class="caption">Fig. 6.3 Example of figure obtained when running <code>plotResponse()</code> on a virtual species object</p>
+<div class="float">
+<img src="06-virtualspeciesobjects_files/figure-html/output3bis-1.png"
+alt="Fig. 6.3 Example of figure obtained when running plotResponse() on a virtual species object" />
+<div class="figcaption">Fig. 6.3 Example of figure obtained when running
+<code>plotResponse()</code> on a virtual species object</div>
 </div>
 </div>
-<div id="plot-the-relationship-between-suitability-and-probability-of-occurrence" class="section level2">
-<h2>6.4. Plot the relationship between suitability and probability of occurrence</h2>
-<p>If you converted your environmental suitability into presence-absence with a probabilistic approach, chances are that you modified the environmental suitability function, e.g. if you used a logistic method or if you wanted to reach a specific prevalence. You may be interested in the relationship between environmental suitability and probability of occurrence, which can be plotted with <code>plotSuitabilityToProba</code></p>
+<div
+id="plot-the-relationship-between-suitability-and-probability-of-occurrence"
+class="section level2">
+<h2>6.4. Plot the relationship between suitability and probability of
+occurrence</h2>
+<p>If you converted your environmental suitability into presence-absence
+with a probabilistic approach, chances are that you modified the
+environmental suitability function, e.g. if you used a logistic method
+or if you wanted to reach a specific prevalence. You may be interested
+in the relationship between environmental suitability and probability of
+occurrence, which can be plotted with
+<code>plotSuitabilityToProba</code></p>
 <pre class="r"><code>plotSuitabilityToProba(my.species)</code></pre>
-<div class="figure">
-<img src="06-virtualspeciesobjects_files/figure-html/output3ter-1.png" alt="Fig. 6.4 Example of figure obtained when running plotSuitabilityToProba() on a virtual species object" />
-<p class="caption">Fig. 6.4 Example of figure obtained when running <code>plotSuitabilityToProba()</code> on a virtual species object</p>
+<div class="float">
+<img src="06-virtualspeciesobjects_files/figure-html/output3ter-1.png"
+alt="Fig. 6.4 Example of figure obtained when running plotSuitabilityToProba() on a virtual species object" />
+<div class="figcaption">Fig. 6.4 Example of figure obtained when running
+<code>plotSuitabilityToProba()</code> on a virtual species object</div>
 </div>
 </div>
-<div id="extracting-elements-of-the-virtual-species-such-as-the-rasters-of-environmental-suitability" class="section level2">
-<h2>6.5. Extracting elements of the virtual species, such as the rasters of environmental suitability</h2>
-<p>The virtual species object is structured as a <code>list</code> in R, which roughly means that it is an object containing many “sub-objects”. When you run functions on your virtual species object, such as the conversion into presence-absence, then new sub-objects are added or replaced in the list.</p>
-<p>There is a function allowing you to see the content of the list: <code>str()</code></p>
+<div
+id="extracting-elements-of-the-virtual-species-such-as-the-rasters-of-environmental-suitability"
+class="section level2">
+<h2>6.5. Extracting elements of the virtual species, such as the rasters
+of environmental suitability</h2>
+<p>The virtual species object is structured as a <code>list</code> in R,
+which roughly means that it is an object containing many “sub-objects”.
+When you run functions on your virtual species object, such as the
+conversion into presence-absence, then new sub-objects are added or
+replaced in the list.</p>
+<p>There is a function allowing you to see the content of the list:
+<code>str()</code></p>
 <pre class="r"><code>str(my.species)</code></pre>
 <pre><code>## List of 6
 ##  $ approach                 : chr &quot;response&quot;
@@ -539,47 +531,68 @@ my.species &lt;- convertToPA(my.species,
 ##   ..$ rescale.each.response: logi TRUE
 ##   ..$ rescale              : logi TRUE
 ##   ..$ parameters           :List of 2
-##  $ suitab.raster            :Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
+##  $ suitab.raster            :S4 class &#39;SpatRaster&#39; [package &quot;terra&quot;]
 ##  $ PA.conversion            : Named chr [1:5] &quot;probability&quot; &quot;logistic&quot; &quot;-0.05&quot; &quot;0.7&quot; ...
 ##   ..- attr(*, &quot;names&quot;)= chr [1:5] &quot;conversion.method&quot; &quot;probabilistic.method&quot; &quot;alpha&quot; &quot;beta&quot; ...
-##  $ probability.of.occurrence:Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
-##  $ pa.raster                :Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
+##  $ probability.of.occurrence:S4 class &#39;SpatRaster&#39; [package &quot;terra&quot;]
+##  $ pa.raster                :S4 class &#39;SpatRaster&#39; [package &quot;terra&quot;]
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;virtualspecies&quot; &quot;list&quot;</code></pre>
-<p>We are informed that the object is a <code>list</code> containing 5 elements (sub-objects), that you can read on the lines starting with a <code>$</code>: <code>approach</code>, <code>details</code>, <code>suitab.raster</code>, <code>PA.conversion</code> and <code>pa.raster</code>.</p>
-<p>You can extract each element using the <code>$</code>: for example, to extract the suitability raster, type</p>
+<p>We are informed that the object is a <code>list</code> containing 5
+elements (sub-objects), that you can read on the lines starting with a
+<code>$</code>: <code>approach</code>, <code>details</code>,
+<code>suitab.raster</code>, <code>PA.conversion</code> and
+<code>pa.raster</code>.</p>
+<p>You can extract each element using the <code>$</code>: for example,
+to extract the suitability raster, type</p>
 <pre class="r"><code>my.species$suitab.raster</code></pre>
-<pre><code>## class       : RasterLayer 
-## dimensions  : 900, 2160, 1944000  (nrow, ncol, ncell)
+<pre><code>## class       : SpatRaster 
+## dimensions  : 1080, 2160, 1  (nrow, ncol, nlyr)
 ## resolution  : 0.1666667, 0.1666667  (x, y)
-## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-## data source : in memory
-## names       : layer 
-## values      : 0, 1  (min, max)</code></pre>
-<p>If you are interested in the probability of occurrence raster, type</p>
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## source(s)   : memory
+## name        : VSP suitability 
+## min value   :               0 
+## max value   :               1</code></pre>
+<p>If you are interested in the probability of occurrence raster,
+type</p>
 <pre class="r"><code>my.species$probability.of.occurrence</code></pre>
-<pre><code>## class       : RasterLayer 
-## dimensions  : 900, 2160, 1944000  (nrow, ncol, ncell)
+<pre><code>## class       : SpatRaster 
+## dimensions  : 1080, 2160, 1  (nrow, ncol, nlyr)
 ## resolution  : 0.1666667, 0.1666667  (x, y)
-## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-## data source : in memory
-## names       : layer 
-## values      : 8.31528e-07, 0.9975274  (min, max)</code></pre>
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## source(s)   : memory
+## name        :        lyr.1 
+## min value   : 8.315280e-07 
+## max value   : 9.975274e-01</code></pre>
 <p>If you are interested in the presence-absence raster, type</p>
 <pre class="r"><code>my.species$pa.raster</code></pre>
-<pre><code>## class       : RasterLayer 
-## dimensions  : 900, 2160, 1944000  (nrow, ncol, ncell)
+<pre><code>## class       : SpatRaster 
+## dimensions  : 1080, 2160, 1  (nrow, ncol, nlyr)
 ## resolution  : 0.1666667, 0.1666667  (x, y)
-## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-## data source : in memory
-## names       : layer 
-## values      : 0, 1  (min, max)</code></pre>
-<p>You can also see that we have “sub-sub-objects”, in the lines starting with <code>..$</code>: these are objects contained within the sub-object <code>details</code>. You can also extract them easily:</p>
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## source(s)   : memory
+## name        : lyr.1 
+## min value   :     0 
+## max value   :     1</code></pre>
+<p><em>Technical note: rasters are terra objects which a stored in a
+special format, called ‘wrapped format’, to ensure that these objects
+can be safely saved to the disk for reproducibility. When you extract
+these rasters from virtualspecies objects with <code>$</code> or
+<code>[[ ]]</code>, they are silently unwrapped so that there is no
+difference for the users.</em></p>
+<p>You can also see that we have “sub-sub-objects”, in the lines
+starting with <code>..$</code>: these are objects contained within the
+sub-object <code>details</code>. You can also extract them easily:</p>
 <pre class="r"><code>my.species$details$variables</code></pre>
 <pre><code>## [1] &quot;bio1&quot;  &quot;bio12&quot;</code></pre>
-<p>However, the sub-sub-sub-objects (level 3 of depth and beyond) are not listed when you use <code>str()</code> on the entire virtual species object. For example, if we extract the <code>parameters</code> object from the details, we can see that it contains all the function names and their parameters:</p>
+<p>However, the sub-sub-sub-objects (level 3 of depth and beyond) are
+not listed when you use <code>str()</code> on the entire virtual species
+object. For example, if we extract the <code>parameters</code> object
+from the details, we can see that it contains all the function names and
+their parameters:</p>
 <pre class="r"><code>my.species$details$parameters</code></pre>
 <pre><code>## $bio1
 ## $bio1$fun
@@ -588,13 +601,13 @@ my.species &lt;- convertToPA(my.species,
 ## 
 ## $bio1$args
 ## mean   sd 
-##  250   50 
+##   25    5 
 ## 
 ## $bio1$min
-## [1] -269
+## [1] -54.72435
 ## 
 ## $bio1$max
-## [1] 314
+## [1] 30.98764
 ## 
 ## 
 ## $bio12
@@ -610,31 +623,37 @@ my.species &lt;- convertToPA(my.species,
 ## [1] 0
 ## 
 ## $bio12$max
-## [1] 9916</code></pre>
+## [1] 11191</code></pre>
 <pre class="r"><code># Looking at how it is structured:
 str(my.species$details$parameters)</code></pre>
 <pre><code>## List of 2
 ##  $ bio1 :List of 4
 ##   ..$ fun : Named chr &quot;dnorm&quot;
 ##   .. ..- attr(*, &quot;names&quot;)= chr &quot;fun&quot;
-##   ..$ args: Named num [1:2] 250 50
+##   ..$ args: Named num [1:2] 25 5
 ##   .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;mean&quot; &quot;sd&quot;
-##   ..$ min : num -269
-##   ..$ max : num 314
+##   ..$ min : num -54.7
+##   ..$ max : num 31
 ##  $ bio12:List of 4
 ##   ..$ fun : Named chr &quot;dnorm&quot;
 ##   .. ..- attr(*, &quot;names&quot;)= chr &quot;fun&quot;
 ##   ..$ args: Named num [1:2] 4000 2000
 ##   .. ..- attr(*, &quot;names&quot;)= chr [1:2] &quot;mean&quot; &quot;sd&quot;
 ##   ..$ min : num 0
-##   ..$ max : num 9916</code></pre>
-<p>Hence, the main message here is if you want to explore the content of the virtual species object, use the function <code>str()</code>, look at which sub-objects you are interested in, and extract them with <code>$</code>.</p>
+##   ..$ max : num 11191</code></pre>
+<p>Hence, the main message here is if you want to explore the content of
+the virtual species object, use the function <code>str()</code>, look at
+which sub-objects you are interested in, and extract them with
+<code>$</code>.</p>
 </div>
-<div id="saving-the-virtual-species-objects-for-later-use" class="section level2">
+<div id="saving-the-virtual-species-objects-for-later-use"
+class="section level2">
 <h2>6.6. Saving the virtual species objects for later use</h2>
-<p>If you want to save a virtual species object, you can save it on your hard drive, using the R function <code>saveRDS()</code>:</p>
+<p>If you want to save a virtual species object, you can save it on your
+hard drive, using the R function <code>saveRDS()</code>:</p>
 <pre class="r"><code>saveRDS(my.species, file = &quot;MyVirtualSpecies.RDS&quot;)</code></pre>
-<p>You can load it in a later session of R, using <code>readRDS()</code>:</p>
+<p>You can load it in a later session of R, using
+<code>readRDS()</code>:</p>
 <pre class="r"><code>my.species &lt;- readRDS(&quot;MyVirtualSpecies.RDS&quot;)</code></pre>
 </div>
 
@@ -656,13 +675,59 @@ Do not hesitate if you have a question, find a bug, or would like to add a featu
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

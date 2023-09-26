@@ -13,7 +13,7 @@
 
 <title>3. Virtual species defined by response to a PCA of the environment</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -403,7 +403,7 @@ bio6</a>) and three precipitation variables (<a
 href="http://worldclim.org/bioclim">bio12, bio13, bio14</a> ).</p>
 <pre class="r"><code>library(geodata)</code></pre>
 <pre><code>## Le chargement a nécessité le package : terra</code></pre>
-<pre><code>## terra 1.7.39</code></pre>
+<pre><code>## terra 1.7.46</code></pre>
 <pre class="r"><code>worldclim &lt;- worldclim_global(var = &quot;bio&quot;, res = 10,
                               path = tempdir())
 # Rename bioclimatic variables for simplicity
@@ -431,8 +431,6 @@ straightforward:</p>
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca2-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>my.pca.species</code></pre>
 <pre><code>## Virtual species generated from 6 variables:
 ##  bio2, bio5, bio6, bio12, bio13, bio14
@@ -440,8 +438,8 @@ straightforward:</p>
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  84.09 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-18.29; max=2.89] : dnorm (mean=-0.05530324; sd=6.411076)
-##    .Axis 2  [min=-11.39; max=3.27] : dnorm (mean=2.649001; sd=1.789812)
+##    .Axis 1  [min=-18.29; max=2.89] : dnorm (mean=-1.191869; sd=7.448132)
+##    .Axis 2  [min=-11.39; max=3.27] : dnorm (mean=1.419812; sd=4.0735)
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
 <p>Something very important to know here is that the PCA is performed on
 all the pixels of the raster stack. As a consequence, if you use large
@@ -460,17 +458,15 @@ and defining the number of pixels to sample with <code>nb.points</code>
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca3-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>my.pca.species</code></pre>
 <pre><code>## Virtual species generated from 6 variables:
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.22 % explained by these axes
+## - Axes:  1, 2 ;  83.67 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-9.43; max=3] : dnorm (mean=0.5665933; sd=4.591964)
-##    .Axis 2  [min=-7.29; max=2.96] : dnorm (mean=0.5792889; sd=0.5148238)
+##    .Axis 1  [min=-10.61; max=3.06] : dnorm (mean=2.48194; sd=6.265016)
+##    .Axis 2  [min=-9.1; max=3.06] : dnorm (mean=-0.7576087; sd=4.672329)
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
 <p>Congratulations! You have just generated your first virtual species
 with a PCA. You will probably have noticed that you have not entered any
@@ -551,8 +547,6 @@ the function (<code>?generateSpFromPCA</code>)</li>
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca6-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>plotResponse(narrow.species)</code></pre>
 <div class="float">
 <img src="03-PCA_files/figure-html/pca6b-1.png"
@@ -583,8 +577,6 @@ alt="A species generated with rather wide niche breadth" />
 <div class="figcaption">A species generated with rather wide niche
 breadth</div>
 </div>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>plotResponse(wide.species)</code></pre>
 <div class="float">
 <img src="03-PCA_files/figure-html/pca7b-1.png"
@@ -629,8 +621,6 @@ and 2):</li>
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca8-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>plotResponse(my.custom.species)</code></pre>
 <div class="float">
 <img src="03-PCA_files/figure-html/pca8b-1.png"
@@ -661,8 +651,6 @@ included in the PCA:</p>
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca9-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <p>You can see slect which axes you want to see in
 <code>plotResponse</code>:</p>
 <pre class="r"><code>plotResponse(my.custom.species,
@@ -708,8 +696,6 @@ next run(s):</p>
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca10-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code># You can access the PCA with the following command
 my.pca &lt;- my.first.run$details$pca
 
@@ -724,8 +710,6 @@ my.second.run &lt;- generateSpFromPCA(raster.stack = my.stack,
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca10-2.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 </div>
 <div
 id="transferring-niches-between-environmental-datasets-e.g.-climate-change-studies"
@@ -751,8 +735,6 @@ conditions:</p>
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca11-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <p>Then, we will project this virtual species onto future
 conditions:</p>
 <pre class="r"><code># Let&#39;s get future projections from the CMIP6, SSP scenario 5-8.5, year 2050, model IPSL-CM6A-LR
@@ -776,8 +758,6 @@ vs1.future &lt;- generateSpFromPCA(raster.stack = future.stack,
 <pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
 <pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca12-1.png" /><!-- --></p>
-<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <p>You can see how the species range will shift northward. Will your
 sdms correctly predict it? ;)</p>
 </div>

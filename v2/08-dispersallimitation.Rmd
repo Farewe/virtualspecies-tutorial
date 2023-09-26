@@ -5,7 +5,7 @@ output:
     fig_caption: yes
     keep_md: yes
     mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-    theme: united
+    theme: yeti
     toc: true
     toc_float: true
 ---
@@ -21,10 +21,15 @@ This is why we introduced the possibility of biasing the distribution of species
 Let's use the same virtual species we generated above:
 ```{r dist1, cache = TRUE, message = TRUE}
 library(virtualspecies)
-worldclim <- getData("worldclim", var = "bio", res = 10)
+library(geodata)
+# Worldclim data
+worldclim <- worldclim_global(var = "bio", res = 10,
+                              path = tempdir())
+names(worldclim) <- paste0("bio", 1:19)
+
 
 # Formatting of the response functions
-my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 25, sd = 5),
                                  bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
 
 # Generation of the virtual species
@@ -51,7 +56,8 @@ plot(my.first.species$pa.raster, main = "Theoretical distribution")
 plot(my.first.species$occupied.area, main = "Realised distribution")
 ```
 
-In the following sections, we see how to customise this function, but [the usage is basically the same as when applying a sampling bias.](07-sampleoccurrences.html#uneven-sampling-intensity)  
+In the following sections, we see how to customise this function, but 
+[the usage is basically the same as when applying a sampling bias.](07-sampleoccurrences.html#uneven-sampling-intensity)  
   
 
 
@@ -61,7 +67,9 @@ There are six main possibilities to limit the distribution to a particular area.
 
 ### 8.2.1. Using countries, regions or continents
 
-As illustrated in the example above, use `geographical.limit = "country"`, `geographical.limit = continent` or `geographical.limit = "region"` and provide the correct name(s) of the area to `area`
+As illustrated in the example above, use `geographical.limit = "country"`,
+`geographical.limit = continent` or `geographical.limit = "region"` and provide
+the correct name(s) of the area to `area`
 
 ```{r dist3, cache = TRUE, fig.cap = "Fig. 8.3 Distribution of a species arbitrary limited to Brazil and Venezuela", fig.height = 4, fig.width = 8}
 my.sp1 <- limitDistribution(my.first.species, 
@@ -72,20 +80,27 @@ my.sp1 <- limitDistribution(my.first.species,
 
 ### 8.2.2. Using a polygon
 
-Set `geographical.limit = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `area`.
+Set `geographical.limit = "polygon"`, and provide a polygon (of type
+`SpatVector` from `terra` or `sf` from package `sf`) to the argument `area`.
 
 ```{r dist4, cache = TRUE, fig.cap = "Fig. 8.4 Distribution of a species limited to the Philippines", fig.height = 4, fig.width = 8, eval = TRUE}
-philippines <- getData("GADM", country = "PHL", level = 0)
+philippines <- rnaturalearth::ne_countries(country = "Philippines",
+                                           returnclass = "sf")
 my.sp2 <- limitDistribution(my.first.species, 
                             geographical.limit = "polygon",
                             area = philippines)
 ```
 
 ### 8.2.3. Using an extent object  
-Set `geographical.limit = "extent"`, and provide an extent to the argument `area` ([see section 7.2.3. if you are not familiar with extents](07-sampleoccurrences.html#providing-an-extent-object)). You can also simply set `geographical.limit = "extent"`, and click twice on the map when asked to:
+Set `geographical.limit = "extent"`, and provide an extent to the argument 
+`area` ([see section 7.2.3. if you are not familiar with extents](07-sampleoccurrences.html#providing-an-extent-object)). You can also 
+draw manually a polygon or extent on the map by 
+simply setting `geographical.limit = "polygon"` or
+`geographical.limit = "extent"`, and clicking on the map when 
+asked to:
 
 ```{r dist5, cache = TRUE, fig.cap = "Fig. 8.5 Distribution of a species limited to a particular extent", fig.height = 4, fig.width = 8}
-my.extent <- extent(-80, -20, -35, -5)
+my.extent <- ext(-80, -20, -35, -5)
 my.sp2 <- limitDistribution(my.first.species, 
                             geographical.limit = "extent",
                             area = my.extent)
@@ -93,11 +108,14 @@ plot(my.extent, add = TRUE)
 ```
 
 ### 8.2.4. Using a raster of suitable habitat
-Let's first generate an example raster of habitat patches. [For this, I will use this function
-that you can find here.](https://github.com/Farewe/CooccurrenceIssue/blob/master/scripts/functions/patch_generation.R)
+Let's first generate an example raster of habitat patches. 
+_[For this, I will use a function to generate artificial habitat patches
+that you can find here.](https://github.com/Farewe/CooccurrenceIssue/blob/master/scripts/functions/patch_generation.R)._
+
 ```{r dist5b, cache = TRUE, echo = FALSE}
 generate.patches <- function(environment.raster, n.patches = 50, patch.size = 10)
 {
+  require(raster)
   dummy.raster <- environment.raster
   dummy.raster[!is.na(dummy.raster)] <- 1
   n.cols <- ncol(dummy.raster)
@@ -142,6 +160,7 @@ generate.patches <- function(environment.raster, n.patches = 50, patch.size = 10
   return(patch.raster)
 }
 expand <- function(x, n.size, start) {
+  require(raster)
   if (x[start] != 1) stop("Attempting to begin on an unoccupied cell")
   n.rows <- dim(x)[1]
   n.cols <- dim(x)[2]
@@ -206,12 +225,15 @@ expand <- function(x, n.size, start) {
 ```
 
 ```{r dist5c, cache = TRUE, fig.cap = "Fig. 8.6 Raster of suitable habitat patches", fig.height = 4, fig.width = 8}
-suitable.habitat <- generate.patches(worldclim[[1]], n.patches = 100, patch.size = 300)
+suitable.habitat <- generate.patches(raster(worldclim[[1]]),
+                                     n.patches = 100, patch.size = 300)
 plot(suitable.habitat)
 ```
 Then, we will restrict the distribution of our species to these suitable habitat patches:
 
 ```{r dist5d, cache = TRUE, fig.cap = "Fig. 8.7 Distribution of our species restricted to suitable habitat patches", fig.height = 4, fig.width = 8}
+# Converting to a terra object
+suitable.habitat <- rast(suitable.habitat)
 my.sp3 <- limitDistribution(my.first.species, 
                             geographical.limit = "raster",
                             area = suitable.habitat)
@@ -220,7 +242,9 @@ my.sp3 <- limitDistribution(my.first.species,
                             
 ## 8.3. Sampling occurrence points in the dispersal-limited distribution
 
-Once the distribution of a species has been limited with `limitDistribution()`, you just have to apply `sampleOccurrences` on this species: it will automatically sample from the realised distribution of the species.
+Once the distribution of a species has been limited with `limitDistribution()`,
+you just have to apply `sampleOccurrences` on this species: it will 
+automatically sample from the realised distribution of the species.
 
 ```{r dist6, cache = TRUE, fig.cap = "Fig. 8.8 Occurrence sampled in the distribution of a species limited to South America", fig.width = 6, fig.height = 6}
 my.first.species <- limitDistribution(my.first.species, 

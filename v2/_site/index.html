@@ -14,7 +14,7 @@
 
 <title>The virtualspecies R package: a complete tutorial - version 1.6</title>
 
-<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
@@ -325,6 +325,29 @@ to general dispersal limitations to your virtual species in section
 <p>I will make extensive use of climate data as an example here, but
 remember that you can use other types of data, as long as it is in the
 format described in section 1.</p>
+</div>
+<div id="update-1.6" class="section level1">
+<h1>Update 1.6</h1>
+<p><code>virtualspecies</code> has been updated to version 1.6 in
+September 2023. The major change in this update is that now this package
+relies upon the R package <code>terra</code> rather than
+<code>raster</code>; in addition, internally it uses functions from the
+package <code>sf</code> rather than <code>sp</code>. This update was
+required since multiple spatial packages are going to be retired from R,
+and future developments and improvements of spatial packages will rely
+on <code>terra</code> and <code>sf</code>.</p>
+<p><em>This update may cause some breaking changes</em>. I maintained
+the changes as minimal as possible so that previous code (version &lt;=
+1.5) will still be compatible with the new code (version &gt;= 1.6).
+However, objects generated in versions &lt;= 1.5 will likely not be
+compatible with the package version 1.6. They can still be converted
+manually to become compatible, using functions from the package
+<code>terra</code> such as <code>rast()</code>. If you find yourself in
+trouble, email me about that. In addition, the methods in functions
+<code>limitDistribution()</code> and <code>sampleOccurrences()</code>
+have changed slightly because they now use the package
+<code>rnaturaleath</code> (formerly they used
+<code>rworldmap</code>).</p>
 </div>
 
 <p><br>

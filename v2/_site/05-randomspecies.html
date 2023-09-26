@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>5. Generating random species</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -44,32 +58,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -81,13 +71,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -101,40 +86,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -162,7 +123,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -174,7 +135,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -184,11 +145,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -200,13 +178,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -214,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -236,6 +206,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -248,48 +219,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -303,6 +235,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -338,8 +276,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -360,7 +296,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -374,7 +310,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -390,7 +326,7 @@ div.tocify {
   <a href="01-inputdata.html">1. Input data</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Simulating virtual species
      
     <span class="caret"></span>
@@ -427,7 +363,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -436,15 +372,29 @@ div.tocify {
 </div>
 
 
-<p>The <code>virtualspecies</code> package embeds a function to randomly generate virtual species <code>generateRandomSp</code>, with many customisable options to constrain the randomisation process.</p>
+<p>The <code>virtualspecies</code> package embeds a function to randomly
+generate virtual species <code>generateRandomSp</code>, with many
+customisable options to constrain the randomisation process.</p>
 <p>Let’s take a look:</p>
 <pre class="r"><code>library(virtualspecies)</code></pre>
-<pre><code>## Loading required package: raster</code></pre>
-<pre><code>## Loading required package: sp</code></pre>
-<pre class="r"><code>worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
+<pre><code>## Le chargement a nécessité le package : terra</code></pre>
+<pre><code>## terra 1.7.46</code></pre>
+<pre><code>## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+## which was just loaded, will retire in October 2023.
+## Please refer to R-spatial evolution reports for details, especially
+## https://r-spatial.org/r/2023/05/15/evolution4.html.
+## It may be desirable to make the sf package available;
+## package maintainers should consider adding sf to Suggests:.
+## The sp package is now running under evolution status 2
+##      (status 2 uses the sf package in place of rgdal)</code></pre>
+<pre class="r"><code>library(geodata)
+worldclim &lt;- worldclim_global(var = &quot;bio&quot;, res = 10,
+                              path = tempdir())
+names(worldclim) &lt;- paste0(&quot;bio&quot;, 1:19)
 
 my.stack &lt;- worldclim[[c(&quot;bio2&quot;, &quot;bio5&quot;, &quot;bio6&quot;, &quot;bio12&quot;, &quot;bio13&quot;, &quot;bio14&quot;)]]
 random.sp &lt;- generateRandomSp(my.stack)</code></pre>
+<pre><code>## Reading raster values. If it fails for very large rasters, use arguments &#39;sample.points = TRUE&#39; and define a number of points to sample with &#39;nb.point&#39;.</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
@@ -455,62 +405,91 @@ random.sp &lt;- generateRandomSp(my.stack)</code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
 <pre><code>##    Logistic conversion finished:
 ##               
-## - beta = 0.585585585585586
+## - beta = 0.807807807807808
 ## - alpha = -0.1
-## - species prevalence =0.174187069412391</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand1-1.png" alt="Fig. 5.1 A species randomly generated with generateRandomSp" />
-<p class="caption">Fig. 5.1 A species randomly generated with <code>generateRandomSp</code></p>
+## - species prevalence =0.619959334350593</code></pre>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand1-1.png"
+alt="Fig. 5.1 A species randomly generated with generateRandomSp" />
+<div class="figcaption">Fig. 5.1 A species randomly generated with
+<code>generateRandomSp</code></div>
 </div>
 <pre class="r"><code>random.sp</code></pre>
 <pre><code>## Virtual species generated from 6 variables:
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.24 % explained by these axes
+## - Axes:  1, 2 ;  84.09 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=1.136441; sd=0.3143425)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=0.2830632; sd=4.88196)
+##    .Axis 1  [min=-18.29; max=2.89] : dnorm (mean=0.2016541; sd=3.903569)
+##    .Axis 2  [min=-11.39; max=3.27] : dnorm (mean=-0.4790539; sd=3.738719)
 ## - Environmental suitability was rescaled between 0 and 1
 ## 
 ## - Converted into presence-absence:
 ##    .Method = probability
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.1
-##    .beta  (inflexion point) = 0.585585585585586
-##    .species prevalence      = 0.174187069412391</code></pre>
-<p>We can see that the species was generated using a PCA approach. Indeed, <a href="#second-approach-generate-virtual-species-with-a-principal-components-analysis">as explained in the PCA section</a>, when you have a lot of variables, it becomes very difficult to generate a species with realistic environmental requirements. Hence, by default the function <code>generateRandomSp</code> uses a PCA approach if you have 6 or more variables, and a ‘response functions’ approach if you have less than 6 variables.</p>
-<p>In the next sections I detail the many possible customisations for the function <code>generateRandomSp</code>.</p>
+##    .beta  (inflexion point) = 0.807807807807808
+##    .species prevalence      = 0.619959334350593</code></pre>
+<p>We can see that the species was generated using a PCA approach.
+Indeed, <a
+href="#second-approach-generate-virtual-species-with-a-principal-components-analysis">as
+explained in the PCA section</a>, when you have a lot of variables, it
+becomes very difficult to generate a species with realistic
+environmental requirements. Hence, by default the function
+<code>generateRandomSp</code> uses a PCA approach if you have 6 or more
+variables, and a ‘response functions’ approach if you have less than 6
+variables.</p>
+<p>In the next sections I detail the many possible customisations for
+the function <code>generateRandomSp</code>.</p>
 <div id="general-parameters" class="section level2">
 <h2>5.1. General parameters</h2>
 <div id="choosing-the-approach" class="section level3">
 <h3>5.1.1. Choosing the approach</h3>
 <p>You can choose <code>approach =</code>:</p>
 <ul>
-<li><code>"automatic"</code>: a ‘response’ approach is used if you have less than 6 variables and a ‘PCA’ approach is used if you have 6 or more variables</li>
-<li><code>"random"</code>: a random approach is chosen (response or PCA)</li>
+<li><code>"automatic"</code>: a ‘response’ approach is used if you have
+less than 6 variables and a ‘PCA’ approach is used if you have 6 or more
+variables</li>
+<li><code>"random"</code>: a random approach is chosen (response or
+PCA)</li>
 <li><code>"response"</code>: to use a response approach</li>
 <li><code>"pca"</code>: to use a pca approach</li>
 </ul>
 </div>
-<div id="rescaling-of-the-environmental-suitability" class="section level3">
+<div id="rescaling-of-the-environmental-suitability"
+class="section level3">
 <h3>5.1.2. Rescaling of the environmental suitability</h3>
-<p>By default, <code>rescale = TRUE</code>, which means that the environmental suitability is rescaled between 0 and 1.</p>
+<p>By default, <code>rescale = TRUE</code>, which means that the
+environmental suitability is rescaled between 0 and 1.</p>
 </div>
 <div id="conversion-to-presence-absence" class="section level3">
 <h3>5.1.3. Conversion to presence-absence</h3>
-<p>You can choose to enable the conversion of environmental suitability to presence-absence. To do this, set <code>convert.to.PA = TRUE</code>. You can customise the conversion:</p>
+<p>You can choose to enable the conversion of environmental suitability
+to presence-absence. To do this, set <code>convert.to.PA = TRUE</code>.
+You can customise the conversion:</p>
 <ul>
-<li>choose the conversion method with <code>PA.method</code>. You should leave it to <code>probability</code> unless you have a very particular reason to use the <code>threshold</code> approach.</li>
-<li>define the parameters <code>alpha</code>, <code>beta</code> and <code>species.prevalence</code> exactly as explained in the convert to presence-absence section, or leave them as they are to create a random conversion into presence-absence</li>
+<li>choose the conversion method with <code>PA.method</code>. You should
+leave it to <code>probability</code> unless you have a very particular
+reason to use the <code>threshold</code> approach.</li>
+<li>define the parameters <code>alpha</code>, <code>beta</code> and
+<code>species.prevalence</code> exactly as explained in the convert to
+presence-absence section, or leave them as they are to create a random
+conversion into presence-absence</li>
 </ul>
 </div>
 </div>
-<div id="parameters-specific-to-a-response-approach" class="section level2">
+<div id="parameters-specific-to-a-response-approach"
+class="section level2">
 <h2>5.2. Parameters specific to a ‘response’ approach</h2>
 <div id="define-the-possible-response-functions" class="section level3">
 <h3>5.2.1. Define the possible response functions</h3>
-<p>At the moment, four relations are possible for a random generation of virtual species: Gaussian (<code>gaussian</code>), linear (<code>linear</code>), logistic (<code>logistic</code>) and quadratic (<code>quadratic</code>) relations. By default, all the relation types are used. You can choose to use any combination with the argument <code>relations</code>:</p>
+<p>At the moment, four relations are possible for a random generation of
+virtual species: Gaussian (<code>gaussian</code>), linear
+(<code>linear</code>), logistic (<code>logistic</code>) and quadratic
+(<code>quadratic</code>) relations. By default, all the relation types
+are used. You can choose to use any combination with the argument
+<code>relations</code>:</p>
 <pre class="r"><code># A species with gaussian and logistic response functions
 random.sp1 &lt;- generateRandomSp(worldclim[[1:3]], 
                               relations = c(&quot;gaussian&quot;, &quot;logistic&quot;),
@@ -520,28 +499,32 @@ random.sp1 &lt;- generateRandomSp(worldclim[[1:3]],
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
 <pre><code>##  - The response to each variable was rescaled between 0 and 1. To
 ##             disable, set argument rescale.each.response = FALSE</code></pre>
-<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand2-1.png" alt="Fig. 5.2 A species randomly generated with generateRandomSp, with gaussian and logistic response functions" />
-<p class="caption">Fig. 5.2 A species randomly generated with <code>generateRandomSp</code>, with gaussian and logistic response functions</p>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE</code></pre>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand2-1.png"
+alt="Fig. 5.2 A species randomly generated with generateRandomSp, with gaussian and logistic response functions" />
+<div class="figcaption">Fig. 5.2 A species randomly generated with
+<code>generateRandomSp</code>, with gaussian and logistic response
+functions</div>
 </div>
 <pre class="r"><code>random.sp1</code></pre>
 <pre><code>## Virtual species generated from 3 variables:
-##  bio2, bio1, bio3
+##  bio1, bio2, bio3
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio2  [min=9; max=211] : logisticFun   (alpha=8.99818181818182; beta=81.4302024302024)
-##    .bio1  [min=-269; max=314] : dnorm   (mean=202.375273752738; sd=157.190031900319)
-##    .bio3  [min=8; max=95] : logisticFun   (alpha=-295.8; beta=29.2549042549043)
+##    .bio1  [min=-54.72435; max=30.98764] : logisticFun   (alpha=8.57119941711426; beta=21.8711321403201)
+##    .bio2  [min=1; max=21.14754] : logisticFun   (alpha=-0.0422950820922852; beta=11.1666318553907)
+##    .bio3  [min=9.131122; max=100] : dnorm   (mean=8.29268228976845; sd=81.3831553774217)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio2 * bio3
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
 <pre class="r"><code>plotResponse(random.sp1)</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand3-1.png" alt="Response functions of the randomly generated species" />
-<p class="caption">Response functions of the randomly generated species</p>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand3-1.png"
+alt="Response functions of the randomly generated species" />
+<div class="figcaption">Response functions of the randomly generated
+species</div>
 </div>
 <pre class="r"><code># A purely gaussian species
 random.sp2 &lt;- generateRandomSp(worldclim[[1:3]], 
@@ -552,38 +535,66 @@ random.sp2 &lt;- generateRandomSp(worldclim[[1:3]],
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
 <pre><code>##  - The response to each variable was rescaled between 0 and 1. To
 ##             disable, set argument rescale.each.response = FALSE</code></pre>
-<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand4-1.png" alt="Fig. 5.4 A species randomly generated with generateRandomSp, with gaussian response functions only" />
-<p class="caption">Fig. 5.4 A species randomly generated with <code>generateRandomSp</code>, with gaussian response functions only</p>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE</code></pre>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand4-1.png"
+alt="Fig. 5.4 A species randomly generated with generateRandomSp, with gaussian response functions only" />
+<div class="figcaption">Fig. 5.4 A species randomly generated with
+<code>generateRandomSp</code>, with gaussian response functions
+only</div>
 </div>
 <pre class="r"><code>random.sp2</code></pre>
 <pre><code>## Virtual species generated from 3 variables:
-##  bio1, bio3, bio2
+##  bio2, bio1, bio3
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=-170.437034370344; sd=100.247852478525)
-##    .bio3  [min=8; max=95] : dnorm   (mean=63.5163351633516; sd=29.9352593525935)
-##    .bio2  [min=9; max=211] : dnorm   (mean=56.4954449544495; sd=119.932639326393)
+##    .bio2  [min=1; max=21.14754] : dnorm   (mean=9.82209201879464; sd=16.0716527336248)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=4.45951290361598; sd=26.2632747667275)
+##    .bio3  [min=9.131122; max=100] : dnorm   (mean=49.4464944649446; sd=70.2257022570226)
 ## - Each response function was rescaled between 0 and 1
-## - Environmental suitability formula = bio1 * bio2 * bio3
+## - Environmental suitability formula = bio2 * bio1 * bio3
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
 <pre class="r"><code>plotResponse(random.sp2)</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand5-1.png" alt="Fig. 5.5 Response functions of the randomly generated species" />
-<p class="caption">Fig. 5.5 Response functions of the randomly generated species</p>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand5-1.png"
+alt="Fig. 5.5 Response functions of the randomly generated species" />
+<div class="figcaption">Fig. 5.5 Response functions of the randomly
+generated species</div>
 </div>
 </div>
 <div id="rescale-individual-response-functions" class="section level3">
 <h3>5.2.2. Rescale individual response functions</h3>
-<p>As explained in the section on the ‘response’ approach, you can choose to rescale or not each individual response function, with the argument <code>rescale.each.response</code>. <code>TRUE</code> by default.</p>
+<p>As explained in the section on the ‘response’ approach, you can
+choose to rescale or not each individual response function, with the
+argument <code>rescale.each.response</code>. <code>TRUE</code> by
+default.</p>
 </div>
 <div id="try-to-find-a-realistic-species" class="section level3">
 <h3>5.2.3. Try to find a realistic species</h3>
-<p>An important issue with the generation of random responses to the environment, is that you can obtain a species willing to live in summer temperatures of 35Â°C and winter temperature of -50Â°C. This may interesting for generating species from another planet, but you are probably more interested in generating species that can actually live on Earth. There is therefore an option to do that, activated by default: <code>realistic.sp</code>.</p>
-<p>When activating this argument, the function will proceed step-by-step to try defining a realistic species. At step one, one of the variable is chosen, and the program randomly determines a response function for this variable. Then, it will compute the environmental suitability of this species. At step two, the program will pick a second variable, and will constrain its random generation depending on the environmental suitability obtained at step one. For example, if at step 2 a gaussian response is picked, then the mean will be chosen in areas where the species had a high environmental suitability. Then, the environmental suitability is recalculated on the basis of the first two response functions. At step 3, another variable is picked, a response function randomly generated with respect to areas where the species already has a high suitability, and so on until there are no variables left. While this process can help, it does not always work, and can provide completely unrealistic results also. In this case, you should try different runs, or switch to a ‘PCA’ approach.</p>
+<p>An important issue with the generation of random responses to the
+environment, is that you can obtain a species willing to live in summer
+temperatures of 35°C and winter temperature of -50°C. This may
+interesting for generating species from another planet, but you are
+probably more interested in generating species that can actually live on
+Earth. There is therefore an option to do that, activated by default:
+<code>realistic.sp</code>.</p>
+<p>When activating this argument, the function will proceed step-by-step
+to try defining a realistic species. At step one, one of the variable is
+chosen, and the program randomly determines a response function for this
+variable. Then, it will compute the environmental suitability of this
+species. At step two, the program will pick a second variable, and will
+constrain its random generation depending on the environmental
+suitability obtained at step one. For example, if at step 2 a gaussian
+response is picked, then the mean will be chosen in areas where the
+species had a high environmental suitability. Then, the environmental
+suitability is recalculated on the basis of the first two response
+functions. At step 3, another variable is picked, a response function
+randomly generated with respect to areas where the species already has a
+high suitability, and so on until there are no variables left. While
+this process can help, it does not always work, and can provide
+completely unrealistic results also. In this case, you should try
+different runs, or switch to a ‘PCA’ approach.</p>
 <p>Let’s see an example :</p>
 <pre class="r"><code>realistic.sp &lt;- generateRandomSp(worldclim[[c(1, 5)]],
                                  realistic.sp = TRUE,
@@ -593,11 +604,12 @@ random.sp2 &lt;- generateRandomSp(worldclim[[1:3]],
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
 <pre><code>##  - The response to each variable was rescaled between 0 and 1. To
 ##             disable, set argument rescale.each.response = FALSE</code></pre>
-<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand6-1.png" alt="Fig. 5.6 A species randomly generated, constrained to find realistic environmental requirements" />
-<p class="caption">Fig. 5.6 A species randomly generated, constrained to find realistic environmental requirements</p>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE</code></pre>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand6-1.png"
+alt="Fig. 5.6 A species randomly generated, constrained to find realistic environmental requirements" />
+<div class="figcaption">Fig. 5.6 A species randomly generated,
+constrained to find realistic environmental requirements</div>
 </div>
 <pre class="r"><code>unrealistic.sp &lt;- generateRandomSp(worldclim[[c(1, 5)]],
                                    realistic.sp = FALSE,
@@ -607,42 +619,68 @@ random.sp2 &lt;- generateRandomSp(worldclim[[1:3]],
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
 <pre><code>##  - The response to each variable was rescaled between 0 and 1. To
 ##             disable, set argument rescale.each.response = FALSE</code></pre>
-<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand6-2.png" alt="Fig. 5.7 A species randomly generated, with no constraints" />
-<p class="caption">Fig. 5.7 A species randomly generated, with no constraints</p>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE</code></pre>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand6-2.png"
+alt="Fig. 5.7 A species randomly generated, with no constraints" />
+<div class="figcaption">Fig. 5.7 A species randomly generated, with no
+constraints</div>
 </div>
-<p>Note that you can always let the function randomly determine the conversion to presence-absence by changing the argument <code>convert.to.PA = TRUE</code> (be careful: since parameters are defined randomly, the results can be bizarre), or you can do it by yourself later:</p>
+<p>Note that you can always let the function randomly determine the
+conversion to presence-absence by changing the argument
+<code>convert.to.PA = TRUE</code> (be careful: since parameters are
+defined randomly, the results can be bizarre), or you can do it by
+yourself later:</p>
 <pre class="r"><code>realistic.sp &lt;- convertToPA(realistic.sp, beta = 0.5) </code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
 <pre><code>##    Logistic conversion finished:
 ##               
 ## - beta = 0.5
 ## - alpha = -0.05
-## - species prevalence =0.491698330769981</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand7-1.png" alt="Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6" />
-<p class="caption">Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6</p>
+## - species prevalence =0.0611680174444003</code></pre>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand7-1.png"
+alt="Fig. 5.8 Modification of the conversion threshold of the previously generated species in fig. 5.6" />
+<div class="figcaption">Fig. 5.8 Modification of the conversion
+threshold of the previously generated species in fig. 5.6</div>
 </div>
-<p>If, in spite of all your attempts, you are struggling to obtain satisfactory species, then perhaps you should try the ‘PCA’ approach.</p>
+<p>If, in spite of all your attempts, you are struggling to obtain
+satisfactory species, then perhaps you should try the ‘PCA’
+approach.</p>
 </div>
-<div id="define-how-response-functions-are-combined-to-compute-the-environmental-suitability" class="section level3">
-<h3>5.2.4. Define how response functions are combined to compute the environmental suitability</h3>
-<p>You can define how response functions are combined with the argument <code>sp.type</code>, exactly as explained in the ‘response’ approach section:</p>
+<div id="define-how-response-functions-are-combined-to-compute-the"
+class="section level3">
+<h3>5.2.4. Define how response functions are combined to compute
+the</h3>
+<p>environmental suitability</p>
+<p>You can define how response functions are combined with the argument
+<code>sp.type</code>, exactly as explained in the ‘response’ approach
+section:</p>
 <ul>
-<li><code>species.type = "additive"</code>: the response functions are added.</li>
-<li><code>species.type = "multiplicative"</code>: the response functions are multiplied (default value).</li>
-<li><code>species.type = "mixed"</code>: there is a mix of additions and products to calculate the environmental suitability, randomly generated.</li>
+<li><code>species.type = "additive"</code>: the response functions are
+added.</li>
+<li><code>species.type = "multiplicative"</code>: the response functions
+are multiplied (default value).</li>
+<li><code>species.type = "mixed"</code>: there is a mix of additions and
+products to calculate the environmental suitability, randomly
+generated.</li>
 </ul>
 </div>
 </div>
 <div id="parameters-specific-to-a-pca-approach" class="section level2">
 <h2>5.3. Parameters specific to a ‘PCA’ approach</h2>
-<div id="generate-a-random-species-with-a-pca-approach-on-a-low-memory-computer" class="section level3">
-<h3>5.3.1. Generate a random species with a PCA approach on a low-memory computer</h3>
-<p>As explained in the PCA section, if you have low-memory computer, or are working with very large raster files (large extent, fine resolution), then you can still perform the PCA by using a sample of the pixels of your raster.</p>
-<p>To do this, set <code>sample.points = TRUE</code>, and choose the number of pixels to sample, depending on your computer’s memory, with <code>nb.points</code>.</p>
+<div id="generate-a-random-species-with-a-pca-approach-on-a-low-memory"
+class="section level3">
+<h3>5.3.1. Generate a random species with a PCA approach on a
+low-memory</h3>
+<p>computer</p>
+<p>As explained in the PCA section, if you have low-memory computer, or
+are working with very large raster files (large extent, fine
+resolution), then you can still perform the PCA by using a sample of the
+pixels of your raster.</p>
+<p>To do this, set <code>sample.points = TRUE</code>, and choose the
+number of pixels to sample, depending on your computer’s memory, with
+<code>nb.points</code>.</p>
 <pre class="r"><code># A safe run for a low memory computer
 safe.run.sp &lt;- generateRandomSp(worldclim[[c(1, 5, 6)]], 
                                 sample.points = TRUE,
@@ -652,24 +690,29 @@ safe.run.sp &lt;- generateRandomSp(worldclim[[c(1, 5, 6)]],
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
 <pre><code>##  - The response to each variable was rescaled between 0 and 1. To
 ##             disable, set argument rescale.each.response = FALSE</code></pre>
-<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE</code></pre>
 <pre><code>##  - Converting into Presence - Absence</code></pre>
 <pre><code>##    --- Generating a random value of beta for the logistic conversion</code></pre>
 <pre><code>##    --- Determing species.prevalence automatically according to alpha and beta</code></pre>
 <pre><code>##    Logistic conversion finished:
 ##               
-## - beta = 0.0940940940940941
+## - beta = 0.965965965965966
 ## - alpha = -0.1
-## - species prevalence =0.904424306397888</code></pre>
-<div class="figure">
-<img src="05-randomspecies_files/figure-html/rand8-1.png" alt="Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure" />
-<p class="caption">Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure</p>
+## - species prevalence =0.0863161203534917</code></pre>
+<div class="float">
+<img src="05-randomspecies_files/figure-html/rand8-1.png"
+alt="Fig 5.9 A virtual species randomly generated from a PCA approach, with a memory-safe procedure" />
+<div class="figcaption">Fig 5.9 A virtual species randomly generated
+from a PCA approach, with a memory-safe procedure</div>
 </div>
 </div>
-<div id="generate-stenotopic-or-eurytopic-species" class="section level3">
+<div id="generate-stenotopic-or-eurytopic-species"
+class="section level3">
 <h3>5.3.2. Generate stenotopic or eurytopic species</h3>
-<p>You can modify the <code>niche.breadth</code> argument to generate stenotopic (<code>niche.breadth = 'narrow'</code>), eurytopic (<code>niche.breadth = 'wide'</code>), or any type of species (<code>niche.breadth = 'any'</code>).</p>
+<p>You can modify the <code>niche.breadth</code> argument to generate
+stenotopic (<code>niche.breadth = 'narrow'</code>), eurytopic
+(<code>niche.breadth = 'wide'</code>), or any type of species
+(<code>niche.breadth = 'any'</code>).</p>
 </div>
 </div>
 
@@ -691,13 +734,59 @@ Do not hesitate if you have a question, find a bug, or would like to add a featu
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

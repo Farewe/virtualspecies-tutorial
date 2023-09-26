@@ -34,7 +34,7 @@ variables, as in the following figure:
 ```
 
 ```
-## terra 1.7.39
+## terra 1.7.46
 ```
 
 ```

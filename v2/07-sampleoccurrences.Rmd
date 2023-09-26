@@ -5,24 +5,34 @@ output:
     fig_caption: yes
     keep_md: yes
     mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-    theme: united
+    theme: yeti
     toc: true
     toc_float: true
 ---
 
 ## 7.1. Basic usage
 
-If you generated virtual species distributions with this package, there is a good chance that your objective is to test a particular modelling protocol or technique. Hence, there is one last step for you to perform: the sampling of species occurrences. This can be done with the function `sampleOccurrences`, with which you can sample either "presence-absence" or "presence only" occurrence data. The function `sampleOccurrences` also provides the possibility to introduce a number of sampling biases, such as uneven spatial sampling intensity, probability of detection, and probability of error.
+If you generated virtual species distributions with this package, there is a 
+good chance that your objective is to test a particular modelling protocol or 
+technique. Hence, there is one last step for you to perform: the sampling of 
+species occurrences. This can be done with the function `sampleOccurrences`, 
+with which you can sample either "presence-absence" or "presence only"
+occurrence data. The function `sampleOccurrences` also provides the possibility 
+to introduce a number of sampling biases, such as uneven spatial sampling 
+intensity, probability of detection, and probability of error.
 
-Let's see an example in practice, using the same tropical species we generated in the beginning of this tutorial:
+Let's see an example in practice, using the same tropical species we generated
+in the beginning of this tutorial:
 ```{r samp1, cache = TRUE, message = TRUE}
 library(virtualspecies)
+library(geodata)
 # Worldclim data
-worldclim <- getData("worldclim", var = "bio", res = 10)
-
+worldclim <- worldclim_global(var = "bio", res = 10,
+                              path = tempdir())
+names(worldclim) <- paste0("bio", 1:19)
 
 # Formatting of the response functions
-my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 25, sd = 5),
                                  bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
 
 # Generation of the virtual species
@@ -41,7 +51,8 @@ presence.points <- sampleOccurrences(my.first.species,
                                      type = "presence only")
 ```
 
-We can see that a map was plotted, with the sampled presence points illustrated with black dots. 
+We can see that a map was plotted, with the sampled presence points 
+illustrated with black dots. 
 
 Now let's see how our object `presence.points` looks like:
 
@@ -59,17 +70,24 @@ str(presence.points)
 
 This is a list containing eight elements: 
 
-1. `type`: the type of occurrence sampled (presence absence or presnece-only)
+1. `type`: the type of occurrence sampled (presence absence or presence-only)
 2. `detection.probability`: the detection probability of our virtual species
-3. `error.probability`: the probability of an erroneous detection of our virtual species
-4. `bias`: if you introduced a sampling bias, this part will contain the appropriate info
-5. `replacement`: a logical indicating if you allowed multiple samples in the same cells
-6. `original.distribution.raster`: the raster from which occurrences were sampled
-7. `sample.plot`: contains the graphical representation of your samplings, so it can be called later 
+3. `error.probability`: the probability of an erroneous detection of our virtual 
+species
+4. `bias`: if you introduced a sampling bias, this part will contain the 
+appropriate info
+5. `replacement`: a logical indicating if you allowed multiple samples in the
+same cells
+6. `original.distribution.raster`: the raster from which occurrences were
+sampled
+7. `sample.plot`: contains the graphical representation of your samples, so it
+can be called later 
 8. `sampled.points`: a data frame containing the sampled points
 
-It also says to us that there are several attributes stored, such as the information about 
-the randomisation process (`RNGkind` and `seed`). You can use these attributes later to 
+It also says to us that there are several attributes stored, such as the
+information about 
+the randomisation process (`RNGkind` and `seed`). You can use these attributes
+later to 
 reproduce exactly a previous sampling.
 
 Now, we can specifically access the data frame of sampled points:
@@ -78,7 +96,11 @@ Now, we can specifically access the data frame of sampled points:
 presence.points$sample.points
 ```
 
-The data frame has four colums: the pixel coordinates `x` and `y`, the real presence/absence (1/0) of the species in the sampled pixel `Real`, and the result of the sampling `Observed` (1 = presence, 0 = absence, NA = no information). The columns `Real` and `Observed` differ only if you have specified a detection probability and/or an error probability.
+The data frame has four colums: the pixel coordinates `x` and `y`, the real 
+presence/absence (1/0) of the species in the sampled pixel `Real`, and the 
+result of the sampling `Observed` (1 = presence, 0 = absence, NA = no 
+information). The columns `Real` and `Observed` differ only if you have 
+specified a detection probability and/or an error probability.
 
 Now, let's sample the other type of occurrence data: presence-absence.
 
@@ -86,15 +108,20 @@ Now, let's sample the other type of occurrence data: presence-absence.
 ```{r samp4, cache = TRUE, fig.cap = "Fig 7.2 Illustration of the presence-absence points sampled for our virtual species. Black dots are presences, open dots are absences."}
 # Sampling of 'presence-absence' occurrences
 PA.points <- sampleOccurrences(my.first.species,
-                               n = 30,
+                               n = 300,
                                type = "presence-absence")
 
 PA.points
 ```
 
-You can see that the points are sampled randomly throughout the whole raster. However, we may have only a few or even no presence points at all because the samples are purely random at the moment. We can define the number of presences and the number of absences by using the parameter [`sample.prevalence`](#defining-the-sample-prevalence).
+You can see that the points are sampled randomly throughout the whole raster. 
+However, we may have only a few or even no presence points at all because the 
+samples are purely random at the moment. We can define the number of presences
+and the number of absences by using the parameter [`sample.prevalence`](#defining-the-sample-prevalence).
 
-You may be interested in extracting the true probability of occurrence at each sampled point, to compare with your SDM results. To do this, use argument `extract.probability`:
+You may be interested in extracting the true probability of occurrence at each 
+sampled point, to compare with your SDM results. To do this, use argument 
+`extract.probability`:
 ```{r samp4.1, cache = TRUE}
 # Sampling of 'presence-absence' occurrences
 PA.points <- sampleOccurrences(my.first.species,
@@ -129,68 +156,77 @@ PA.points <- sampleOccurrences(my.first.species,
 
 
 
-The only restriction is to provide the correct names.
+The only restriction is to provide the correct names and to have the 
+package `rnaturalearth` installed.
 
-The correct region names are: "Africa", "Antarctica", "Asia", "Australia", "Europe", "North America", "South America"
+The correct region names are: "Africa", "Antarctica", "Asia", "Oceania", 
+"Europe", "Americas"
 
-The correct continent names are: "Africa", "Antarctica", "Australia", "Eurasia", "North America", "South America"
+The correct continent names are: "Africa", "Antarctica", "Asia", "Europe", 
+"North America", "Oceania", "South America"
 
 And you can consult the correct names with the following commands:
 
 ```{r, samp6, cache = TRUE}
-library(rworldmap, quiet = TRUE)
 # Country names
-levels(getMap()@data$SOVEREIGNT)
+ unique(rnaturalearth::ne_countries(returnclass ='sf')$sovereignt)
 ```
 
 ### 7.2.2. Providing a polygon
-_Examples in this section are currently not working because of a bug in raster's `getData()`. Will be updated when it's resolved._
-In this case you have to import in R your own polygon, using commands of the package `sp`. The polygon has to be of type `SpatialPolygons` or `SpatialPolygonsDataFrame`. 
 
-We will use here the example of a `SpatialPolygonsDataFrame` which we can download straight into R using the function `getData()` of the package `raster`. Since our species is a tropical species, let's assume we are working in Brasil only. Remember that this is an example, and that you can import your own polygons into R.
+In this case you have to import in R your own polygon, using commands of 
+packages `sf` or `terra`.
+
+We will use here an example of a `terra` object which we can downloaded straight
+into R using the R package `geodata`. Since our species is a tropical species, 
+let's assume we are working in Brazil only. Remember that this is an example, 
+and that you can import your own polygons into R.
 
 First, let's download our polygon:
 
 ```{r samp7, cache = TRUE, echo = 1, fig.cap = "Fig 7.4 A polygon of the brazil", eval = TRUE}
-brasil <- getData("GADM", country = "BRA", level = 0)
-plot(brasil, xlab = "Latitude", ylab = "Longitude")
-axis(1)
-axis(2)
+brazil <- gadm(country = "BRA", level = 0, path = tempdir())
+plot(brazil, xlab = "Latitude", ylab = "Longitude")
 ```
 
-Now, to limit the sampling area to our polygon, we simply provide it to the argument `sampling.area` of the function `sampleOccurrences`:
+Now, to limit the sampling area to our polygon, we simply provide it to the 
+argument `sampling.area` of the function `sampleOccurrences()`:
 
 ```{r samp8, cache = TRUE, fig.cap = "Fig 7.5 Points sampled within the Brazil polygon", eval = TRUE}
 PA.points <- sampleOccurrences(my.first.species,
                                n = 30,
                                type = "presence-absence",
-                               sampling.area = brasil)
+                               sampling.area = brazil)
 
 PA.points
 ```
 
 It worked!
 
-However, the plot is not very convenient because it kept the scale of our input raster, so we may be interested in manually restricting the plot region to Brasil:
+However, the plot is not very convenient because it kept the scale of our input 
+raster, so we may be interested in manually restricting the plot region to 
+Brasil:
 
 ```{r samp9, cache = TRUE, fig.cap = "Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom", eval = TRUE}
 # First we get our data frame of occurrence points
 occ <- PA.points$sample.points
 
 plot(my.first.species$pa.raster, 
-     xlim = c(-80, -20),
-     ylim = c(-35, 5))
-plot(brasil, add = TRUE)
+     xlim = c(-80, -30),
+     ylim = c(-35, 10))
+plot(brazil, add = TRUE)
 points(occ[occ$Observed == 1, c("x", "y")], pch = 16, cex = .8)
 points(occ[occ$Observed == 0, c("x", "y")], pch = 1, cex = .8)
 ```
 
 ### 7.2.3. Providing an extent object
 
-An extent object is a rectangular area defined by four coordinates xmin/xmax/ymin/ymax. You can easily create an extent object using the command `extent`, of the package `raster`:
+An extent object is a rectangular area defined by four coordinates 
+xmin/xmax/ymin/ymax. You can easily create an extent object using the command 
+`extent`, of the package `raster`:
 
 ```{r samp10, cache = TRUE, fig.cap = "Fig 7.7 Points sampled within our extent object"}
-my.extent <- extent(-80, -20, -35, -5)
+my.extent <- ext(-80, -30, -35, 10)
 PA.points <- sampleOccurrences(my.first.species,
                                n = 30,
                                type = "presence-absence",
@@ -198,11 +234,26 @@ PA.points <- sampleOccurrences(my.first.species,
 plot(my.extent, add = TRUE)
 ```
 
+### 7.2.4 Draw an extent or a polygon to sample
+
+You can draw a polygon manually with `terra` and feed it to `sampleOccurrences`,
+try it yourself (press 'escape' when finished):
+
+
+```{r samp11.2, eval = FALSE, fig.cap = "Fig 7.7 Points sampled within our extent object"}
+plot(my.first.species$pa.raster)
+my.polygon <- terra::draw(x = "polygon")
+```
+
 ## 7.3. Introducing a sampling bias
 
 ### 7.3.1.Detection probability
 
-Detection probability has been shown to be influencial on SDM performance. Hence, you might be interested in generating species with varying degrees of detection probability. This can be done easily, using the argument `detection.probability`, ranging from 0 (species cannot be detected) to 1 (species is always detected):
+Detection probability has been shown to be influential on SDM performance. 
+Hence, you might be interested in generating species with varying degrees of
+detection probability. This can be done easily, using the argument
+`detection.probability`, ranging from 0 (species cannot be detected) to 1 
+(species is always detected):
 
 ```{r samp11, cache = TRUE, fig.cap = "Fig 7.8 Presence-absence points sampled with a low detection probability"}
 # Let's try to find samples of a very cryptic species
@@ -214,9 +265,11 @@ PA.points <- sampleOccurrences(my.first.species,
 PA.points
 ```
 
-You can see that some points sampled in its distribution range are classified as "absences".
+You can see that some points sampled in its distribution range are classified 
+as "absences".
 
-If you use this argument when sampling 'presence only' occurrences, then this will result in a lower number of sampled points than asked:
+If you use this argument when sampling 'presence only' occurrences, then this
+will result in a lower number of sampled points than asked:
 
 ```{r samp12, cache = TRUE, fig.cap = "Fig 7.9 Presence only points sampled with a low detection probability"}
 PO.points <- sampleOccurrences(my.first.species,
@@ -227,24 +280,38 @@ PO.points <- sampleOccurrences(my.first.species,
 PO.points
 ```
 
-In this case, we see that out of all the possible sampling points, only a fraction are sampled as presence points.
+In this case, we see that out of all the possible sampling points, only a 
+fraction are sampled as presence points.
 
 ### 7.3.2. Detection probability as a function of environmental suitability
 
-You can further complexify the detection probability by making it dependent on the environmental suitability. In this case, cells will be weighted by the environmental suitability: less suitable cells will have a lesser chance of detecting the species. This can be seen as an impact on the population size: a higher environmental suitability increases the population size, and thus the detection probability. How does this work in practice?
+You can further complexify the detection probability by making it dependent on
+the environmental suitability. In this case, cells will be weighted by the
+environmental suitability: less suitable cells will have a lesser chance of 
+detecting the species. This can be seen as an impact on the population size: 
+a higher environmental suitability increases the population size, and thus the
+detection probability. How does this work in practice?
 
-The initial probability of detection ($P_{di}$) is multiplied by the environmental suitability ($S$) to obtain the final probability of detection ($P_d$):
+The initial probability of detection ($P_{di}$) is multiplied by the 
+environmental suitability ($S$) to obtain the final probability of 
+detection ($P_d$):
 
 $$P_d = P_{di} \times S$$
 
-Hence, if our species has a probability of detection of 0.5, the final probability of detection will be:
+Hence, if our species has a probability of detection of 0.5, the final
+probability of detection will be:
 
 * 0.5 if the cell has an environmental suitability of 1
 * 0.25 if the cell has an environmental suitability of 0.5
 
-Of course, no occurrence points will be detected outside the distribution range, regardless of their environmental suitability.
+Of course, no occurrence points will be detected outside the distribution
+range, regardless of their environmental suitability.
 
-You can also keep the detection probability to 1, and set `correct.by.suitabilaty = TRUE`. In that case, the detection probability will be equal to the environmental suitability. This can be seen as a species whose detection probability is strictly dependent on its population size, which in turn is strictly dependent on the environmental suitability.
+You can also keep the detection probability to 1, and set
+`correct.by.suitability = TRUE`. In that case, the detection probability will
+be equal to the environmental suitability. This can be seen as a species whose
+detection probability is strictly dependent on its population size, which in 
+turn is strictly dependent on the environmental suitability.
 
 An example in practice:
 
@@ -272,7 +339,9 @@ points(occ[occ$Observed == 0, c("x", "y")], pch = 1, cex = .8)
 
 ### 7.3.3. Error probability
 
-You can also introduce an error probability, which is a probability of finding the species where it is absent. This is straightforward with the argument `error.probability`:
+You can also introduce an error probability, which is a probability of finding
+the species where it is absent. This is straightforward with the argument
+`error.probability`:
 
 ```{r samp14, cache = TRUE, fig.cap = "Fig 7.11 Presence-absence points sampled with an error probability of 0.3"}
 PA.points <- sampleOccurrences(my.first.species,
@@ -283,11 +352,13 @@ PA.points <- sampleOccurrences(my.first.species,
 PA.points
 ```
 
-Two important remarks with the error probability:
+One important remark with the error probability:
 
-1. The error probability is useless in a 'presence only' sampling scheme, because the sampling strictly occurs within the boundaries of the species distribution range. Nevertheless, **if you still want to introduce errors**, then make a sampling scheme 'presence-absence', and use only the 'presence' points obtained.
-
-2. **There is an interaction between the detection probability and the error probability**: in a cell where the species is present, but not detected, a presence can still be attributed because of an error. See the following (extreme) example, for a species with a low detection probability and high error probability:
+**There is an interaction between the detection probability and the error 
+probability**: in a cell where the species is present, but not detected, a 
+presence can still be attributed because of an error. See the following 
+(extreme) example, for a species with a low detection probability and high error
+probability:
 
 ```{r samp15, cache = TRUE, fig.cap = "Fig 7.12 Presence-absence points sampled with a detection probability of 0.2, and an error probability of 0.8. In numerous pixels the species was not detected, but erroneous presences were nevertheless attributed."}
 PA.points <- sampleOccurrences(my.first.species,
@@ -301,24 +372,33 @@ PA.points
 
 ### 7.3.4. Uneven sampling intensity
 
-The `sampleOccurrences` also allows you to introduce a sampling bias such as uneven sampling intensity in space. How does it works?
+The `sampleOccurrences` also allows you to introduce a sampling bias such as 
+uneven sampling intensity in space. How does it works?
 
-You will have to define a region in which the sampling is biased, with arguments `bias` and `area`. In this region, the sampling will be biased by a strength equal to the argument `bias.strength`. If `bias.strength` is equal to 50 for example, then the sampling will be 50 times more intense in the chosen area. If `bias.strength`is below 1, then the sampling will be less intense in the biased area than elsewhere.
+You will have to define a region in which the sampling is biased, with arguments
+`bias` and `area`. In this region, the sampling will be biased by a strength 
+equal to the argument `bias.strength`. If `bias.strength` is equal to 50 for 
+example, then the sampling will be 50 times more intense in the chosen area. 
+If `bias.strength`is below 1, then the sampling will be less intense in the 
+biased area than elsewhere.
 
 Let's see an example in practice before we go into the details:
 
 ```{r samp16, cache = TRUE, fig.cap = "Fig 7.13 Presence only points sampled with a strong bias in South America (20 times more sample)"}
 PO.points <- sampleOccurrences(my.first.species,
                                n = 100, 
-                               bias = "region",
+                               bias = "continent",
                                bias.strength = 20,
                                bias.area = "South America")
 ```
 
-Now that you have grasped how the bias works, let's see the different possibilities:
+Now that you have grasped how the bias works, let's see the different 
+possibilities:
 
 * Introducing a bias using country, region or continent names  
-Set either `bias = "country"`, `bias = "region"` or `bias = "continent"`, and provide to `bias.area` the name(s) of the country(-ies), region(s) or continent(s).
+Set either `bias = "country"`, `bias = "region"` or `bias = "continent"`, 
+and provide to `bias.area` the name(s) of the country(-ies), region(s) or 
+continent(s).
 
 ```{r samp17, cache = TRUE, fig.cap = "Fig 7.14 Presence only points sampled with a strong bias in Mexico and Colombia"}
 PO.points <- sampleOccurrences(my.first.species,
@@ -329,10 +409,12 @@ PO.points <- sampleOccurrences(my.first.species,
 ```
 
 * Using a polygon in which the sampling will be biased  
-Set `bias = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `bias.area`.
+Set `bias = "polygon"`, and provide a polygon (`sf` or `terra` object, classes
+`sf` or `SpatVector`) to the argument `bias.area`.
 
 ```{r samp18, eval = TRUE, cache = TRUE, fig.cap = "Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon"}
-philippines <- getData("GADM", country = "PHL", level = 0)
+philippines <- rnaturalearth::ne_countries(country = "Philippines",
+                                           returnclass = "sf")
 PO.points <- sampleOccurrences(my.first.species,
                                n = 100, 
                                bias = "polygon",
@@ -341,31 +423,38 @@ PO.points <- sampleOccurrences(my.first.species,
 ```
 
 * Using an extent object  
-Set `bias = "extent"`, and provide an extent to the argument `bias.area` ([see section 7.2.3. if you are not familiar with extents](#providing-an-extent-object)). You can also simply set `bias.area = polygon`, and click twice on the map when asked to:
+Set `bias = "extent"`, and provide an extent to the argument `bias.area`
+([see section 7.2.3. if you are not familiar with
+extents](#providing-an-extent-object)). You can also simply set 
+`bias = "polygon"` (*new in version 1.6*) or `bias = "extent"`, and click on
+the map when asked to:
 
 ```{r samp19, eval = FALSE}
 PO.points <- sampleOccurrences(my.first.species,
                                n = 100, 
-                               bias = "extent",
+                               bias = "polygon", # also works with "extent"
                                bias.strength = 50)
 ```
 
 * Manually defining weights for all the cells  
-A last option is to manually define the weights with which the sampling will be biased. This may be especially useful when you want to precisely create a sampling bias. To do this, set `bias = "manual"`, and provide a raster of weights to the argument `weights`.  
+A last option is to manually define the weights with which the sampling will be
+biased. This may be especially useful when you want to precisely create a 
+sampling bias. To do this, set `bias = "manual"`, and provide a raster of 
+weights to the argument `weights`.  
 To clear things up, we will see an example together:
 
 ```{r samp20, eval = TRUE, cache = TRUE, fig.cap = "Fig 7.16 Raster used to weight the sampling bias: a raster of cell areas"}
-library(rworldmap)
 # First, we create a raster of weights
 # As an arbitrary example, we will use the area of each cell as a weight:
 # larger cells have more chance of being sampled
-weight.raster <- area(worldclim)
+weight.raster <- cellSize(worldclim)
 
 plot(weight.raster)
-plot(getMap(), add = TRUE)
+# Add continents
+plot(rnaturalearth::ne_coastline(returnclass = "sf")[1], add = TRUE)
 ```
 
-Now, let's weight our samplings using this raster:
+Now, let's weight our samples using this raster:
 
 ```{r samp21, cache = TRUE, fig.cap = "Fig 7.17 Presence only points sampled with a sampling biased according to the area of each cell", dependson = "samp20"}
 PO.points <- sampleOccurrences(my.first.species,
@@ -374,15 +463,16 @@ PO.points <- sampleOccurrences(my.first.species,
                                weights = weight.raster)
 ```
 
-Of course, the changes are not  visible, because our species occurs mainly in pixels of relatively similar areas. Nevertheless, this example should be useful if you want to create a manual sampling bias later on.
+Of course, the changes are not  visible, because our species occurs mainly in
+pixels of relatively similar areas. Nevertheless, this example should be useful 
+if you want to create a manual sampling bias later on.
 
-
-
-**Important note** Please note that when using rasters based on longitude-latitude, larger cells have _automatically_ more chance of being sampled than smaller cells, so you do not need to do it by yourself. See documentation of the `randomPoints` function of package `dismo` for more details.
 
 ### 7.3.5. Sampling multiple records in the same cells
 
-In real datasets such as Museum datasets, it is frequent to have multiple records in the same cells. To mimic such datasets, it is possible to allow the function to sample repeatedly in the same cells:
+In real datasets such as Museum datasets, it is frequent to have multiple 
+records in the same cells. To mimic such datasets, it is possible to allow
+the function to sample repeatedly in the same cells:
 
 ```{r samp22, eval = TRUE}
 PO.points <- sampleOccurrences(my.first.species,
@@ -398,9 +488,12 @@ length(which(duplicated(PO.points$sample.points[, c("x", "y")])))
 
 ## 7.4. Defining the sample prevalence
 
-_The sample prevalence is the proportion of samples in which the species has been found. It is therefore different from the species prevalence which [was mentionned earlier](04-presenceabsence.html#conversion-to-presence-absence-based-on-a-value-of-species-prevalence)._
+_The sample prevalence is the proportion of samples in which the species has 
+been found. It is therefore different from the species prevalence which 
+[was mentionned earlier](04-presenceabsence.html#conversion-to-presence-absence-based-on-a-value-of-species-prevalence)._
 
-You can define the desired sample prevalence when sampling presences and absences, with the parameter `sample.prevalence`:
+You can define the desired sample prevalence when sampling presences and 
+absences, with the parameter `sample.prevalence`:
 
 ```{r samp23, cache = TRUE, fig.cap = "Fig 7.17 Presence-absence points sampled with a prevalence of 0.5 (i.e., 50% of presence points, 50% of absence points)"}
 PA.points <- sampleOccurrences(my.first.species,

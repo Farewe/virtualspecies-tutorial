@@ -56,7 +56,7 @@ of environmental suitability.
 ```
 
 ```
-## terra 1.7.39
+## terra 1.7.46
 ```
 
 ```
@@ -191,10 +191,10 @@ pa3 <- convertToPA(my.first.species, PA.method = "probability",
 ##               
 ## - slope (a) = 1
 ## - intercept (b) = 0
-## - species prevalence =0.0874113455429285
+## - species prevalence =0.0866428315964423
 ```
 
-![Fig. 4.5 Linear conversion, ](04-presenceabsence_files/figure-html/conv4.2-1.png)
+![Fig. 4.5 Linear conversion](04-presenceabsence_files/figure-html/conv4.2-1.png)
 
 A second example where we change the probability of occurrence, which results 
 in a difference in terms of species prevalence:
@@ -216,7 +216,7 @@ pa4 <- convertToPA(my.first.species, PA.method = "probability",
 ##               
 ## - slope (a) = 0.5
 ## - intercept (b) = 0
-## - species prevalence =0.0434142314922412
+## - species prevalence =0.0432558260411136
 ```
 
 ![Fig. 4.6 Linear conversion](04-presenceabsence_files/figure-html/conv4.3-1.png)
@@ -401,7 +401,7 @@ sp.0.2 <- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.876382668991938
 ## - intercept (b) = 0.123617331008062
-## - species prevalence =0.199248069124179
+## - species prevalence =0.200226965310444
 ```
 
 ![Fig. 4.14 Linear conversion of a species with a prevalence of 0.2](04-presenceabsence_files/figure-html/conv8.2-1.png)
@@ -427,7 +427,7 @@ sp.0.2
 ##    .probabilistic method    = linear
 ##    .a (slope)               = 0.876382668991938
 ##    .b (intercept)           = 0.123617331008062
-##    .species prevalence      = 0.199248069124179
+##    .species prevalence      = 0.200226965310444
 ```
 
 ```r
@@ -449,7 +449,7 @@ sp.0.05 <- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.573679003730832
 ## - intercept (b) = 0
-## - species prevalence =0.0502380413165968
+## - species prevalence =0.0499855826288622
 ```
 
 ![Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5](04-presenceabsence_files/figure-html/conv8.4-1.png)
@@ -472,7 +472,7 @@ sp.0.5 <- convertToPA(my.first.species,
 ##               
 ## - slope (a) = 0.547739168119961
 ## - intercept (b) = 0.452260831880039
-## - species prevalence =0.500036507506315
+## - species prevalence =0.499890477481056
 ```
 
 ![Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5](04-presenceabsence_files/figure-html/conv8.4-2.png)
@@ -516,7 +516,7 @@ sp.0.2 <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.17578125
 ## - alpha = -0.05
-## - species prevalence =0.200796234900434
+## - species prevalence =0.200578427405133
 ```
 
 ![Fig. 4.17 Conversion of a species with a prevalence of 0.2, _i.e._ occupying 20% of the world (which is quite large)](04-presenceabsence_files/figure-html/conv8-1.png)
@@ -542,7 +542,7 @@ sp.0.2
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
 ##    .beta  (inflexion point) = 0.17578125
-##    .species prevalence      = 0.200796234900434
+##    .species prevalence      = 0.200578427405133
 ```
 
 
@@ -563,7 +563,7 @@ sp.0.015 <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.78125
 ## - alpha = -0.015
-## - species prevalence =0.0144841984374787
+## - species prevalence =0.0145052366614566
 ```
 
 ![Fig. 4.18 Conversion of a species with a prevalence of 0.015, _i.e._ occupying 1.5% of the world](04-presenceabsence_files/figure-html/conv9-1.png)
@@ -589,7 +589,7 @@ sp.0.015
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.015
 ##    .beta  (inflexion point) = 0.78125
-##    .species prevalence      = 0.0144841984374787
+##    .species prevalence      = 0.0145052366614566
 ```
 
 
@@ -611,7 +611,7 @@ sp.10 <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.9
 ## - alpha = -0.35252734375
-## - species prevalence =0.101000800690054
+## - species prevalence =0.100947586358816
 ```
 
 ![Fig. 4.19 Conversion of a species with a prevalence of 0.1, _i.e._ occupying 10% of the world](04-presenceabsence_files/figure-html/conv10-1.png)
@@ -637,7 +637,7 @@ sp.10
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.35252734375
 ##    .beta  (inflexion point) = 0.9
-##    .species prevalence      = 0.101000800690054
+##    .species prevalence      = 0.100947586358816
 ```
 
 It worked, but the resulting species does not look realistic at all: alpha was below -0.3, which means that we had a quasi-linear conversion curve, producing this unrealistic presence-absence map.
@@ -667,7 +667,7 @@ sp.10bis <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.3
 ## - alpha = -0.001
-## - species prevalence =0.108668614558699
+## - species prevalence =0.108688415240089
 ```
 
 ![Fig. 4.20 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta](04-presenceabsence_files/figure-html/conv11-1.png)
@@ -693,7 +693,7 @@ sp.10bis
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.001
 ##    .beta  (inflexion point) = 0.3
-##    .species prevalence      = 0.108668614558699
+##    .species prevalence      = 0.108688415240089
 ```
 
 

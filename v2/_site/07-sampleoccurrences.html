@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>7. Sampling occurrences</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -44,32 +58,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -81,13 +71,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -101,40 +86,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -162,7 +123,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -174,7 +135,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -184,11 +145,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -200,13 +178,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -214,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -236,6 +206,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -248,48 +219,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -303,6 +235,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -338,8 +276,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -360,7 +296,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -374,7 +310,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -390,7 +326,7 @@ div.tocify {
   <a href="01-inputdata.html">1. Input data</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Simulating virtual species
      
     <span class="caret"></span>
@@ -427,7 +363,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -438,17 +374,36 @@ div.tocify {
 
 <div id="basic-usage" class="section level2">
 <h2>7.1. Basic usage</h2>
-<p>If you generated virtual species distributions with this package, there is a good chance that your objective is to test a particular modelling protocol or technique. Hence, there is one last step for you to perform: the sampling of species occurrences. This can be done with the function <code>sampleOccurrences</code>, with which you can sample either “presence-absence” or “presence only” occurrence data. The function <code>sampleOccurrences</code> also provides the possibility to introduce a number of sampling biases, such as uneven spatial sampling intensity, probability of detection, and probability of error.</p>
-<p>Let’s see an example in practice, using the same tropical species we generated in the beginning of this tutorial:</p>
+<p>If you generated virtual species distributions with this package,
+there is a good chance that your objective is to test a particular
+modelling protocol or technique. Hence, there is one last step for you
+to perform: the sampling of species occurrences. This can be done with
+the function <code>sampleOccurrences</code>, with which you can sample
+either “presence-absence” or “presence only” occurrence data. The
+function <code>sampleOccurrences</code> also provides the possibility to
+introduce a number of sampling biases, such as uneven spatial sampling
+intensity, probability of detection, and probability of error.</p>
+<p>Let’s see an example in practice, using the same tropical species we
+generated in the beginning of this tutorial:</p>
 <pre class="r"><code>library(virtualspecies)</code></pre>
-<pre><code>## Loading required package: raster</code></pre>
-<pre><code>## Loading required package: sp</code></pre>
-<pre class="r"><code># Worldclim data
-worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
-
+<pre><code>## Le chargement a nécessité le package : terra</code></pre>
+<pre><code>## terra 1.7.46</code></pre>
+<pre><code>## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+## which was just loaded, will retire in October 2023.
+## Please refer to R-spatial evolution reports for details, especially
+## https://r-spatial.org/r/2023/05/15/evolution4.html.
+## It may be desirable to make the sf package available;
+## package maintainers should consider adding sf to Suggests:.
+## The sp package is now running under evolution status 2
+##      (status 2 uses the sf package in place of rgdal)</code></pre>
+<pre class="r"><code>library(geodata)
+# Worldclim data
+worldclim &lt;- worldclim_global(var = &quot;bio&quot;, res = 10,
+                              path = tempdir())
+names(worldclim) &lt;- paste0(&quot;bio&quot;, 1:19)
 
 # Formatting of the response functions
-my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 250, sd = 50),
+my.parameters &lt;- formatFunctions(bio1 = c(fun = &#39;dnorm&#39;, mean = 25, sd = 5),
                                  bio12 = c(fun = &#39;dnorm&#39;, mean = 4000, sd = 2000))
 
 # Generation of the virtual species
@@ -457,8 +412,7 @@ my.first.species &lt;- generateSpFromFun(raster.stack = worldclim[[c(&quot;bio1&
 <pre><code>## Generating virtual species environmental suitability...</code></pre>
 <pre><code>##  - The response to each variable was rescaled between 0 and 1. To
 ##             disable, set argument rescale.each.response = FALSE</code></pre>
-<pre><code>##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE</code></pre>
+<pre><code>##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE</code></pre>
 <pre class="r"><code># Conversion to presence-absence
 my.first.species &lt;- convertToPA(my.first.species,
                                 beta = 0.7, plot = FALSE)</code></pre>
@@ -467,17 +421,21 @@ my.first.species &lt;- convertToPA(my.first.species,
 ##               
 ## - beta = 0.7
 ## - alpha = -0.05
-## - species prevalence =0.0338242766299243</code></pre>
+## - species prevalence =0.0244971555083639</code></pre>
 <pre class="r"><code># Sampling of &#39;presence only&#39; occurrences
 presence.points &lt;- sampleOccurrences(my.first.species,
                                      n = 30, # The number of points to sample
                                      type = &quot;presence only&quot;)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp1b-1.png" alt="Fig 7.1 Illustration of the points sampled for our virtual species" />
-<p class="caption">Fig 7.1 Illustration of the points sampled for our virtual species</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp1b-1.png"
+alt="Fig 7.1 Illustration of the points sampled for our virtual species" />
+<div class="figcaption">Fig 7.1 Illustration of the points sampled for
+our virtual species</div>
 </div>
-<p>We can see that a map was plotted, with the sampled presence points illustrated with black dots.</p>
-<p>Now let’s see how our object <code>presence.points</code> looks like:</p>
+<p>We can see that a map was plotted, with the sampled presence points
+illustrated with black dots.</p>
+<p>Now let’s see how our object <code>presence.points</code> looks
+like:</p>
 <pre class="r"><code>presence.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
 ## 
@@ -491,19 +449,20 @@ presence.points &lt;- sampleOccurrences(my.first.species,
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1   73.41667 19.7500000    1        1
-## 2  101.75000  3.7500000    1        1
-## 3  -11.25000  7.0833333    1        1
-## 4  -78.41667 -4.5833333    1        1
-## 5  122.25000 11.2500000    1        1
-## 6  137.91667 -4.9166667    1        1
-## 7  111.08333 -0.4166667    1        1
-## 8  -66.25000  0.4166667    1        1
-## 9  -74.58333 -5.2500000    1        1
-## 10 -73.75000 -3.5833333    1        1
+##                  x         y Real Observed
+## 1088748 -162.08333  5.916667    1        1
+## 1237397  132.75000 -5.416667    1        1
+## 1231880  -66.75000 -5.083333    1        1
+## 1121785  -55.91667  3.416667    1        1
+## 1169344  -49.41667 -0.250000    1        1
+## 1215812  135.25000 -3.750000    1        1
+## 1263173  108.75000 -7.416667    1        1
+## 939106    97.58333 17.583333    1        1
+## 1266396  -74.08333 -7.750000    1        1
+## 1256676  105.91667 -6.916667    1        1
 ## ... 20 more lines.</code></pre>
-<p>This message summarizes us information about the 30 occurrence points we just sampled. Now let’s look at the structure of this object:</p>
+<p>This message summarizes us information about the 30 occurrence points
+we just sampled. Now let’s look at the structure of this object:</p>
 <pre class="r"><code>str(presence.points)</code></pre>
 <pre><code>## List of 8
 ##  $ type                        : chr &quot;presence only&quot;
@@ -513,112 +472,140 @@ presence.points &lt;- sampleOccurrences(my.first.species,
 ##  $ error.probability           : num 0
 ##  $ bias                        : NULL
 ##  $ replacement                 : logi FALSE
-##  $ original.distribution.raster:Formal class &#39;RasterLayer&#39; [package &quot;raster&quot;] with 12 slots
+##  $ original.distribution.raster:S4 class &#39;SpatRaster&#39; [package &quot;terra&quot;]
 ##  $ sample.plot                 :List of 3
-##   ..$ :Dotted pair list of 23
+##   ..$ :Dotted pair list of 24
 ##   ..$ : raw [1:35992] 00 00 00 00 ...
 ##   .. ..- attr(*, &quot;pkgName&quot;)= chr &quot;graphics&quot;
 ##   ..$ :List of 2
 ##   .. ..- attr(*, &quot;pkgName&quot;)= chr &quot;grid&quot;
-##   ..- attr(*, &quot;engineVersion&quot;)= int 12
-##   ..- attr(*, &quot;pid&quot;)= int 11756
+##   ..- attr(*, &quot;engineVersion&quot;)= int 16
+##   ..- attr(*, &quot;pid&quot;)= int 31592
 ##   ..- attr(*, &quot;Rversion&quot;)=Classes &#39;R_system_version&#39;, &#39;package_version&#39;, &#39;numeric_version&#39;  hidden list of 1
 ##   ..- attr(*, &quot;load&quot;)= chr(0) 
 ##   ..- attr(*, &quot;attach&quot;)= chr(0) 
 ##   ..- attr(*, &quot;class&quot;)= chr &quot;recordedplot&quot;
 ##  $ sample.points               :&#39;data.frame&#39;:    30 obs. of  4 variables:
-##   ..$ x       : num [1:30] 73.4 101.8 -11.2 -78.4 122.2 ...
-##   ..$ y       : num [1:30] 19.75 3.75 7.08 -4.58 11.25 ...
+##   ..$ x       : num [1:30] -162.1 132.8 -66.8 -55.9 -49.4 ...
+##   ..$ y       : num [1:30] 5.92 -5.42 -5.08 3.42 -0.25 ...
 ##   ..$ Real    : num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
 ##   ..$ Observed: num [1:30] 1 1 1 1 1 1 1 1 1 1 ...
-##  - attr(*, &quot;RNGkind&quot;)= chr [1:2] &quot;Mersenne-Twister&quot; &quot;Inversion&quot;
-##  - attr(*, &quot;seed&quot;)= int [1:626] 403 240 -783267279 -1072830632 -1244324702 1938186215 1315597702 -550798737 -802745507 -407459021 ...
+##  - attr(*, &quot;RNGkind&quot;)= chr [1:3] &quot;Mersenne-Twister&quot; &quot;Inversion&quot; &quot;Rejection&quot;
+##  - attr(*, &quot;seed&quot;)= int [1:626] 10403 288 -962552501 -84035233 1038343804 1488043481 889822882 1185920310 -301917002 -1257285662 ...
 ##  - attr(*, &quot;class&quot;)= chr [1:2] &quot;VSSampledPoints&quot; &quot;list&quot;</code></pre>
 <p>This is a list containing eight elements:</p>
 <ol style="list-style-type: decimal">
-<li><code>type</code>: the type of occurrence sampled (presence absence or presnece-only)</li>
-<li><code>detection.probability</code>: the detection probability of our virtual species</li>
-<li><code>error.probability</code>: the probability of an erroneous detection of our virtual species</li>
-<li><code>bias</code>: if you introduced a sampling bias, this part will contain the appropriate info</li>
-<li><code>replacement</code>: a logical indicating if you allowed multiple samples in the same cells</li>
-<li><code>original.distribution.raster</code>: the raster from which occurrences were sampled</li>
-<li><code>sample.plot</code>: contains the graphical representation of your samplings, so it can be called later</li>
-<li><code>sampled.points</code>: a data frame containing the sampled points</li>
+<li><code>type</code>: the type of occurrence sampled (presence absence
+or presence-only)</li>
+<li><code>detection.probability</code>: the detection probability of our
+virtual species</li>
+<li><code>error.probability</code>: the probability of an erroneous
+detection of our virtual species</li>
+<li><code>bias</code>: if you introduced a sampling bias, this part will
+contain the appropriate info</li>
+<li><code>replacement</code>: a logical indicating if you allowed
+multiple samples in the same cells</li>
+<li><code>original.distribution.raster</code>: the raster from which
+occurrences were sampled</li>
+<li><code>sample.plot</code>: contains the graphical representation of
+your samples, so it can be called later</li>
+<li><code>sampled.points</code>: a data frame containing the sampled
+points</li>
 </ol>
-<p>It also says to us that there are several attributes stored, such as the information about the randomisation process (<code>RNGkind</code> and <code>seed</code>). You can use these attributes later to reproduce exactly a previous sampling.</p>
+<p>It also says to us that there are several attributes stored, such as
+the information about the randomisation process (<code>RNGkind</code>
+and <code>seed</code>). You can use these attributes later to reproduce
+exactly a previous sampling.</p>
 <p>Now, we can specifically access the data frame of sampled points:</p>
 <pre class="r"><code>presence.points$sample.points</code></pre>
-<pre><code>##            x            y Real Observed
-## 1   73.41667  19.75000000    1        1
-## 2  101.75000   3.75000000    1        1
-## 3  -11.25000   7.08333333    1        1
-## 4  -78.41667  -4.58333333    1        1
-## 5  122.25000  11.25000000    1        1
-## 6  137.91667  -4.91666667    1        1
-## 7  111.08333  -0.41666667    1        1
-## 8  -66.25000   0.41666667    1        1
-## 9  -74.58333  -5.25000000    1        1
-## 10 -73.75000  -3.58333333    1        1
-## 11 101.75000   3.58333333    1        1
-## 12 131.25000  -0.25000000    1        1
-## 13 -72.91667  -6.58333333    1        1
-## 14 101.08333   6.25000000    1        1
-## 15 134.58333  -5.58333333    1        1
-## 16 -73.58333  -4.08333333    1        1
-## 17 106.91667  -7.41666667    1        1
-## 18 -77.58333   1.75000000    1        1
-## 19 -57.25000  -4.91666667    1        1
-## 20 -55.08333  -1.25000000    1        1
-## 21 143.08333  -8.41666667    1        1
-## 22 103.08333   1.08333333    1        1
-## 23 115.08333  -1.91666667    1        1
-## 24 119.25000  -2.25000000    1        1
-## 25 -66.08333  -3.08333333    1        1
-## 26 179.25000 -18.08333333    1        1
-## 27 -51.58333  -2.91666667    1        1
-## 28 -72.58333   0.08333333    1        1
-## 29 -92.91667  15.25000000    1        1
-## 30 -70.58333  -1.25000000    1        1</code></pre>
-<p>The data frame has four colums: the pixel coordinates <code>x</code> and <code>y</code>, the real presence/absence (1/0) of the species in the sampled pixel <code>Real</code>, and the result of the sampling <code>Observed</code> (1 = presence, 0 = absence, NA = no information). The columns <code>Real</code> and <code>Observed</code> differ only if you have specified a detection probability and/or an error probability.</p>
-<p>Now, let’s sample the other type of occurrence data: presence-absence.</p>
+<pre><code>##                  x          y Real Observed
+## 1088748 -162.08333  5.9166667    1        1
+## 1237397  132.75000 -5.4166667    1        1
+## 1231880  -66.75000 -5.0833333    1        1
+## 1121785  -55.91667  3.4166667    1        1
+## 1169344  -49.41667 -0.2500000    1        1
+## 1215812  135.25000 -3.7500000    1        1
+## 1263173  108.75000 -7.4166667    1        1
+## 939106    97.58333 17.5833333    1        1
+## 1266396  -74.08333 -7.7500000    1        1
+## 1256676  105.91667 -6.9166667    1        1
+## 1036344  103.91667 10.0833333    1        1
+## 1079403   80.41667  6.7500000    1        1
+## 1123891  -64.91667  3.2500000    1        1
+## 1274263  157.08333 -8.2500000    1        1
+## 1128276  -54.08333  2.9166667    1        1
+## 1008091   75.08333 12.2500000    1        1
+## 1190806  -72.41667 -1.9166667    1        1
+## 1227526  -72.41667 -4.7500000    1        1
+## 1185573  135.41667 -1.4166667    1        1
+## 1194022  103.58333 -2.0833333    1        1
+## 1017015  122.41667 11.5833333    1        1
+## 1106601  -66.58333  4.5833333    1        1
+## 967236   105.91667 15.4166667    1        1
+## 993113    98.75000 13.4166667    1        1
+## 1198388  111.25000 -2.4166667    1        1
+## 1107692  115.25000  4.5833333    1        1
+## 1150857  109.41667  1.2500000    1        1
+## 1154207  -52.25000  0.9166667    1        1
+## 962853    95.41667 15.7500000    1        1
+## 1023515  125.75000 11.0833333    1        1</code></pre>
+<p>The data frame has four colums: the pixel coordinates <code>x</code>
+and <code>y</code>, the real presence/absence (1/0) of the species in
+the sampled pixel <code>Real</code>, and the result of the sampling
+<code>Observed</code> (1 = presence, 0 = absence, NA = no information).
+The columns <code>Real</code> and <code>Observed</code> differ only if
+you have specified a detection probability and/or an error
+probability.</p>
+<p>Now, let’s sample the other type of occurrence data:
+presence-absence.</p>
 <pre class="r"><code># Sampling of &#39;presence-absence&#39; occurrences
 PA.points &lt;- sampleOccurrences(my.first.species,
-                               n = 30,
+                               n = 300,
                                type = &quot;presence-absence&quot;)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp4-1.png" alt="Fig 7.2 Illustration of the presence-absence points sampled for our virtual species. Black dots are presences, open dots are absences." />
-<p class="caption">Fig 7.2 Illustration of the presence-absence points sampled for our virtual species. Black dots are presences, open dots are absences.</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp4-1.png"
+alt="Fig 7.2 Illustration of the presence-absence points sampled for our virtual species. Black dots are presences, open dots are absences." />
+<div class="figcaption">Fig 7.2 Illustration of the presence-absence
+points sampled for our virtual species. Black dots are presences, open
+dots are absences.</div>
 </div>
 <pre class="r"><code>PA.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
 ## 
 ## - Type: presence-absence
-## - Number of points: 30
+## - Number of points: 300
 ## - No sampling bias
 ## - Detection probability: 
 ##    .Probability: 1
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0
 ## - Sample prevalence: 
-##    .True:0
-##    .Observed:0
+##    .True:0.01
+##    .Observed:0.01
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -91.25000  41.083333    0        0
-## 2  124.75000 -25.250000    0        0
-## 3   83.75000  47.750000    0        0
-## 4  142.75000 -33.750000    0        0
-## 5   44.25000  48.416667    0        0
-## 6   71.58333  41.750000    0        0
-## 7  152.08333  -4.583333    0        0
-## 8   35.91667  28.416667    0        0
-## 9   96.91667  42.583333    0        0
-## 10 -37.08333  -8.250000    0        0
-## ... 20 more lines.</code></pre>
-<p>You can see that the points are sampled randomly throughout the whole raster. However, we may have only a few or even no presence points at all because the samples are purely random at the moment. We can define the number of presences and the number of absences by using the parameter <a href="#defining-the-sample-prevalence"><code>sample.prevalence</code></a>.</p>
-<p>You may be interested in extracting the true probability of occurrence at each sampled point, to compare with your SDM results. To do this, use argument <code>extract.probability</code>:</p>
+##                  x         y Real Observed
+## 171413   -51.25000  76.75000    0        0
+## 479386   157.58333  53.08333    0        0
+## 791057   -97.25000  28.91667    0        0
+## 2298665 -109.25000 -87.41667    0        0
+## 2083546   37.58333 -70.75000    0        0
+## 599737    56.08333  43.75000    0        0
+## 2043008  121.25000 -67.58333    0        0
+## 712122    66.91667  35.08333    0        0
+## 773755  -100.91667  30.25000    0        0
+## 554845   134.08333  47.25000    0        0
+## ... 290 more lines.</code></pre>
+<p>You can see that the points are sampled randomly throughout the whole
+raster. However, we may have only a few or even no presence points at
+all because the samples are purely random at the moment. We can define
+the number of presences and the number of absences by using the
+parameter <a
+href="#defining-the-sample-prevalence"><code>sample.prevalence</code></a>.</p>
+<p>You may be interested in extracting the true probability of
+occurrence at each sampled point, to compare with your SDM results. To
+do this, use argument <code>extract.probability</code>:</p>
 <pre class="r"><code># Sampling of &#39;presence-absence&#39; occurrences
 PA.points &lt;- sampleOccurrences(my.first.species,
                                n = 30,
@@ -636,174 +623,180 @@ PA.points</code></pre>
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0
 ## - Sample prevalence: 
-##    .True:0.0333333333333333
-##    .Observed:0.0333333333333333
+##    .True:0
+##    .Observed:0
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##             x         y Real Observed true.probability
-## 1   150.08333  71.25000    0        0     8.315280e-07
-## 2   -58.75000 -35.41667    0        0     2.601265e-06
-## 3    77.91667  20.41667    0        0     1.694370e-04
-## 4  -107.75000  30.91667    0        0     1.428352e-06
-## 5   -71.08333 -14.25000    0        0     8.325917e-07
-## 6   107.75000  58.08333    0        0     8.315281e-07
-## 7  -115.08333  60.08333    0        0     8.315284e-07
-## 8   -61.91667  52.41667    0        0     8.315293e-07
-## 9     7.25000  15.25000    0        0     1.337543e-05
-## 10  101.58333  28.25000    0        0     8.903669e-07
+##                  x          y Real Observed true.probability
+## 670998    52.91667  38.250000    0        0     1.658934e-06
+## 894718  -100.41667  20.916667    0        0     2.151494e-06
+## 2146264   50.58333 -75.583333    0        0     8.315280e-07
+## 1272000  139.91667  -8.083333    0        0     9.830516e-03
+## 2149559 -120.25000 -75.916667    0        0     8.315280e-07
+## 274191   158.41667  68.916667    0        0     8.315280e-07
+## 2286879   86.41667 -86.416667    0        0     8.315280e-07
+## 558885    87.41667  46.916667    0        0     8.333703e-07
+## 730586   -95.75000  33.583333    0        0     6.658379e-06
+## 2088575  155.75000 -71.083333    0        0     8.315280e-07
 ## ... 20 more lines.</code></pre>
-<p>In the next section you will see how to limit the sampling to a region in particular, and after that, how to introduce a bias in the sampling procedure.</p>
+<p>In the next section you will see how to limit the sampling to a
+region in particular, and after that, how to introduce a bias in the
+sampling procedure.</p>
 </div>
 <div id="delimiting-a-sampling-area" class="section level2">
 <h2>7.2. Delimiting a sampling area</h2>
-<p>There are three main possibilities to delimit the sampling areas :</p>
+<p>There are three main possibilities to delimit the sampling areas
+:</p>
 <ol style="list-style-type: decimal">
-<li>Specifying the region(s) of the world (country, continent, region</li>
-<li>Provide a polygon (of type <code>SpatialPolygons</code> or <code>SpatialPolygonsDataFrame</code> of package <code>sp</code>)</li>
-<li>Provide an <code>extent</code> object (a rectangular area, from the package <code>raster</code>)</li>
+<li>Specifying the region(s) of the world (country, continent,
+region</li>
+<li>Provide a polygon (of type <code>SpatialPolygons</code> or
+<code>SpatialPolygonsDataFrame</code> of package <code>sp</code>)</li>
+<li>Provide an <code>extent</code> object (a rectangular area, from the
+package <code>raster</code>)</li>
 </ol>
 <div id="specifying-the-regions-of-the-world" class="section level3">
 <h3>7.2.1. Specifying the region(s) of the world</h3>
-<p>You can specify any combination of countries, continents and regions of the world to restrict your sampling area, using the argument <code>sampling.area</code>. For example:</p>
+<p>You can specify any combination of countries, continents and regions
+of the world to restrict your sampling area, using the argument
+<code>sampling.area</code>. For example:</p>
 <pre class="r"><code># Sampling of &#39;presence-absence&#39; occurrences
 PA.points &lt;- sampleOccurrences(my.first.species,
                                n = 30,
                                type = &quot;presence-absence&quot;,
                                sampling.area = c(&quot;South America&quot;, &quot;Mexico&quot;))</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp5-1.png" alt="Fig 7.3 Illustration of points sampled in a restricted area (here, South America + Mexico)" />
-<p class="caption">Fig 7.3 Illustration of points sampled in a restricted area (here, South America + Mexico)</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp5-1.png"
+alt="Fig 7.3 Illustration of points sampled in a restricted area (here, South America + Mexico)" />
+<div class="figcaption">Fig 7.3 Illustration of points sampled in a
+restricted area (here, South America + Mexico)</div>
 </div>
-<p>The only restriction is to provide the correct names.</p>
-<p>The correct region names are: “Africa”, “Antarctica”, “Asia”, “Australia”, “Europe”, “North America”, “South America”</p>
-<p>The correct continent names are: “Africa”, “Antarctica”, “Australia”, “Eurasia”, “North America”, “South America”</p>
-<p>And you can consult the correct names with the following commands:</p>
-<pre class="r"><code>library(rworldmap, quiet = TRUE)</code></pre>
-<pre><code>## ### Welcome to rworldmap ###</code></pre>
-<pre><code>## For a short introduction type :   vignette(&#39;rworldmap&#39;)</code></pre>
+<p>The only restriction is to provide the correct names and to have the
+package <code>rnaturalearth</code> installed.</p>
+<p>The correct region names are: “Africa”, “Antarctica”, “Asia”,
+“Oceania”, “Europe”, “Americas”</p>
+<p>The correct continent names are: “Africa”, “Antarctica”, “Asia”,
+“Europe”, “North America”, “Oceania”, “South America”</p>
+<p>And you can consult the correct names with the following
+commands:</p>
 <pre class="r"><code># Country names
-levels(getMap()@data$SOVEREIGNT)</code></pre>
-<pre><code>##   [1] &quot;Afghanistan&quot;                      &quot;Albania&quot;                         
-##   [3] &quot;Algeria&quot;                          &quot;Andorra&quot;                         
-##   [5] &quot;Angola&quot;                           &quot;Antarctica&quot;                      
-##   [7] &quot;Antigua and Barbuda&quot;              &quot;Argentina&quot;                       
-##   [9] &quot;Armenia&quot;                          &quot;Australia&quot;                       
-##  [11] &quot;Austria&quot;                          &quot;Azerbaijan&quot;                      
-##  [13] &quot;Bahrain&quot;                          &quot;Bangladesh&quot;                      
-##  [15] &quot;Barbados&quot;                         &quot;Belarus&quot;                         
-##  [17] &quot;Belgium&quot;                          &quot;Belize&quot;                          
-##  [19] &quot;Benin&quot;                            &quot;Bhutan&quot;                          
-##  [21] &quot;Bolivia&quot;                          &quot;Bosnia and Herzegovina&quot;          
-##  [23] &quot;Botswana&quot;                         &quot;Brazil&quot;                          
-##  [25] &quot;Brunei&quot;                           &quot;Bulgaria&quot;                        
-##  [27] &quot;Burkina Faso&quot;                     &quot;Burundi&quot;                         
-##  [29] &quot;Cambodia&quot;                         &quot;Cameroon&quot;                        
-##  [31] &quot;Canada&quot;                           &quot;Cape Verde&quot;                      
-##  [33] &quot;Central African Republic&quot;         &quot;Chad&quot;                            
-##  [35] &quot;Chile&quot;                            &quot;China&quot;                           
-##  [37] &quot;Colombia&quot;                         &quot;Comoros&quot;                         
-##  [39] &quot;Costa Rica&quot;                       &quot;Croatia&quot;                         
-##  [41] &quot;Cuba&quot;                             &quot;Cyprus&quot;                          
-##  [43] &quot;Czech Republic&quot;                   &quot;Democratic Republic of the Congo&quot;
-##  [45] &quot;Denmark&quot;                          &quot;Djibouti&quot;                        
-##  [47] &quot;Dominica&quot;                         &quot;Dominican Republic&quot;              
-##  [49] &quot;East Timor&quot;                       &quot;Ecuador&quot;                         
-##  [51] &quot;Egypt&quot;                            &quot;El Salvador&quot;                     
-##  [53] &quot;Equatorial Guinea&quot;                &quot;Eritrea&quot;                         
-##  [55] &quot;Estonia&quot;                          &quot;Ethiopia&quot;                        
-##  [57] &quot;Federated States of Micronesia&quot;   &quot;Fiji&quot;                            
-##  [59] &quot;Finland&quot;                          &quot;France&quot;                          
-##  [61] &quot;Gabon&quot;                            &quot;Gambia&quot;                          
-##  [63] &quot;Georgia&quot;                          &quot;Germany&quot;                         
-##  [65] &quot;Ghana&quot;                            &quot;Greece&quot;                          
-##  [67] &quot;Grenada&quot;                          &quot;Guatemala&quot;                       
-##  [69] &quot;Guinea&quot;                           &quot;Guinea Bissau&quot;                   
-##  [71] &quot;Guyana&quot;                           &quot;Haiti&quot;                           
-##  [73] &quot;Honduras&quot;                         &quot;Hungary&quot;                         
-##  [75] &quot;Iceland&quot;                          &quot;India&quot;                           
-##  [77] &quot;Indonesia&quot;                        &quot;Iran&quot;                            
-##  [79] &quot;Iraq&quot;                             &quot;Ireland&quot;                         
-##  [81] &quot;Israel&quot;                           &quot;Italy&quot;                           
-##  [83] &quot;Ivory Coast&quot;                      &quot;Jamaica&quot;                         
-##  [85] &quot;Japan&quot;                            &quot;Jordan&quot;                          
-##  [87] &quot;Kashmir&quot;                          &quot;Kazakhstan&quot;                      
-##  [89] &quot;Kenya&quot;                            &quot;Kiribati&quot;                        
-##  [91] &quot;Kosovo&quot;                           &quot;Kuwait&quot;                          
-##  [93] &quot;Kyrgyzstan&quot;                       &quot;Laos&quot;                            
-##  [95] &quot;Latvia&quot;                           &quot;Lebanon&quot;                         
-##  [97] &quot;Lesotho&quot;                          &quot;Liberia&quot;                         
-##  [99] &quot;Libya&quot;                            &quot;Liechtenstein&quot;                   
-## [101] &quot;Lithuania&quot;                        &quot;Luxembourg&quot;                      
-## [103] &quot;Macedonia&quot;                        &quot;Madagascar&quot;                      
-## [105] &quot;Malawi&quot;                           &quot;Malaysia&quot;                        
-## [107] &quot;Maldives&quot;                         &quot;Mali&quot;                            
-## [109] &quot;Malta&quot;                            &quot;Marshall Islands&quot;                
-## [111] &quot;Mauritania&quot;                       &quot;Mauritius&quot;                       
-## [113] &quot;Mexico&quot;                           &quot;Moldova&quot;                         
-## [115] &quot;Monaco&quot;                           &quot;Mongolia&quot;                        
-## [117] &quot;Montenegro&quot;                       &quot;Morocco&quot;                         
-## [119] &quot;Mozambique&quot;                       &quot;Myanmar&quot;                         
-## [121] &quot;Namibia&quot;                          &quot;Nauru&quot;                           
-## [123] &quot;Nepal&quot;                            &quot;Netherlands&quot;                     
-## [125] &quot;New Zealand&quot;                      &quot;Nicaragua&quot;                       
-## [127] &quot;Niger&quot;                            &quot;Nigeria&quot;                         
-## [129] &quot;North Korea&quot;                      &quot;Northern Cyprus&quot;                 
-## [131] &quot;Norway&quot;                           &quot;Oman&quot;                            
-## [133] &quot;Pakistan&quot;                         &quot;Palau&quot;                           
-## [135] &quot;Palestine&quot;                        &quot;Panama&quot;                          
-## [137] &quot;Papua New Guinea&quot;                 &quot;Paraguay&quot;                        
-## [139] &quot;Peru&quot;                             &quot;Philippines&quot;                     
-## [141] &quot;Poland&quot;                           &quot;Portugal&quot;                        
-## [143] &quot;Qatar&quot;                            &quot;Republic of Serbia&quot;              
-## [145] &quot;Republic of the Congo&quot;            &quot;Romania&quot;                         
-## [147] &quot;Russia&quot;                           &quot;Rwanda&quot;                          
-## [149] &quot;Saint Kitts and Nevis&quot;            &quot;Saint Lucia&quot;                     
-## [151] &quot;Saint Vincent and the Grenadines&quot; &quot;Samoa&quot;                           
-## [153] &quot;San Marino&quot;                       &quot;Sao Tome and Principe&quot;           
-## [155] &quot;Saudi Arabia&quot;                     &quot;Senegal&quot;                         
-## [157] &quot;Seychelles&quot;                       &quot;Sierra Leone&quot;                    
-## [159] &quot;Singapore&quot;                        &quot;Slovakia&quot;                        
-## [161] &quot;Slovenia&quot;                         &quot;Solomon Islands&quot;                 
-## [163] &quot;Somalia&quot;                          &quot;Somaliland&quot;                      
-## [165] &quot;South Africa&quot;                     &quot;South Korea&quot;                     
-## [167] &quot;South Sudan&quot;                      &quot;Spain&quot;                           
-## [169] &quot;Sri Lanka&quot;                        &quot;Sudan&quot;                           
-## [171] &quot;Suriname&quot;                         &quot;Swaziland&quot;                       
-## [173] &quot;Sweden&quot;                           &quot;Switzerland&quot;                     
-## [175] &quot;Syria&quot;                            &quot;Taiwan&quot;                          
-## [177] &quot;Tajikistan&quot;                       &quot;Thailand&quot;                        
-## [179] &quot;The Bahamas&quot;                      &quot;Togo&quot;                            
-## [181] &quot;Tonga&quot;                            &quot;Trinidad and Tobago&quot;             
-## [183] &quot;Tunisia&quot;                          &quot;Turkey&quot;                          
-## [185] &quot;Turkmenistan&quot;                     &quot;Tuvalu&quot;                          
-## [187] &quot;Uganda&quot;                           &quot;Ukraine&quot;                         
-## [189] &quot;United Arab Emirates&quot;             &quot;United Kingdom&quot;                  
-## [191] &quot;United Republic of Tanzania&quot;      &quot;United States of America&quot;        
-## [193] &quot;Uruguay&quot;                          &quot;Uzbekistan&quot;                      
-## [195] &quot;Vanuatu&quot;                          &quot;Vatican&quot;                         
-## [197] &quot;Venezuela&quot;                        &quot;Vietnam&quot;                         
-## [199] &quot;Western Sahara&quot;                   &quot;Yemen&quot;                           
-## [201] &quot;Zambia&quot;                           &quot;Zimbabwe&quot;</code></pre>
+ unique(rnaturalearth::ne_countries(returnclass =&#39;sf&#39;)$sovereignt)</code></pre>
+<pre><code>##   [1] &quot;Fiji&quot;                             &quot;United Republic of Tanzania&quot;     
+##   [3] &quot;Western Sahara&quot;                   &quot;Canada&quot;                          
+##   [5] &quot;United States of America&quot;         &quot;Kazakhstan&quot;                      
+##   [7] &quot;Uzbekistan&quot;                       &quot;Papua New Guinea&quot;                
+##   [9] &quot;Indonesia&quot;                        &quot;Argentina&quot;                       
+##  [11] &quot;Chile&quot;                            &quot;Democratic Republic of the Congo&quot;
+##  [13] &quot;Somalia&quot;                          &quot;Kenya&quot;                           
+##  [15] &quot;Sudan&quot;                            &quot;Chad&quot;                            
+##  [17] &quot;Haiti&quot;                            &quot;Dominican Republic&quot;              
+##  [19] &quot;Russia&quot;                           &quot;The Bahamas&quot;                     
+##  [21] &quot;United Kingdom&quot;                   &quot;Norway&quot;                          
+##  [23] &quot;Denmark&quot;                          &quot;France&quot;                          
+##  [25] &quot;East Timor&quot;                       &quot;South Africa&quot;                    
+##  [27] &quot;Lesotho&quot;                          &quot;Mexico&quot;                          
+##  [29] &quot;Uruguay&quot;                          &quot;Brazil&quot;                          
+##  [31] &quot;Bolivia&quot;                          &quot;Peru&quot;                            
+##  [33] &quot;Colombia&quot;                         &quot;Panama&quot;                          
+##  [35] &quot;Costa Rica&quot;                       &quot;Nicaragua&quot;                       
+##  [37] &quot;Honduras&quot;                         &quot;El Salvador&quot;                     
+##  [39] &quot;Guatemala&quot;                        &quot;Belize&quot;                          
+##  [41] &quot;Venezuela&quot;                        &quot;Guyana&quot;                          
+##  [43] &quot;Suriname&quot;                         &quot;Ecuador&quot;                         
+##  [45] &quot;Jamaica&quot;                          &quot;Cuba&quot;                            
+##  [47] &quot;Zimbabwe&quot;                         &quot;Botswana&quot;                        
+##  [49] &quot;Namibia&quot;                          &quot;Senegal&quot;                         
+##  [51] &quot;Mali&quot;                             &quot;Mauritania&quot;                      
+##  [53] &quot;Benin&quot;                            &quot;Niger&quot;                           
+##  [55] &quot;Nigeria&quot;                          &quot;Cameroon&quot;                        
+##  [57] &quot;Togo&quot;                             &quot;Ghana&quot;                           
+##  [59] &quot;Ivory Coast&quot;                      &quot;Guinea&quot;                          
+##  [61] &quot;Guinea-Bissau&quot;                    &quot;Liberia&quot;                         
+##  [63] &quot;Sierra Leone&quot;                     &quot;Burkina Faso&quot;                    
+##  [65] &quot;Central African Republic&quot;         &quot;Republic of the Congo&quot;           
+##  [67] &quot;Gabon&quot;                            &quot;Equatorial Guinea&quot;               
+##  [69] &quot;Zambia&quot;                           &quot;Malawi&quot;                          
+##  [71] &quot;Mozambique&quot;                       &quot;eSwatini&quot;                        
+##  [73] &quot;Angola&quot;                           &quot;Burundi&quot;                         
+##  [75] &quot;Israel&quot;                           &quot;Lebanon&quot;                         
+##  [77] &quot;Madagascar&quot;                       &quot;Gambia&quot;                          
+##  [79] &quot;Tunisia&quot;                          &quot;Algeria&quot;                         
+##  [81] &quot;Jordan&quot;                           &quot;United Arab Emirates&quot;            
+##  [83] &quot;Qatar&quot;                            &quot;Kuwait&quot;                          
+##  [85] &quot;Iraq&quot;                             &quot;Oman&quot;                            
+##  [87] &quot;Vanuatu&quot;                          &quot;Cambodia&quot;                        
+##  [89] &quot;Thailand&quot;                         &quot;Laos&quot;                            
+##  [91] &quot;Myanmar&quot;                          &quot;Vietnam&quot;                         
+##  [93] &quot;North Korea&quot;                      &quot;South Korea&quot;                     
+##  [95] &quot;Mongolia&quot;                         &quot;India&quot;                           
+##  [97] &quot;Bangladesh&quot;                       &quot;Bhutan&quot;                          
+##  [99] &quot;Nepal&quot;                            &quot;Pakistan&quot;                        
+## [101] &quot;Afghanistan&quot;                      &quot;Tajikistan&quot;                      
+## [103] &quot;Kyrgyzstan&quot;                       &quot;Turkmenistan&quot;                    
+## [105] &quot;Iran&quot;                             &quot;Syria&quot;                           
+## [107] &quot;Armenia&quot;                          &quot;Sweden&quot;                          
+## [109] &quot;Belarus&quot;                          &quot;Ukraine&quot;                         
+## [111] &quot;Poland&quot;                           &quot;Austria&quot;                         
+## [113] &quot;Hungary&quot;                          &quot;Moldova&quot;                         
+## [115] &quot;Romania&quot;                          &quot;Lithuania&quot;                       
+## [117] &quot;Latvia&quot;                           &quot;Estonia&quot;                         
+## [119] &quot;Germany&quot;                          &quot;Bulgaria&quot;                        
+## [121] &quot;Greece&quot;                           &quot;Turkey&quot;                          
+## [123] &quot;Albania&quot;                          &quot;Croatia&quot;                         
+## [125] &quot;Switzerland&quot;                      &quot;Luxembourg&quot;                      
+## [127] &quot;Belgium&quot;                          &quot;Netherlands&quot;                     
+## [129] &quot;Portugal&quot;                         &quot;Spain&quot;                           
+## [131] &quot;Ireland&quot;                          &quot;Solomon Islands&quot;                 
+## [133] &quot;New Zealand&quot;                      &quot;Australia&quot;                       
+## [135] &quot;Sri Lanka&quot;                        &quot;China&quot;                           
+## [137] &quot;Taiwan&quot;                           &quot;Italy&quot;                           
+## [139] &quot;Iceland&quot;                          &quot;Azerbaijan&quot;                      
+## [141] &quot;Georgia&quot;                          &quot;Philippines&quot;                     
+## [143] &quot;Malaysia&quot;                         &quot;Brunei&quot;                          
+## [145] &quot;Slovenia&quot;                         &quot;Finland&quot;                         
+## [147] &quot;Slovakia&quot;                         &quot;Czechia&quot;                         
+## [149] &quot;Eritrea&quot;                          &quot;Japan&quot;                           
+## [151] &quot;Paraguay&quot;                         &quot;Yemen&quot;                           
+## [153] &quot;Saudi Arabia&quot;                     &quot;Antarctica&quot;                      
+## [155] &quot;Northern Cyprus&quot;                  &quot;Cyprus&quot;                          
+## [157] &quot;Morocco&quot;                          &quot;Egypt&quot;                           
+## [159] &quot;Libya&quot;                            &quot;Ethiopia&quot;                        
+## [161] &quot;Djibouti&quot;                         &quot;Somaliland&quot;                      
+## [163] &quot;Uganda&quot;                           &quot;Rwanda&quot;                          
+## [165] &quot;Bosnia and Herzegovina&quot;           &quot;North Macedonia&quot;                 
+## [167] &quot;Republic of Serbia&quot;               &quot;Montenegro&quot;                      
+## [169] &quot;Kosovo&quot;                           &quot;Trinidad and Tobago&quot;             
+## [171] &quot;South Sudan&quot;</code></pre>
 </div>
 <div id="providing-a-polygon" class="section level3">
 <h3>7.2.2. Providing a polygon</h3>
-<p><em>Examples in this section are currently not working because of a bug in raster’s <code>getData()</code>. Will be updated when it’s resolved.</em> In this case you have to import in R your own polygon, using commands of the package <code>sp</code>. The polygon has to be of type <code>SpatialPolygons</code> or <code>SpatialPolygonsDataFrame</code>.</p>
-<p>We will use here the example of a <code>SpatialPolygonsDataFrame</code> which we can download straight into R using the function <code>getData()</code> of the package <code>raster</code>. Since our species is a tropical species, let’s assume we are working in Brasil only. Remember that this is an example, and that you can import your own polygons into R.</p>
+<p>In this case you have to import in R your own polygon, using commands
+of packages <code>sf</code> or <code>terra</code>.</p>
+<p>We will use here an example of a <code>terra</code> object which we
+can downloaded straight into R using the R package <code>geodata</code>.
+Since our species is a tropical species, let’s assume we are working in
+Brazil only. Remember that this is an example, and that you can import
+your own polygons into R.</p>
 <p>First, let’s download our polygon:</p>
-<pre class="r"><code>brasil &lt;- getData(&quot;GADM&quot;, country = &quot;BRA&quot;, level = 0)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp7-1.png" alt="Fig 7.4 A polygon of the brazil" />
-<p class="caption">Fig 7.4 A polygon of the brazil</p>
+<pre class="r"><code>brazil &lt;- gadm(country = &quot;BRA&quot;, level = 0, path = tempdir())</code></pre>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp7-1.png"
+alt="Fig 7.4 A polygon of the brazil" />
+<div class="figcaption">Fig 7.4 A polygon of the brazil</div>
 </div>
-<p>Now, to limit the sampling area to our polygon, we simply provide it to the argument <code>sampling.area</code> of the function <code>sampleOccurrences</code>:</p>
+<p>Now, to limit the sampling area to our polygon, we simply provide it
+to the argument <code>sampling.area</code> of the function
+<code>sampleOccurrences()</code>:</p>
 <pre class="r"><code>PA.points &lt;- sampleOccurrences(my.first.species,
                                n = 30,
                                type = &quot;presence-absence&quot;,
-                               sampling.area = brasil)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp8-1.png" alt="Fig 7.5 Points sampled within the Brazil polygon" />
-<p class="caption">Fig 7.5 Points sampled within the Brazil polygon</p>
+                               sampling.area = brazil)</code></pre>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp8-1.png"
+alt="Fig 7.5 Points sampled within the Brazil polygon" />
+<div class="figcaption">Fig 7.5 Points sampled within the Brazil
+polygon</div>
 </div>
 <pre class="r"><code>PA.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
@@ -816,68 +809,90 @@ levels(getMap()@data$SOVEREIGNT)</code></pre>
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0
 ## - Sample prevalence: 
-##    .True:0.0666666666666667
-##    .Observed:0.0666666666666667
+##    .True:0.133333333333333
+##    .Observed:0.133333333333333
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -55.75000 -20.583333    0        0
-## 2  -35.25000  -7.750000    0        0
-## 3  -57.58333 -16.750000    0        0
-## 4  -43.91667 -19.416667    0        0
-## 5  -50.25000  -2.083333    1        1
-## 6  -39.75000 -16.083333    0        0
-## 7  -37.41667 -10.250000    0        0
-## 8  -52.58333 -23.250000    0        0
-## 9  -60.58333   1.916667    0        0
-## 10 -55.41667  -1.583333    0        0
+##                 x           y Real Observed
+## 1432910 -41.75000 -20.5833333    0        0
+## 1456600 -53.41667 -22.4166667    0        0
+## 1435026 -49.08333 -20.7500000    0        0
+## 1242853 -37.91667  -5.9166667    0        0
+## 1221202 -46.41667  -4.2500000    0        0
+## 1346456 -50.75000 -13.9166667    0        0
+## 1149845 -59.25000   1.2500000    1        1
+## 1277399 -40.25000  -8.5833333    0        0
+## 1160682 -53.08333   0.4166667    0        0
+## 1203856 -57.41667  -2.9166667    1        1
 ## ... 20 more lines.</code></pre>
 <p>It worked!</p>
-<p>However, the plot is not very convenient because it kept the scale of our input raster, so we may be interested in manually restricting the plot region to Brasil:</p>
+<p>However, the plot is not very convenient because it kept the scale of
+our input raster, so we may be interested in manually restricting the
+plot region to Brasil:</p>
 <pre class="r"><code># First we get our data frame of occurrence points
 occ &lt;- PA.points$sample.points
 
 plot(my.first.species$pa.raster, 
-     xlim = c(-80, -20),
-     ylim = c(-35, 5))
-plot(brasil, add = TRUE)
+     xlim = c(-80, -30),
+     ylim = c(-35, 10))
+plot(brazil, add = TRUE)
 points(occ[occ$Observed == 1, c(&quot;x&quot;, &quot;y&quot;)], pch = 16, cex = .8)
 points(occ[occ$Observed == 0, c(&quot;x&quot;, &quot;y&quot;)], pch = 1, cex = .8)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp9-1.png" alt="Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom" />
-<p class="caption">Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp9-1.png"
+alt="Fig 7.6 Points sampled within the Brazil polygon, with a suitable zoom" />
+<div class="figcaption">Fig 7.6 Points sampled within the Brazil
+polygon, with a suitable zoom</div>
 </div>
 </div>
 <div id="providing-an-extent-object" class="section level3">
 <h3>7.2.3. Providing an extent object</h3>
-<p>An extent object is a rectangular area defined by four coordinates xmin/xmax/ymin/ymax. You can easily create an extent object using the command <code>extent</code>, of the package <code>raster</code>:</p>
-<pre class="r"><code>my.extent &lt;- extent(-80, -20, -35, -5)
+<p>An extent object is a rectangular area defined by four coordinates
+xmin/xmax/ymin/ymax. You can easily create an extent object using the
+command <code>extent</code>, of the package <code>raster</code>:</p>
+<pre class="r"><code>my.extent &lt;- ext(-80, -30, -35, 10)
 PA.points &lt;- sampleOccurrences(my.first.species,
                                n = 30,
                                type = &quot;presence-absence&quot;,
                                sampling.area = my.extent)
 plot(my.extent, add = TRUE)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp10-1.png" alt="Fig 7.7 Points sampled within our extent object" />
-<p class="caption">Fig 7.7 Points sampled within our extent object</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp10-1.png"
+alt="Fig 7.7 Points sampled within our extent object" />
+<div class="figcaption">Fig 7.7 Points sampled within our extent
+object</div>
 </div>
+</div>
+<div id="draw-an-extent-or-a-polygon-to-sample" class="section level3">
+<h3>7.2.4 Draw an extent or a polygon to sample</h3>
+<p>You can draw a polygon manually with <code>terra</code> and feed it
+to <code>sampleOccurrences</code>, try it yourself (press ‘escape’ when
+finished):</p>
+<pre class="r"><code>plot(my.first.species$pa.raster)
+my.polygon &lt;- terra::draw(x = &quot;polygon&quot;)</code></pre>
 </div>
 </div>
 <div id="introducing-a-sampling-bias" class="section level2">
 <h2>7.3. Introducing a sampling bias</h2>
 <div id="detection-probability" class="section level3">
 <h3>7.3.1.Detection probability</h3>
-<p>Detection probability has been shown to be influencial on SDM performance. Hence, you might be interested in generating species with varying degrees of detection probability. This can be done easily, using the argument <code>detection.probability</code>, ranging from 0 (species cannot be detected) to 1 (species is always detected):</p>
+<p>Detection probability has been shown to be influential on SDM
+performance. Hence, you might be interested in generating species with
+varying degrees of detection probability. This can be done easily, using
+the argument <code>detection.probability</code>, ranging from 0 (species
+cannot be detected) to 1 (species is always detected):</p>
 <pre class="r"><code># Let&#39;s try to find samples of a very cryptic species
 PA.points &lt;- sampleOccurrences(my.first.species,
                                sampling.area = &quot;Brazil&quot;,
                                n = 50,
                                type = &quot;presence-absence&quot;,
                                detection.probability = 0.3)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp11-1.png" alt="Fig 7.8 Presence-absence points sampled with a low detection probability" />
-<p class="caption">Fig 7.8 Presence-absence points sampled with a low detection probability</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp11-1.png"
+alt="Fig 7.8 Presence-absence points sampled with a low detection probability" />
+<div class="figcaption">Fig 7.8 Presence-absence points sampled with a
+low detection probability</div>
 </div>
 <pre class="r"><code>PA.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
@@ -890,33 +905,38 @@ PA.points &lt;- sampleOccurrences(my.first.species,
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0
 ## - Sample prevalence: 
-##    .True:0.18
+##    .True:0.12
 ##    .Observed:0.02
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x           y Real Observed
-## 1  -43.08333 -18.4166667    0        0
-## 2  -58.25000 -16.0833333    0        0
-## 3  -65.41667  -0.5833333    1        0
-## 4  -54.08333 -28.4166667    0        0
-## 5  -45.25000 -20.9166667    0        0
-## 6  -61.08333  -8.5833333    0        0
-## 7  -48.75000  -9.2500000    0        0
-## 8  -47.25000  -5.2500000    0        0
-## 9  -60.58333   0.5833333    0        0
-## 10 -63.41667  -3.9166667    0        0
+##                 x           y Real Observed
+## 1326981 -56.58333 -12.4166667    1        0
+## 1309652 -64.75000 -11.0833333    0        0
+## 1156359 -53.58333   0.7500000    0        0
+## 1171444 -59.41667  -0.4166667    0        0
+## 1247144 -42.75000  -6.2500000    0        0
+## 1184414 -57.75000  -1.4166667    1        1
+## 1139030 -61.75000   2.0833333    0        0
+## 1290259 -56.91667  -9.5833333    0        0
+## 1327085 -39.25000 -12.4166667    0        0
+## 1374598 -40.41667 -16.0833333    0        0
 ## ... 40 more lines.</code></pre>
-<p>You can see that some points sampled in its distribution range are classified as “absences”.</p>
-<p>If you use this argument when sampling ‘presence only’ occurrences, then this will result in a lower number of sampled points than asked:</p>
+<p>You can see that some points sampled in its distribution range are
+classified as “absences”.</p>
+<p>If you use this argument when sampling ‘presence only’ occurrences,
+then this will result in a lower number of sampled points than
+asked:</p>
 <pre class="r"><code>PO.points &lt;- sampleOccurrences(my.first.species,
                                sampling.area = &quot;Brazil&quot;,
                                n = 50,
                                type = &quot;presence only&quot;,
                                detection.probability = 0.3)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp12-1.png" alt="Fig 7.9 Presence only points sampled with a low detection probability" />
-<p class="caption">Fig 7.9 Presence only points sampled with a low detection probability</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp12-1.png"
+alt="Fig 7.9 Presence only points sampled with a low detection probability" />
+<div class="figcaption">Fig 7.9 Presence only points sampled with a low
+detection probability</div>
 </div>
 <pre class="r"><code>PO.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
@@ -931,32 +951,53 @@ PA.points &lt;- sampleOccurrences(my.first.species,
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x         y Real Observed
-## 1  -62.25000 -3.083333    1        1
-## 2  -67.75000 -4.083333    1       NA
-## 3  -55.25000 -9.916667    1       NA
-## 4  -67.41667  0.750000    1       NA
-## 5  -56.41667 -9.583333    1       NA
-## 6  -65.58333 -3.083333    1       NA
-## 7  -61.25000 -7.916667    1       NA
-## 8  -67.58333  0.750000    1       NA
-## 9  -65.08333 -3.750000    1        1
-## 10 -61.58333 -6.250000    1       NA
+##                 x         y Real Observed
+## 1247014 -64.41667 -6.250000    1       NA
+## 1257867 -55.58333 -7.083333    1       NA
+## 1218920 -66.75000 -4.083333    1        1
+## 1184404 -59.41667 -1.416667    1       NA
+## 1186618 -50.41667 -1.583333    1        1
+## 1227529 -71.91667 -4.750000    1       NA
+## 1186570 -58.41667 -1.583333    1       NA
+## 1253482 -66.41667 -6.750000    1       NA
+## 1156296 -64.08333  0.750000    1        1
+## 1236182 -69.75000 -5.416667    1       NA
 ## ... 40 more lines.</code></pre>
-<p>In this case, we see that out of all the possible sampling points, only a fraction are sampled as presence points.</p>
+<p>In this case, we see that out of all the possible sampling points,
+only a fraction are sampled as presence points.</p>
 </div>
-<div id="detection-probability-as-a-function-of-environmental-suitability" class="section level3">
-<h3>7.3.2. Detection probability as a function of environmental suitability</h3>
-<p>You can further complexify the detection probability by making it dependent on the environmental suitability. In this case, cells will be weighted by the environmental suitability: less suitable cells will have a lesser chance of detecting the species. This can be seen as an impact on the population size: a higher environmental suitability increases the population size, and thus the detection probability. How does this work in practice?</p>
-<p>The initial probability of detection (<span class="math inline">\(P_{di}\)</span>) is multiplied by the environmental suitability (<span class="math inline">\(S\)</span>) to obtain the final probability of detection (<span class="math inline">\(P_d\)</span>):</p>
+<div
+id="detection-probability-as-a-function-of-environmental-suitability"
+class="section level3">
+<h3>7.3.2. Detection probability as a function of environmental
+suitability</h3>
+<p>You can further complexify the detection probability by making it
+dependent on the environmental suitability. In this case, cells will be
+weighted by the environmental suitability: less suitable cells will have
+a lesser chance of detecting the species. This can be seen as an impact
+on the population size: a higher environmental suitability increases the
+population size, and thus the detection probability. How does this work
+in practice?</p>
+<p>The initial probability of detection (<span
+class="math inline">\(P_{di}\)</span>) is multiplied by the
+environmental suitability (<span class="math inline">\(S\)</span>) to
+obtain the final probability of detection (<span
+class="math inline">\(P_d\)</span>):</p>
 <p><span class="math display">\[P_d = P_{di} \times S\]</span></p>
-<p>Hence, if our species has a probability of detection of 0.5, the final probability of detection will be:</p>
+<p>Hence, if our species has a probability of detection of 0.5, the
+final probability of detection will be:</p>
 <ul>
 <li>0.5 if the cell has an environmental suitability of 1</li>
 <li>0.25 if the cell has an environmental suitability of 0.5</li>
 </ul>
-<p>Of course, no occurrence points will be detected outside the distribution range, regardless of their environmental suitability.</p>
-<p>You can also keep the detection probability to 1, and set <code>correct.by.suitabilaty = TRUE</code>. In that case, the detection probability will be equal to the environmental suitability. This can be seen as a species whose detection probability is strictly dependent on its population size, which in turn is strictly dependent on the environmental suitability.</p>
+<p>Of course, no occurrence points will be detected outside the
+distribution range, regardless of their environmental suitability.</p>
+<p>You can also keep the detection probability to 1, and set
+<code>correct.by.suitability = TRUE</code>. In that case, the detection
+probability will be equal to the environmental suitability. This can be
+seen as a species whose detection probability is strictly dependent on
+its population size, which in turn is strictly dependent on the
+environmental suitability.</p>
 <p>An example in practice:</p>
 <pre class="r"><code>PA.points &lt;- sampleOccurrences(my.first.species,
                                sampling.area = &quot;Brazil&quot;,
@@ -975,22 +1016,28 @@ plot(my.first.species$suitab.raster,
 # plot(brasil, add = TRUE)
 points(occ[occ$Observed == 1, c(&quot;x&quot;, &quot;y&quot;)], pch = 16, cex = .8)
 points(occ[occ$Observed == 0, c(&quot;x&quot;, &quot;y&quot;)], pch = 1, cex = .8)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp13-1.png" alt="Fig 7.10 Presence-absence points sampled with a detection probability equal to the environmental suitability" />
-<p class="caption">Fig 7.10 Presence-absence points sampled with a detection probability equal to the environmental suitability</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp13-1.png"
+alt="Fig 7.10 Presence-absence points sampled with a detection probability equal to the environmental suitability" />
+<div class="figcaption">Fig 7.10 Presence-absence points sampled with a
+detection probability equal to the environmental suitability</div>
 </div>
 </div>
 <div id="error-probability" class="section level3">
 <h3>7.3.3. Error probability</h3>
-<p>You can also introduce an error probability, which is a probability of finding the species where it is absent. This is straightforward with the argument <code>error.probability</code>:</p>
+<p>You can also introduce an error probability, which is a probability
+of finding the species where it is absent. This is straightforward with
+the argument <code>error.probability</code>:</p>
 <pre class="r"><code>PA.points &lt;- sampleOccurrences(my.first.species,
                                sampling.area = &quot;Brazil&quot;,
                                n = 20,
                                type = &quot;presence-absence&quot;,
                                error.probability = 0.3)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp14-1.png" alt="Fig 7.11 Presence-absence points sampled with an error probability of 0.3" />
-<p class="caption">Fig 7.11 Presence-absence points sampled with an error probability of 0.3</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp14-1.png"
+alt="Fig 7.11 Presence-absence points sampled with an error probability of 0.3" />
+<div class="figcaption">Fig 7.11 Presence-absence points sampled with an
+error probability of 0.3</div>
 </div>
 <pre class="r"><code>PA.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
@@ -1003,37 +1050,42 @@ points(occ[occ$Observed == 0, c(&quot;x&quot;, &quot;y&quot;)], pch = 1, cex = .
 ##    .Corrected by suitability: FALSE
 ## - Probability of identification error (false positive): 0.3
 ## - Sample prevalence: 
-##    .True:0.1
-##    .Observed:0.5
+##    .True:0.3
+##    .Observed:0.65
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  -62.58333   1.583333    0        0
-## 2  -72.25000  -6.083333    1        1
-## 3  -55.91667 -21.916667    0        1
-## 4  -36.08333  -8.416667    0        1
-## 5  -51.08333  -6.916667    0        0
-## 6  -66.91667  -4.916667    0        1
-## 7  -66.25000  -5.250000    1        1
-## 8  -56.08333 -17.583333    0        0
-## 9  -52.75000 -32.416667    0        1
-## 10 -49.91667 -26.583333    0        0
+##                 x          y Real Observed
+## 1147727 -52.25000   1.416667    1        1
+## 1188797 -47.25000  -1.750000    1        1
+## 1560265 -55.91667 -30.416667    0        0
+## 1350831 -41.58333 -14.250000    0        1
+## 1303221 -56.58333 -10.583333    0        1
+## 1197415 -50.91667  -2.416667    1        1
+## 1394019 -43.58333 -17.583333    0        0
+## 1290282 -53.08333  -9.583333    1        1
+## 1413416 -50.75000 -19.083333    0        1
+## 1396147 -48.91667 -17.750000    0        0
 ## ... 10 more lines.</code></pre>
-<p>Two important remarks with the error probability:</p>
-<ol style="list-style-type: decimal">
-<li><p>The error probability is useless in a ‘presence only’ sampling scheme, because the sampling strictly occurs within the boundaries of the species distribution range. Nevertheless, <strong>if you still want to introduce errors</strong>, then make a sampling scheme ‘presence-absence’, and use only the ‘presence’ points obtained.</p></li>
-<li><p><strong>There is an interaction between the detection probability and the error probability</strong>: in a cell where the species is present, but not detected, a presence can still be attributed because of an error. See the following (extreme) example, for a species with a low detection probability and high error probability:</p></li>
-</ol>
+<p>One important remark with the error probability:</p>
+<p><strong>There is an interaction between the detection probability and
+the error probability</strong>: in a cell where the species is present,
+but not detected, a presence can still be attributed because of an
+error. See the following (extreme) example, for a species with a low
+detection probability and high error probability:</p>
 <pre class="r"><code>PA.points &lt;- sampleOccurrences(my.first.species,
                                sampling.area = &quot;Brazil&quot;,
                                n = 20,
                                type = &quot;presence-absence&quot;,
                                detection.probability = 0.2,
                                error.probability = 0.8)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp15-1.png" alt="Fig 7.12 Presence-absence points sampled with a detection probability of 0.2, and an error probability of 0.8. In numerous pixels the species was not detected, but erroneous presences were nevertheless attributed." />
-<p class="caption">Fig 7.12 Presence-absence points sampled with a detection probability of 0.2, and an error probability of 0.8. In numerous pixels the species was not detected, but erroneous presences were nevertheless attributed.</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp15-1.png"
+alt="Fig 7.12 Presence-absence points sampled with a detection probability of 0.2, and an error probability of 0.8. In numerous pixels the species was not detected, but erroneous presences were nevertheless attributed." />
+<div class="figcaption">Fig 7.12 Presence-absence points sampled with a
+detection probability of 0.2, and an error probability of 0.8. In
+numerous pixels the species was not detected, but erroneous presences
+were nevertheless attributed.</div>
 </div>
 <pre class="r"><code>PA.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
@@ -1047,108 +1099,145 @@ points(occ[occ$Observed == 0, c(&quot;x&quot;, &quot;y&quot;)], pch = 1, cex = .
 ## - Probability of identification error (false positive): 0.8
 ## - Sample prevalence: 
 ##    .True:0.15
-##    .Observed:0.95
+##    .Observed:0.9
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x           y Real Observed
-## 1  -51.58333 -31.2500000    0        1
-## 2  -66.75000  -6.5833333    0        1
-## 3  -43.58333  -8.5833333    0        1
-## 4  -62.91667   2.4166667    0        1
-## 5  -70.25000  -8.5833333    1        1
-## 6  -53.41667  -8.4166667    0        1
-## 7  -53.91667 -21.0833333    0        1
-## 8  -63.41667  -2.9166667    0        1
-## 9  -50.91667  -0.5833333    0        1
-## 10 -42.41667  -7.4166667    0        1
+##                 x          y Real Observed
+## 1378884 -46.08333 -16.416667    0        1
+## 1234154 -47.75000  -5.250000    0        1
+## 1383218 -43.75000 -16.750000    0        1
+## 1234201 -39.91667  -5.250000    0        1
+## 1305484 -39.41667 -10.750000    0        1
+## 1156333 -57.91667   0.750000    0        0
+## 1212569 -45.25000  -3.583333    0        1
+## 1320571 -44.91667 -11.916667    0        1
+## 1314075 -47.58333 -11.416667    0        1
+## 1385367 -45.58333 -16.916667    0        1
 ## ... 10 more lines.</code></pre>
 </div>
 <div id="uneven-sampling-intensity" class="section level3">
 <h3>7.3.4. Uneven sampling intensity</h3>
-<p>The <code>sampleOccurrences</code> also allows you to introduce a sampling bias such as uneven sampling intensity in space. How does it works?</p>
-<p>You will have to define a region in which the sampling is biased, with arguments <code>bias</code> and <code>area</code>. In this region, the sampling will be biased by a strength equal to the argument <code>bias.strength</code>. If <code>bias.strength</code> is equal to 50 for example, then the sampling will be 50 times more intense in the chosen area. If <code>bias.strength</code>is below 1, then the sampling will be less intense in the biased area than elsewhere.</p>
+<p>The <code>sampleOccurrences</code> also allows you to introduce a
+sampling bias such as uneven sampling intensity in space. How does it
+works?</p>
+<p>You will have to define a region in which the sampling is biased,
+with arguments <code>bias</code> and <code>area</code>. In this region,
+the sampling will be biased by a strength equal to the argument
+<code>bias.strength</code>. If <code>bias.strength</code> is equal to 50
+for example, then the sampling will be 50 times more intense in the
+chosen area. If <code>bias.strength</code>is below 1, then the sampling
+will be less intense in the biased area than elsewhere.</p>
 <p>Let’s see an example in practice before we go into the details:</p>
 <pre class="r"><code>PO.points &lt;- sampleOccurrences(my.first.species,
                                n = 100, 
-                               bias = &quot;region&quot;,
+                               bias = &quot;continent&quot;,
                                bias.strength = 20,
                                bias.area = &quot;South America&quot;)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp16-1.png" alt="Fig 7.13 Presence only points sampled with a strong bias in South America (20 times more sample)" />
-<p class="caption">Fig 7.13 Presence only points sampled with a strong bias in South America (20 times more sample)</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp16-1.png"
+alt="Fig 7.13 Presence only points sampled with a strong bias in South America (20 times more sample)" />
+<div class="figcaption">Fig 7.13 Presence only points sampled with a
+strong bias in South America (20 times more sample)</div>
 </div>
-<p>Now that you have grasped how the bias works, let’s see the different possibilities:</p>
+<p>Now that you have grasped how the bias works, let’s see the different
+possibilities:</p>
 <ul>
 <li>Introducing a bias using country, region or continent names<br />
-Set either <code>bias = "country"</code>, <code>bias = "region"</code> or <code>bias = "continent"</code>, and provide to <code>bias.area</code> the name(s) of the country(-ies), region(s) or continent(s).</li>
+Set either <code>bias = "country"</code>, <code>bias = "region"</code>
+or <code>bias = "continent"</code>, and provide to
+<code>bias.area</code> the name(s) of the country(-ies), region(s) or
+continent(s).</li>
 </ul>
 <pre class="r"><code>PO.points &lt;- sampleOccurrences(my.first.species,
                                n = 100, 
                                bias = &quot;country&quot;,
                                bias.strength = 20,
                                bias.area = c(&quot;Mexico&quot;, &quot;Colombia&quot;))</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp17-1.png" alt="Fig 7.14 Presence only points sampled with a strong bias in Mexico and Colombia" />
-<p class="caption">Fig 7.14 Presence only points sampled with a strong bias in Mexico and Colombia</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp17-1.png"
+alt="Fig 7.14 Presence only points sampled with a strong bias in Mexico and Colombia" />
+<div class="figcaption">Fig 7.14 Presence only points sampled with a
+strong bias in Mexico and Colombia</div>
 </div>
 <ul>
 <li>Using a polygon in which the sampling will be biased<br />
-Set <code>bias = "polygon"</code>, and provide a polygon (of type <code>SpatialPolygons</code> or <code>SpatialPolygonsDataFrame</code> from package <code>sp</code>) to the argument <code>bias.area</code>.</li>
+Set <code>bias = "polygon"</code>, and provide a polygon
+(<code>sf</code> or <code>terra</code> object, classes <code>sf</code>
+or <code>SpatVector</code>) to the argument <code>bias.area</code>.</li>
 </ul>
-<pre class="r"><code>philippines &lt;- getData(&quot;GADM&quot;, country = &quot;PHL&quot;, level = 0)
+<pre class="r"><code>philippines &lt;- rnaturalearth::ne_countries(country = &quot;Philippines&quot;,
+                                           returnclass = &quot;sf&quot;)
 PO.points &lt;- sampleOccurrences(my.first.species,
                                n = 100, 
                                bias = &quot;polygon&quot;,
                                bias.strength = 50,
                                bias.area = philippines)</code></pre>
-<pre><code>## Warning in sampleOccurrences(my.first.species, n = 100, bias = &quot;polygon&quot;, : Polygon projection is not checked. Please make sure you have the 
-##             same projections between your polygon and your presence-absence
-##             raster</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp18-1.png" alt="Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon" />
-<p class="caption">Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp18-1.png"
+alt="Fig 7.15 Presence only points sampled with strong bias for the Philippines, using a polygon" />
+<div class="figcaption">Fig 7.15 Presence only points sampled with
+strong bias for the Philippines, using a polygon</div>
 </div>
 <ul>
 <li>Using an extent object<br />
-Set <code>bias = "extent"</code>, and provide an extent to the argument <code>bias.area</code> (<a href="#providing-an-extent-object">see section 7.2.3. if you are not familiar with extents</a>). You can also simply set <code>bias.area = polygon</code>, and click twice on the map when asked to:</li>
+Set <code>bias = "extent"</code>, and provide an extent to the argument
+<code>bias.area</code> (<a href="#providing-an-extent-object">see
+section 7.2.3. if you are not familiar with extents</a>). You can also
+simply set <code>bias = "polygon"</code> (<em>new in version 1.6</em>)
+or <code>bias = "extent"</code>, and click on the map when asked
+to:</li>
 </ul>
 <pre class="r"><code>PO.points &lt;- sampleOccurrences(my.first.species,
                                n = 100, 
-                               bias = &quot;extent&quot;,
+                               bias = &quot;polygon&quot;, # also works with &quot;extent&quot;
                                bias.strength = 50)</code></pre>
 <ul>
 <li>Manually defining weights for all the cells<br />
-A last option is to manually define the weights with which the sampling will be biased. This may be especially useful when you want to precisely create a sampling bias. To do this, set <code>bias = "manual"</code>, and provide a raster of weights to the argument <code>weights</code>.<br />
+A last option is to manually define the weights with which the sampling
+will be biased. This may be especially useful when you want to precisely
+create a sampling bias. To do this, set <code>bias = "manual"</code>,
+and provide a raster of weights to the argument
+<code>weights</code>.<br />
 To clear things up, we will see an example together:</li>
 </ul>
-<pre class="r"><code>library(rworldmap)
-# First, we create a raster of weights
+<pre class="r"><code># First, we create a raster of weights
 # As an arbitrary example, we will use the area of each cell as a weight:
 # larger cells have more chance of being sampled
-weight.raster &lt;- area(worldclim)
+weight.raster &lt;- cellSize(worldclim)
 
 plot(weight.raster)
-plot(getMap(), add = TRUE)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp20-1.png" alt="Fig 7.16 Raster used to weight the sampling bias: a raster of cell areas" />
-<p class="caption">Fig 7.16 Raster used to weight the sampling bias: a raster of cell areas</p>
+# Add continents
+plot(rnaturalearth::ne_coastline(returnclass = &quot;sf&quot;)[1], add = TRUE)</code></pre>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp20-1.png"
+alt="Fig 7.16 Raster used to weight the sampling bias: a raster of cell areas" />
+<div class="figcaption">Fig 7.16 Raster used to weight the sampling
+bias: a raster of cell areas</div>
 </div>
-<p>Now, let’s weight our samplings using this raster:</p>
+<p>Now, let’s weight our samples using this raster:</p>
 <pre class="r"><code>PO.points &lt;- sampleOccurrences(my.first.species,
                                n = 100, 
                                bias = &quot;manual&quot;,
                                weights = weight.raster)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp21-1.png" alt="Fig 7.17 Presence only points sampled with a sampling biased according to the area of each cell" />
-<p class="caption">Fig 7.17 Presence only points sampled with a sampling biased according to the area of each cell</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp21-1.png"
+alt="Fig 7.17 Presence only points sampled with a sampling biased according to the area of each cell" />
+<div class="figcaption">Fig 7.17 Presence only points sampled with a
+sampling biased according to the area of each cell</div>
 </div>
-<p>Of course, the changes are not visible, because our species occurs mainly in pixels of relatively similar areas. Nevertheless, this example should be useful if you want to create a manual sampling bias later on.</p>
-<p><strong>Important note</strong> Please note that when using rasters based on longitude-latitude, larger cells have <em>automatically</em> more chance of being sampled than smaller cells, so you do not need to do it by yourself. See documentation of the <code>randomPoints</code> function of package <code>dismo</code> for more details.</p>
+<p>Of course, the changes are not visible, because our species occurs
+mainly in pixels of relatively similar areas. Nevertheless, this example
+should be useful if you want to create a manual sampling bias later
+on.</p>
 </div>
-<div id="sampling-multiple-records-in-the-same-cells" class="section level3">
+<div id="sampling-multiple-records-in-the-same-cells"
+class="section level3">
 <h3>7.3.5. Sampling multiple records in the same cells</h3>
-<p>In real datasets such as Museum datasets, it is frequent to have multiple records in the same cells. To mimic such datasets, it is possible to allow the function to sample repeatedly in the same cells:</p>
+<p>In real datasets such as Museum datasets, it is frequent to have
+multiple records in the same cells. To mimic such datasets, it is
+possible to allow the function to sample repeatedly in the same
+cells:</p>
 <pre class="r"><code>PO.points &lt;- sampleOccurrences(my.first.species,
                                n = 1000, 
                                replacement = TRUE,
@@ -1156,20 +1245,28 @@ plot(getMap(), add = TRUE)</code></pre>
 
 # Number of duplicated records: 
 length(which(duplicated(PO.points$sample.points[, c(&quot;x&quot;, &quot;y&quot;)])))</code></pre>
-<pre><code>## [1] 25</code></pre>
+<pre><code>## [1] 20</code></pre>
 </div>
 </div>
 <div id="defining-the-sample-prevalence" class="section level2">
 <h2>7.4. Defining the sample prevalence</h2>
-<p><em>The sample prevalence is the proportion of samples in which the species has been found. It is therefore different from the species prevalence which <a href="04-presenceabsence.html#conversion-to-presence-absence-based-on-a-value-of-species-prevalence">was mentionned earlier</a>.</em></p>
-<p>You can define the desired sample prevalence when sampling presences and absences, with the parameter <code>sample.prevalence</code>:</p>
+<p><em>The sample prevalence is the proportion of samples in which the
+species has been found. It is therefore different from the species
+prevalence which <a
+href="04-presenceabsence.html#conversion-to-presence-absence-based-on-a-value-of-species-prevalence">was
+mentionned earlier</a>.</em></p>
+<p>You can define the desired sample prevalence when sampling presences
+and absences, with the parameter <code>sample.prevalence</code>:</p>
 <pre class="r"><code>PA.points &lt;- sampleOccurrences(my.first.species,
                                n = 30,
                                type = &quot;presence-absence&quot;,
                                sample.prevalence = 0.5)</code></pre>
-<div class="figure">
-<img src="07-sampleoccurrences_files/figure-html/samp23-1.png" alt="Fig 7.17 Presence-absence points sampled with a prevalence of 0.5 (i.e., 50% of presence points, 50% of absence points)" />
-<p class="caption">Fig 7.17 Presence-absence points sampled with a prevalence of 0.5 (i.e., 50% of presence points, 50% of absence points)</p>
+<div class="float">
+<img src="07-sampleoccurrences_files/figure-html/samp23-1.png"
+alt="Fig 7.17 Presence-absence points sampled with a prevalence of 0.5 (i.e., 50% of presence points, 50% of absence points)" />
+<div class="figcaption">Fig 7.17 Presence-absence points sampled with a
+prevalence of 0.5 (i.e., 50% of presence points, 50% of absence
+points)</div>
 </div>
 <pre class="r"><code>PA.points</code></pre>
 <pre><code>## Occurrence points sampled from a virtual species
@@ -1187,17 +1284,17 @@ length(which(duplicated(PO.points$sample.points[, c(&quot;x&quot;, &quot;y&quot;
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x          y Real Observed
-## 1  122.25000  16.250000    1        1
-## 2  -52.58333  -1.083333    1        1
-## 3  -58.41667  -6.750000    1        1
-## 4  109.25000   1.583333    1        1
-## 5  -63.75000  -5.416667    1        1
-## 6   91.75000  25.916667    1        1
-## 7  112.58333  -0.750000    1        1
-## 8  149.91667 -10.250000    1        1
-## 9  121.41667  15.916667    1        1
-## 10  90.91667  22.750000    1        1
+##                 x            y Real Observed
+## 1170333 115.41667  -0.25000000    1        1
+## 1220119 133.08333  -4.08333333    1        1
+## 1391037 179.41667 -17.25000000    1        1
+## 1195202 -59.75000  -2.25000000    1        1
+## 1189764 113.91667  -1.75000000    1        1
+## 1161599  99.75000   0.41666667    1        1
+## 1230943 137.08333  -4.91666667    1        1
+## 1260058 -50.41667  -7.25000000    1        1
+## 1218947 -62.25000  -4.08333333    1        1
+## 1165926 100.91667   0.08333333    1        1
 ## ... 20 more lines.</code></pre>
 </div>
 
@@ -1219,13 +1316,59 @@ Do not hesitate if you have a question, find a bug, or would like to add a featu
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

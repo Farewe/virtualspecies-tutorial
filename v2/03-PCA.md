@@ -48,7 +48,7 @@ library(geodata)
 ```
 
 ```
-## terra 1.7.39
+## terra 1.7.46
 ```
 
 ```r
@@ -113,11 +113,6 @@ my.pca.species <- generateSpFromPCA(raster.stack = my.stack)
 
 ![](03-PCA_files/figure-html/pca2-1.png)<!-- -->
 
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
-
 ```r
 my.pca.species
 ```
@@ -129,8 +124,8 @@ my.pca.species
 ## - Approach used: Response to axes of a PCA
 ## - Axes:  1, 2 ;  84.09 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-18.29; max=2.89] : dnorm (mean=-0.05530324; sd=6.411076)
-##    .Axis 2  [min=-11.39; max=3.27] : dnorm (mean=2.649001; sd=1.789812)
+##    .Axis 1  [min=-18.29; max=2.89] : dnorm (mean=-1.191869; sd=7.448132)
+##    .Axis 2  [min=-11.39; max=3.27] : dnorm (mean=1.419812; sd=4.0735)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
@@ -174,11 +169,6 @@ my.pca.species <- generateSpFromPCA(raster.stack = my.stack,
 
 ![](03-PCA_files/figure-html/pca3-1.png)<!-- -->
 
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
-
 ```r
 my.pca.species
 ```
@@ -188,10 +178,10 @@ my.pca.species
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.22 % explained by these axes
+## - Axes:  1, 2 ;  83.67 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-9.43; max=3] : dnorm (mean=0.5665933; sd=4.591964)
-##    .Axis 2  [min=-7.29; max=2.96] : dnorm (mean=0.5792889; sd=0.5148238)
+##    .Axis 1  [min=-10.61; max=3.06] : dnorm (mean=2.48194; sd=6.265016)
+##    .Axis 2  [min=-9.1; max=3.06] : dnorm (mean=-0.7576087; sd=4.672329)
 ## - Environmental suitability was rescaled between 0 and 1
 ```
 
@@ -298,11 +288,6 @@ narrow.species <- generateSpFromPCA(raster.stack = my.stack,
 
 ![](03-PCA_files/figure-html/pca6-1.png)<!-- -->
 
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
-
 
 ```r
 plotResponse(narrow.species)
@@ -350,11 +335,6 @@ wide.species <- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
 ```
 
 ![A species generated with rather wide niche breadth](03-PCA_files/figure-html/pca7-1.png)
-
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
 
 
 ```r
@@ -424,11 +404,6 @@ my.custom.species <- generateSpFromPCA(raster.stack = my.stack,
 
 ![](03-PCA_files/figure-html/pca8-1.png)<!-- -->
 
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
-
 
 ```r
 plotResponse(my.custom.species)
@@ -482,11 +457,6 @@ my.custom.species <- generateSpFromPCA(raster.stack = my.stack,
 ```
 
 ![](03-PCA_files/figure-html/pca9-1.png)<!-- -->
-
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
 
 
 You can see slect which axes you want to see in `plotResponse`:
@@ -562,11 +532,6 @@ my.first.run <- generateSpFromPCA(raster.stack = my.stack,
 
 ![](03-PCA_files/figure-html/pca10-1.png)<!-- -->
 
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
-
 ```r
 # You can access the PCA with the following command
 my.pca <- my.first.run$details$pca
@@ -602,11 +567,6 @@ my.second.run <- generateSpFromPCA(raster.stack = my.stack,
 ```
 
 ![](03-PCA_files/figure-html/pca10-2.png)<!-- -->
-
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
 
 
 ### 3.2.5. Transferring niches between environmental datasets (e.g., climate change studies)
@@ -659,11 +619,6 @@ vs1.current <- generateSpFromPCA(raster.stack = my.stack,
 
 ![](03-PCA_files/figure-html/pca11-1.png)<!-- -->
 
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
-
 Then, we will project this virtual species onto future conditions:
 
 ```r
@@ -711,10 +666,5 @@ vs1.future <- generateSpFromPCA(raster.stack = future.stack,
 ```
 
 ![](03-PCA_files/figure-html/pca12-1.png)<!-- -->
-
-```
-## Error in data.frame(dev = paste(names(d), d[[1]], sep = "_"), rbind(clp),  : 
-##   les arguments impliquent des nombres de lignes différents : 1, 0
-```
 
 You can see how the species range will shift northward. Will your sdms correctly predict it? ;)

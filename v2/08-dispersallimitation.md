@@ -5,7 +5,7 @@ output:
     fig_caption: yes
     keep_md: yes
     mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-    theme: united
+    theme: yeti
     toc: true
     toc_float: true
 ---
@@ -25,18 +25,34 @@ library(virtualspecies)
 ```
 
 ```
-## Loading required package: raster
+## Le chargement a nécessité le package : terra
 ```
 
 ```
-## Loading required package: sp
+## terra 1.7.46
+```
+
+```
+## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+## which was just loaded, will retire in October 2023.
+## Please refer to R-spatial evolution reports for details, especially
+## https://r-spatial.org/r/2023/05/15/evolution4.html.
+## It may be desirable to make the sf package available;
+## package maintainers should consider adding sf to Suggests:.
+## The sp package is now running under evolution status 2
+##      (status 2 uses the sf package in place of rgdal)
 ```
 
 ```r
-worldclim <- getData("worldclim", var = "bio", res = 10)
+library(geodata)
+# Worldclim data
+worldclim <- worldclim_global(var = "bio", res = 10,
+                              path = tempdir())
+names(worldclim) <- paste0("bio", 1:19)
+
 
 # Formatting of the response functions
-my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 25, sd = 5),
                                  bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
 
 # Generation of the virtual species
@@ -54,8 +70,7 @@ my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12
 ```
 
 ```
-##  - The final environmental suitability was rescaled between 0 and 1.
-##             To disable, set argument rescale = FALSE
+##  - The final environmental suitability was rescaled between 0 and 1. To disable, set argument rescale = FALSE
 ```
 
 ```r
@@ -73,7 +88,7 @@ my.first.species <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.7
 ## - alpha = -0.05
-## - species prevalence =0.0337370257013863
+## - species prevalence =0.0246147220541227
 ```
 
 
@@ -94,7 +109,8 @@ plot(my.first.species$occupied.area, main = "Realised distribution")
 
 ![Fig. 8.2 Distribution of a species limited to South America](08-dispersallimitation_files/figure-html/dist2-1.png)
 
-In the following sections, we see how to customise this function, but [the usage is basically the same as when applying a sampling bias.](07-sampleoccurrences.html#uneven-sampling-intensity)  
+In the following sections, we see how to customise this function, but 
+[the usage is basically the same as when applying a sampling bias.](07-sampleoccurrences.html#uneven-sampling-intensity)  
   
 
 
@@ -104,7 +120,9 @@ There are six main possibilities to limit the distribution to a particular area.
 
 ### 8.2.1. Using countries, regions or continents
 
-As illustrated in the example above, use `geographical.limit = "country"`, `geographical.limit = continent` or `geographical.limit = "region"` and provide the correct name(s) of the area to `area`
+As illustrated in the example above, use `geographical.limit = "country"`,
+`geographical.limit = continent` or `geographical.limit = "region"` and provide
+the correct name(s) of the area to `area`
 
 
 ```r
@@ -118,30 +136,31 @@ my.sp1 <- limitDistribution(my.first.species,
 
 ### 8.2.2. Using a polygon
 
-Set `geographical.limit = "polygon"`, and provide a polygon (of type `SpatialPolygons` or `SpatialPolygonsDataFrame` from package `sp`) to the argument `area`.
+Set `geographical.limit = "polygon"`, and provide a polygon (of type
+`SpatVector` from `terra` or `sf` from package `sf`) to the argument `area`.
 
 
 ```r
-philippines <- getData("GADM", country = "PHL", level = 0)
+philippines <- rnaturalearth::ne_countries(country = "Philippines",
+                                           returnclass = "sf")
 my.sp2 <- limitDistribution(my.first.species, 
                             geographical.limit = "polygon",
                             area = philippines)
 ```
 
-```
-## Warning in limitDistribution(my.first.species, geographical.limit =
-## "polygon", : Polygon projection is not checked. Please make sure you have
-## the same projections between your polygon and your presence-absence raster
-```
-
 ![Fig. 8.4 Distribution of a species limited to the Philippines](08-dispersallimitation_files/figure-html/dist4-1.png)
 
 ### 8.2.3. Using an extent object  
-Set `geographical.limit = "extent"`, and provide an extent to the argument `area` ([see section 7.2.3. if you are not familiar with extents](07-sampleoccurrences.html#providing-an-extent-object)). You can also simply set `geographical.limit = "extent"`, and click twice on the map when asked to:
+Set `geographical.limit = "extent"`, and provide an extent to the argument 
+`area` ([see section 7.2.3. if you are not familiar with extents](07-sampleoccurrences.html#providing-an-extent-object)). You can also 
+draw manually a polygon or extent on the map by 
+simply setting `geographical.limit = "polygon"` or
+`geographical.limit = "extent"`, and clicking on the map when 
+asked to:
 
 
 ```r
-my.extent <- extent(-80, -20, -35, -5)
+my.extent <- ext(-80, -20, -35, -5)
 my.sp2 <- limitDistribution(my.first.species, 
                             geographical.limit = "extent",
                             area = my.extent)
@@ -151,13 +170,27 @@ plot(my.extent, add = TRUE)
 ![Fig. 8.5 Distribution of a species limited to a particular extent](08-dispersallimitation_files/figure-html/dist5-1.png)
 
 ### 8.2.4. Using a raster of suitable habitat
-Let's first generate an example raster of habitat patches. [For this, I will use this function
-that you can find here.](https://github.com/Farewe/CooccurrenceIssue/blob/master/scripts/functions/patch_generation.R)
+Let's first generate an example raster of habitat patches. 
+_[For this, I will use a function to generate artificial habitat patches
+that you can find here.](https://github.com/Farewe/CooccurrenceIssue/blob/master/scripts/functions/patch_generation.R)._
+
 
 
 
 ```r
-suitable.habitat <- generate.patches(worldclim[[1]], n.patches = 100, patch.size = 300)
+suitable.habitat <- generate.patches(raster(worldclim[[1]]),
+                                     n.patches = 100, patch.size = 300)
+```
+
+```
+## Le chargement a nécessité le package : raster
+```
+
+```
+## Le chargement a nécessité le package : sp
+```
+
+```r
 plot(suitable.habitat)
 ```
 
@@ -166,6 +199,8 @@ Then, we will restrict the distribution of our species to these suitable habitat
 
 
 ```r
+# Converting to a terra object
+suitable.habitat <- rast(suitable.habitat)
 my.sp3 <- limitDistribution(my.first.species, 
                             geographical.limit = "raster",
                             area = suitable.habitat)
@@ -176,7 +211,9 @@ my.sp3 <- limitDistribution(my.first.species,
                             
 ## 8.3. Sampling occurrence points in the dispersal-limited distribution
 
-Once the distribution of a species has been limited with `limitDistribution()`, you just have to apply `sampleOccurrences` on this species: it will automatically sample from the realised distribution of the species.
+Once the distribution of a species has been limited with `limitDistribution()`,
+you just have to apply `sampleOccurrences` on this species: it will 
+automatically sample from the realised distribution of the species.
 
 
 ```r
@@ -203,16 +240,16 @@ sampleOccurrences(my.first.species, n = 30)
 ## - Multiple samples can occur in a single cell: No
 ## 
 ## First 10 lines: 
-##            x           y Real Observed
-## 1  -77.08333  -0.2500000    1        1
-## 2  -64.08333   3.9166667    1        1
-## 3  -66.75000  -5.5833333    1        1
-## 4  -74.75000  -3.0833333    1        1
-## 5  -68.25000  -3.9166667    1        1
-## 6  -70.41667  -3.4166667    1        1
-## 7  -73.25000   1.7500000    1        1
-## 8  -70.25000  -0.4166667    1        1
-## 9  -54.91667  -9.0833333    1        1
-## 10 -71.41667 -11.0833333    1        1
+##                 x         y Real Observed
+## 1195117 -73.91667 -2.250000    1        1
+## 1223215 -70.91667 -4.416667    1        1
+## 1249145 -69.25000 -6.416667    1        1
+## 1186466 -75.75000 -1.583333    1        1
+## 1143321 -66.58333  1.750000    1        1
+## 1186507 -68.91667 -1.583333    1        1
+## 1279348 -75.41667 -8.750000    1        1
+## 1097960 -66.75000  5.250000    1        1
+## 1192939 -76.91667 -2.083333    1        1
+## 1195108 -75.41667 -2.250000    1        1
 ## ... 20 more lines.
 ```
