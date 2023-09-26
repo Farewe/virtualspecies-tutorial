@@ -24,6 +24,7 @@ navbar:
       href: 08-dispersallimitation.html
 output:
   html_document:
+    theme: cosmo
     css: styles.css
     include:
       after_body: footer.html

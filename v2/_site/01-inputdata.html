@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>1. Input data</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -44,32 +58,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -81,13 +71,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -101,40 +86,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -162,7 +123,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -174,7 +135,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -184,11 +145,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -200,13 +178,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -214,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -236,6 +206,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -248,48 +219,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -303,6 +235,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -338,8 +276,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -360,7 +296,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -374,7 +310,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -390,7 +326,7 @@ div.tocify {
   <a href="01-inputdata.html">1. Input data</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Simulating virtual species
      
     <span class="caret"></span>
@@ -427,7 +363,7 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
@@ -436,74 +372,131 @@ div.tocify {
 </div>
 
 
-<p><code>virtualspecies</code> uses spatialised environmental data as an input. These data must be gridded spatial data in the <code>RasterStack</code> format of the package <code>raster</code>.</p>
+<p><code>virtualspecies</code> uses spatialised environmental data as an
+input. These data must be gridded spatial data in the
+<code>SpatRaster</code> format of the package <code>terra</code>.</p>
 <div id="small-introduction-to-raster-data" class="section level3">
 <h3>1.1. Small introduction to raster data</h3>
-<p>The input data for virtual species is gridded spatial data (<em>i.e.</em>, raster data).<br />
-To summarise, a raster is a map regularly divided into small units, called pixels. Each pixel has its own value. These values can be, for example, temperature values, for a raster of temperature. Raster data can be imported into R using the package <code>raster</code>. The command <code>stack()</code> will allow you to import your own rasters (stored on your hard drive) into an object of class <code>RasterStack</code>. Below you will find some concrete examples.</p>
+<p>The input data for virtual species is gridded spatial data
+(<em>i.e.</em>, raster data).<br />
+To summarise, a raster is a map regularly divided into small units,
+called pixels. Each pixel has its own value. These values can be, for
+example, temperature values, for a raster of temperature. Raster data
+can be imported into R using the package <code>terra</code>. The command
+<code>rast()</code> will allow you to import your own rasters (stored on
+your hard drive) into an object of class <code>SpatRaster</code>. Below
+you will find some concrete examples.</p>
 </div>
 <div id="required-format-for-virtualspecies" class="section level3">
 <h3>1.2. Required format for virtualspecies</h3>
-<p>As stated above, the required format is a <code>RasterStack</code> containing all the environmental variables with which you want to generate a virtual species distribution. Note that I may use interchangeably the variables and layers in this tutorial, because they roughly refer to the same aspect: a layer is the spatial representation of an environmental variable.</p>
-<p>The most important part here is that every layer of your <code>RasterStack</code> must be correctly named, because these names will be used when generating virtual species.<br />
-Hence, I strongly advise using explicit names for your layers. You can use “variable1”, “variable2”, etc. or “layer1”, “layer2”, etc. but names like “bio1”, “bio2”, “bio3”, (<a href="http://worldclim.org/bioclim">bioclimatic variable names</a>) or “temp1”, “temp2”, etc. will reduce confusion.<br />
-You can access the names of the layers of your stack with <code>names(my.stack)</code>, and modify them with <code>names(my.stack) &lt;- c("name1", "name2", etc.)</code>.</p>
+<p>As stated above, the required format is a <code>SpatRaster</code>
+containing all the environmental variables with which you want to
+generate a virtual species distribution. Note that I may use
+interchangeably the terms ‘variables’ and ‘layers’ in this tutorial,
+because they roughly refer to the same aspect: a layer is the spatial
+representation of an environmental variable.</p>
+<p>The most important part here is that every layer of your
+<code>SpatRaster</code> must be correctly named, because these names
+will be used when generating virtual species.<br />
+Hence, I strongly advise using explicit names for your layers. You can
+use “variable1”, “variable2”, etc. or “layer1”, “layer2”, etc. but names
+like “bio1”, “bio2”, “bio3”, (<a
+href="http://worldclim.org/bioclim">bioclimatic variable names</a>) or
+“temp1”, “temp2”, etc. will reduce confusion.<br />
+You can access the names of the layers of your stack with
+<code>names(my.stack)</code>, and modify them with
+<code>names(my.stack) &lt;- c("name1", "name2", etc.)</code>.</p>
 </div>
-<div id="a-quick-and-easy-example-using-worldclim-data" class="section level3">
+<div id="a-quick-and-easy-example-using-worldclim-data"
+class="section level3">
 <h3>1.3. A quick and easy example using WorldClim data</h3>
-<p>WorldClim (www.worldclim.org) freely provides gridded climate data (temperature and precipitations) for the entire World. These data can be downloaded to your hard drive from the website above, and then imported into R using the stack command: <code>stack("my.path/MyWorldClimStack.bil")</code>.</p>
-<p>Otherwise, a much simpler solution is to directly download them into R using the function <code>getData()</code> (requires an internet connection).</p>
-<p>You have to provide the type of environmental variables you are looking for:</p>
+<p>WorldClim (www.worldclim.org) freely provides gridded climate data
+(temperature and precipitations) for the entire World. These data can be
+downloaded to your hard drive from the website above, and then imported
+into R using the stack command:
+<code>rast("my_path/worldclim_data.tif")</code>.</p>
+<p>Otherwise, a much simpler solution is to directly download them into
+R using the R package <code>geodata</code>, with the function
+<code>worldclim_global()</code> (requires an internet connection).</p>
+<p>You have to provide the type of environmental variables you are
+looking for:</p>
 <ul>
-<li>tmean = average monthly mean temperature (°C * 10)</li>
+<li>tavg = average monthly mean temperature (°C * 10)</li>
 <li>tmin = average monthly minimum temperature (°C * 10)</li>
 <li>tmax = average monthly maximum temperature (°C * 10)</li>
 <li>prec = average monthly precipitation (mm)</li>
-<li>bio = bioclimatic variables derived from the tmean, tmin, tmax and prec</li>
-<li>alt = altitude (elevation above sea level) (m) (from SRTM)</li>
+<li>srad = incident solar radiation (kJ m<sup>-2</sup>
+day<sup>-1</sup>)</li>
+<li>wind = wind speed (2m above the ground) (m.s<sup>-1</sup>)</li>
+<li>bio = bioclimatic variables derived from the tmean, tmin, tmax and
+prec</li>
+<li>vapr = vapor pressure (kPa)</li>
 </ul>
-<p>And the resolution: 0.5, 2.5, 5, or 10 minutes of a degree. Note that at fine resolutions the files downloaded are very heavy and may take a long time; at the finest resolution (0.5) you cannot download the global file, and you have to provide a longitude and latitude to obtain a tile of the world (see <code>?getData</code> for help).</p>
+<p>And the resolution: 0.5, 2.5, 5, or 10 minutes of a degree. Note that
+at fine resolutions the files downloaded are very heavy and may take a
+long time.</p>
+<p>You need to specify the directory where the files will be downloaded.
+Below, I used a temporary directory created by R
+(<code>path = tempdir()</code>), but this is not an optimal choice,
+since we will probably have to redownload everytime. You should probably
+create a dedicated folder and specify it in path, e.g.
+<code>path = "gis_data"</code>.</p>
 <p>Here is the example in practice:</p>
-<pre class="r"><code>library(raster, quietly = T)
-worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
+<pre class="r"><code>library(geodata)
+worldclim &lt;- worldclim_global(var = &quot;bio&quot;, res = 10,
+                              path = tempdir())
 worldclim</code></pre>
-<pre><code>## class       : RasterStack 
-## dimensions  : 900, 2160, 1944000, 19  (nrow, ncol, ncell, nlayers)
+<pre><code>## class       : SpatRaster 
+## dimensions  : 1080, 2160, 19  (nrow, ncol, nlyr)
 ## resolution  : 0.1666667, 0.1666667  (x, y)
-## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-## names       :  bio1,  bio2,  bio3,  bio4,  bio5,  bio6,  bio7,  bio8,  bio9, bio10, bio11, bio12, bio13, bio14, bio15, ... 
-## min values  :  -269,     9,     8,    72,   -59,  -547,    53,  -251,  -450,   -97,  -488,     0,     0,     0,     0, ... 
-## max values  :   314,   211,    95, 22673,   489,   258,   725,   375,   364,   380,   289,  9916,  2088,   652,   261, ...</code></pre>
-<p>You can see that the object is of class <code>RasterStack</code>, ready to use for <code>virtualspecies</code>. The names of the layers are also convenient.</p>
-<p>We can easily access a subset of the layers with <code>[[]]</code>:</p>
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## sources     : wc2.1_10m_bio_1.tif  
+##               wc2.1_10m_bio_2.tif  
+##               wc2.1_10m_bio_3.tif  
+##               ... and 16 more source(s)
+## names       : wc2.1~bio_1, wc2.1~bio_2, wc2.1~bio_3, wc2.1~bio_4, wc2.1~bio_5, wc2.1~bio_6, ... 
+## min values  :   -54.72435,     1.00000,    9.131122,       0.000,   -29.68600,   -72.50025, ... 
+## max values  :    30.98764,    21.14754,  100.000000,    2363.846,    48.08275,    26.30000, ...</code></pre>
+<p>You can see that the object is of class <code>SpatRaster</code>,
+ready to use for <code>virtualspecies</code>. The names of the layers
+are also convenient.</p>
+<p>We can easily access a subset of the layers with
+<code>[[]]</code>:</p>
 <pre class="r"><code># The first four layers
 worldclim[[1:4]]</code></pre>
-<pre><code>## class       : RasterStack 
-## dimensions  : 900, 2160, 1944000, 4  (nrow, ncol, ncell, nlayers)
+<pre><code>## class       : SpatRaster 
+## dimensions  : 1080, 2160, 4  (nrow, ncol, nlyr)
 ## resolution  : 0.1666667, 0.1666667  (x, y)
-## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-## names       :  bio1,  bio2,  bio3,  bio4 
-## min values  :  -269,     9,     8,    72 
-## max values  :   314,   211,    95, 22673</code></pre>
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## sources     : wc2.1_10m_bio_1.tif  
+##               wc2.1_10m_bio_2.tif  
+##               wc2.1_10m_bio_3.tif  
+##               wc2.1_10m_bio_4.tif  
+## names       : wc2.1_10m_bio_1, wc2.1_10m_bio_2, wc2.1_10m_bio_3, wc2.1_10m_bio_4 
+## min values  :       -54.72435,         1.00000,        9.131122,           0.000 
+## max values  :        30.98764,        21.14754,      100.000000,        2363.846</code></pre>
 <pre class="r"><code># Layers bio1 and bio12 (annual mean temperature and annual precipitation)
-worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]]</code></pre>
-<pre><code>## class       : RasterStack 
-## dimensions  : 900, 2160, 1944000, 2  (nrow, ncol, ncell, nlayers)
+worldclim[[c(&quot;wc2.1_10m_bio_1&quot;, &quot;wc2.1_10m_bio_12&quot;)]]</code></pre>
+<pre><code>## class       : SpatRaster 
+## dimensions  : 1080, 2160, 2  (nrow, ncol, nlyr)
 ## resolution  : 0.1666667, 0.1666667  (x, y)
-## extent      : -180, 180, -60, 90  (xmin, xmax, ymin, ymax)
-## coord. ref. : +proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0 
-## names       : bio1, bio12 
-## min values  : -269,     0 
-## max values  :  314,  9916</code></pre>
+## extent      : -180, 180, -90, 90  (xmin, xmax, ymin, ymax)
+## coord. ref. : lon/lat WGS 84 (EPSG:4326) 
+## sources     : wc2.1_10m_bio_1.tif  
+##               wc2.1_10m_bio_12.tif  
+## names       : wc2.1_10m_bio_1, wc2.1_10m_bio_12 
+## min values  :       -54.72435,                0 
+## max values  :        30.98764,            11191</code></pre>
 <p>And we can plot our variables:</p>
 <pre class="r"><code># Plotting bio1 and bio12
-par(oma = c(0.1, 0.1, 0.1, 2.1))
-plot(worldclim[[c(&quot;bio1&quot;, &quot;bio12&quot;)]])</code></pre>
-<div class="figure">
-<img src="01-inputdata_files/figure-html/wcex2-1.png" alt="Fig. 1.1 Variables bio1 (annual mean temperature in °C * 10) and bio2 (annual precipitation)" />
-<p class="caption">Fig. 1.1 Variables bio1 (annual mean temperature in °C * 10) and bio2 (annual precipitation)</p>
+plot(worldclim[[c(&quot;wc2.1_10m_bio_1&quot;, &quot;wc2.1_10m_bio_12&quot;)]])</code></pre>
+<div class="float">
+<img src="01-inputdata_files/figure-html/wcex2-1.png"
+alt="Fig. 1.1 Variables bio1 (annual mean temperature in C degree * 10) and bio2 (annual precipitation)" />
+<div class="figcaption">Fig. 1.1 Variables bio1 (annual mean temperature
+in C degree * 10) and bio2 (annual precipitation)</div>
 </div>
 </div>
 
@@ -525,13 +518,59 @@ Do not hesitate if you have a question, find a bug, or would like to add a featu
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

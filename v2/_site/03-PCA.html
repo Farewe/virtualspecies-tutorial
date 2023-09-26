@@ -1,37 +1,51 @@
 <!DOCTYPE html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 
 <head>
 
 <meta charset="utf-8" />
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
 <meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
 
 
 
 
 <title>3. Virtual species defined by response to a PCA of the environment</title>
 
-<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<script src="site_libs/header-attrs-2.24/header-attrs.js"></script>
+<script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<link href="site_libs/bootstrap-3.3.5/css/united.min.css" rel="stylesheet" />
+<link href="site_libs/bootstrap-3.3.5/css/yeti.min.css" rel="stylesheet" />
 <script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
 <script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
-<script src="site_libs/jqueryui-1.11.4/jquery-ui.min.js"></script>
+<style>h1 {font-size: 34px;}
+       h1.title {font-size: 38px;}
+       h2 {font-size: 30px;}
+       h3 {font-size: 24px;}
+       h4 {font-size: 18px;}
+       h5 {font-size: 16px;}
+       h6 {font-size: 12px;}
+       code {color: inherit; background-color: rgba(0, 0, 0, 0.04);}
+       pre:not([class]) { background-color: white }</style>
+<script src="site_libs/jqueryui-1.13.2/jquery-ui.min.js"></script>
 <link href="site_libs/tocify-1.9.1/jquery.tocify.css" rel="stylesheet" />
 <script src="site_libs/tocify-1.9.1/jquery.tocify.js"></script>
 <script src="site_libs/navigation-1.1/tabsets.js"></script>
 <link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
 <script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
 
-<style type="text/css">code{white-space: pre;}</style>
 <style type="text/css">
-  pre:not([class]) {
-    background-color: white;
-  }
-</style>
+  code{white-space: pre-wrap;}
+  span.smallcaps{font-variant: small-caps;}
+  span.underline{text-decoration: underline;}
+  div.column{display: inline-block; vertical-align: top; width: 50%;}
+  div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+  ul.task-list{list-style: none;}
+    </style>
+
+<style type="text/css">code{white-space: pre;}</style>
 <script type="text/javascript">
 if (window.hljs) {
   hljs.configure({languages: []});
@@ -44,32 +58,8 @@ if (window.hljs) {
 
 
 
-<style type="text/css">
-h1 {
-  font-size: 34px;
-}
-h1.title {
-  font-size: 38px;
-}
-h2 {
-  font-size: 30px;
-}
-h3 {
-  font-size: 24px;
-}
-h4 {
-  font-size: 18px;
-}
-h5 {
-  font-size: 16px;
-}
-h6 {
-  font-size: 12px;
-}
-.table th:not([align]) {
-  text-align: left;
-}
-</style>
+
+
 
 <link rel="stylesheet" href="styles.css" type="text/css" />
 
@@ -81,13 +71,8 @@ h6 {
   margin-left: auto;
   margin-right: auto;
 }
-code {
-  color: inherit;
-  background-color: rgba(0, 0, 0, 0.04);
-}
 img {
   max-width:100%;
-  height: auto;
 }
 .tabbed-pane {
   padding-top: 12px;
@@ -101,40 +86,16 @@ button.code-folding-btn:focus {
 summary {
   display: list-item;
 }
+details > summary > p:only-child {
+  display: inline;
+}
+pre code {
+  padding: 0;
+}
 </style>
 
 
 <style type="text/css">
-/* padding for bootstrap navbar */
-body {
-  padding-top: 51px;
-  padding-bottom: 40px;
-}
-/* offset scroll position for anchor links (for fixed navbar)  */
-.section h1 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h2 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h3 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h4 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h5 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
-.section h6 {
-  padding-top: 56px;
-  margin-top: -56px;
-}
 .dropdown-submenu {
   position: relative;
 }
@@ -162,7 +123,7 @@ body {
   margin-right: -10px;
 }
 .dropdown-submenu:hover>a:after {
-  border-left-color: #ffffff;
+  border-left-color: #adb5bd;
 }
 .dropdown-submenu.pull-left {
   float: none;
@@ -174,7 +135,7 @@ body {
 }
 </style>
 
-<script>
+<script type="text/javascript">
 // manage active state of menu based on current page
 $(document).ready(function () {
   // active menu anchor
@@ -184,11 +145,28 @@ $(document).ready(function () {
     href = "index.html";
   var menuAnchor = $('a[href="' + href + '"]');
 
-  // mark it active
-  menuAnchor.parent().addClass('active');
+  // mark the anchor link active (and if it's in a dropdown, also mark that active)
+  var dropdown = menuAnchor.closest('li.dropdown');
+  if (window.bootstrap) { // Bootstrap 4+
+    menuAnchor.addClass('active');
+    dropdown.find('> .dropdown-toggle').addClass('active');
+  } else { // Bootstrap 3
+    menuAnchor.parent().addClass('active');
+    dropdown.addClass('active');
+  }
 
-  // if it's got a parent navbar menu mark it active as well
-  menuAnchor.closest('li.dropdown').addClass('active');
+  // Navbar adjustments
+  var navHeight = $(".navbar").first().height() + 15;
+  var style = document.createElement('style');
+  var pt = "padding-top: " + navHeight + "px; ";
+  var mt = "margin-top: -" + navHeight + "px; ";
+  var css = "";
+  // offset scroll position for anchor links (for fixed navbar)
+  for (var i = 1; i <= 6; i++) {
+    css += ".section h" + i + "{ " + pt + mt + "}\n";
+  }
+  style.innerHTML = "body {" + pt + "padding-bottom: 40px; }\n" + css;
+  document.head.appendChild(style);
 });
 </script>
 
@@ -200,13 +178,12 @@ $(document).ready(function () {
   max-height: 500px;
   min-height: 44px;
   overflow-y: auto;
-  background: white;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.tabset-dropdown > .nav-tabs > li.active:before {
-  content: "";
+.tabset-dropdown > .nav-tabs > li.active:before, .tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "\e259";
   font-family: 'Glyphicons Halflings';
   display: inline-block;
   padding: 10px;
@@ -214,16 +191,9 @@ $(document).ready(function () {
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
-  content: "&#xe258;";
-  border: none;
-}
-
-.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
-  content: "";
+  content: "\e258";
   font-family: 'Glyphicons Halflings';
-  display: inline-block;
-  padding: 10px;
-  border-right: 1px solid #ddd;
+  border: none;
 }
 
 .tabset-dropdown > .nav-tabs > li.active {
@@ -236,6 +206,7 @@ $(document).ready(function () {
   border: none;
   display: inline-block;
   border-radius: 4px;
+  background-color: transparent;
 }
 
 .tabset-dropdown > .nav-tabs.nav-tabs-open > li {
@@ -248,48 +219,9 @@ $(document).ready(function () {
 }
 </style>
 
-<script>
-$(document).ready(function () {
-  window.buildTabsets("TOC");
-});
-
-$(document).ready(function () {
-  $('.tabset-dropdown > .nav-tabs > li').click(function () {
-    $(this).parent().toggleClass('nav-tabs-open')
-  });
-});
-</script>
-
 <!-- code folding -->
 
 
-
-<script>
-$(document).ready(function ()  {
-
-    // move toc-ignore selectors from section div to header
-    $('div.section.toc-ignore')
-        .removeClass('toc-ignore')
-        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
-
-    // establish options
-    var options = {
-      selectors: "h1,h2,h3",
-      theme: "bootstrap3",
-      context: '.toc-content',
-      hashGenerator: function (text) {
-        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_').toLowerCase();
-      },
-      ignoreSelector: ".toc-ignore",
-      scrollTo: 0
-    };
-    options.showAndHide = true;
-    options.smoothScroll = true;
-
-    // tocify
-    var toc = $("#TOC").tocify(options).data("toc-tocify");
-});
-</script>
 
 <style type="text/css">
 
@@ -303,6 +235,12 @@ $(document).ready(function ()  {
 }
 }
 
+@media print {
+.toc-content {
+  /* see https://github.com/w3c/csswg-drafts/issues/4434 */
+  float: right;
+}
+}
 
 .toc-content {
   padding-left: 30px;
@@ -338,8 +276,6 @@ div.tocify {
 
 .tocify-subheader .tocify-item {
   font-size: 0.90em;
-  padding-left: 25px;
-  text-indent: 0;
 }
 
 .tocify .list-group-item {
@@ -360,7 +296,7 @@ div.tocify {
 
 
 <!-- setup 3col/9col grid for toc_float and main content  -->
-<div class="row-fluid">
+<div class="row">
 <div class="col-xs-12 col-sm-4 col-md-3">
 <div id="TOC" class="tocify">
 </div>
@@ -374,7 +310,7 @@ div.tocify {
 <div class="navbar navbar-default  navbar-fixed-top" role="navigation">
   <div class="container">
     <div class="navbar-header">
-      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-bs-toggle="collapse" data-target="#navbar" data-bs-target="#navbar">
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
@@ -390,7 +326,7 @@ div.tocify {
   <a href="01-inputdata.html">1. Input data</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Simulating virtual species
      
     <span class="caret"></span>
@@ -427,89 +363,184 @@ div.tocify {
   </div><!--/.container -->
 </div><!--/.navbar -->
 
-<div class="fluid-row" id="header">
+<div id="header">
 
 
 
-<h1 class="title toc-ignore">3. Virtual species defined by response to a PCA of the environment</h1>
+<h1 class="title toc-ignore">3. Virtual species defined by response to a
+PCA of the environment</h1>
 
 </div>
 
 
-<p>If you try to use the “response” approach with a large number of variables, <em>e.g.</em> 10, then you will rapidly hit the unextricable problem of unrealistic environmental requirements. When you have 2 environmental variables, it is easy to choose response functions that are compatible. For example, you know that you should not try to generate a species which requires a temperature of the warmest month at 35°C, and a temperature of the coldest month at -25°C, because such conditions are unlikely to exist on Earth. However, if you have 10 variables, the task is much more complicated: if you want to generate a species which is dependent on 5 different temperature variables, 3 precipitation variables, and 2 land use variables, then it is almost impossible to know if your response functions are realistic regarding environmental conditions.</p>
-<p>This is why we implemented the second approach, which consists in generating a Principal Component Analysis (PCA) of all the environmental variables in your <code>RasterStack</code>, and then define the response of the species to two axes (pricipal components). Using this approach will greatly help you to generate virtual species which have plausible environmental requirements, whil being dependent on all of your variables.</p>
-<p>The function providing this approach is <code>generateSpFromPCA</code>.</p>
+<p>If you try to use the “response” approach with a large number of
+variables, <em>e.g.</em> 10, then you will rapidly hit the unextricable
+problem of unrealistic environmental requirements. When you have 2
+environmental variables, it is easy to choose response functions that
+are compatible. For example, you know that you should not try to
+generate a species which requires a temperature of the warmest month at
+35°C, and a temperature of the coldest month at -25°C, because such
+conditions are unlikely to exist on Earth. However, if you have 10
+variables, the task is much more complicated: if you want to generate a
+species which is dependent on 5 different temperature variables, 3
+precipitation variables, and 2 land use variables, then it is almost
+impossible to know if your response functions are realistic regarding
+environmental conditions.</p>
+<p>This is why we implemented the second approach, which consists in
+generating a Principal Component Analysis (PCA) of all the environmental
+variables in your <code>SpatRaster</code>, and then define the response
+of the species to two axes (pricipal components). Using this approach
+will greatly help you to generate virtual species which have plausible
+environmental requirements, while being dependent on all of your
+variables.</p>
+<p>The function providing this approach is
+<code>generateSpFromPCA</code>.</p>
 <div id="an-introduction-example" class="section level2">
 <h2>3.1. An introduction example</h2>
-<p>We want to generate a species dependent on three temperature variables (<a href="http://worldclim.org/bioclim">bio2, bio5 and bio6</a>) and three precipitation variables (<a href="http://worldclim.org/bioclim">bio12, bio13, bio14</a> ).</p>
-<pre class="r"><code>library(virtualspecies)</code></pre>
-<pre><code>## Loading required package: raster</code></pre>
-<pre><code>## Loading required package: sp</code></pre>
-<pre class="r"><code>worldclim &lt;- getData(&quot;worldclim&quot;, var = &quot;bio&quot;, res = 10)
+<p>We want to generate a species dependent on three temperature
+variables (<a href="http://worldclim.org/bioclim">bio2, bio5 and
+bio6</a>) and three precipitation variables (<a
+href="http://worldclim.org/bioclim">bio12, bio13, bio14</a> ).</p>
+<pre class="r"><code>library(geodata)</code></pre>
+<pre><code>## Le chargement a nécessité le package : terra</code></pre>
+<pre><code>## terra 1.7.39</code></pre>
+<pre class="r"><code>worldclim &lt;- worldclim_global(var = &quot;bio&quot;, res = 10,
+                              path = tempdir())
+# Rename bioclimatic variables for simplicity
+names(worldclim) &lt;- paste0(&quot;bio&quot;, 1:19)
+
 my.stack &lt;- worldclim[[c(&quot;bio2&quot;, &quot;bio5&quot;, &quot;bio6&quot;, &quot;bio12&quot;, &quot;bio13&quot;, &quot;bio14&quot;)]]</code></pre>
-<p>The generation of a virtual species is relatively straightforward:</p>
+<p>The generation of a virtual species is relatively
+straightforward:</p>
+<pre class="r"><code>library(virtualspecies)</code></pre>
+<pre><code>## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+## which was just loaded, will retire in October 2023.
+## Please refer to R-spatial evolution reports for details, especially
+## https://r-spatial.org/r/2023/05/15/evolution4.html.
+## It may be desirable to make the sf package available;
+## package maintainers should consider adding sf to Suggests:.
+## The sp package is now running under evolution status 2
+##      (status 2 uses the sf package in place of rgdal)</code></pre>
 <pre class="r"><code>my.pca.species &lt;- generateSpFromPCA(raster.stack = my.stack)</code></pre>
+<pre><code>## Reading raster values. If it fails for very large rasters, use arguments &#39;sample.points = TRUE&#39; and define a number of points to sample with &#39;nb.point&#39;.</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca2-1.png" /><!-- --></p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>my.pca.species</code></pre>
 <pre><code>## Virtual species generated from 6 variables:
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.24 % explained by these axes
+## - Axes:  1, 2 ;  84.09 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-19; max=2.6] : dnorm (mean=0.5271664; sd=1.349929)
-##    .Axis 2  [min=-3.44; max=10.95] : dnorm (mean=4.036709; sd=4.613638)
+##    .Axis 1  [min=-18.29; max=2.89] : dnorm (mean=-0.05530324; sd=6.411076)
+##    .Axis 2  [min=-11.39; max=3.27] : dnorm (mean=2.649001; sd=1.789812)
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
-<p>Something very important to know here is that the PCA is performed on all the pixels of the raster stack. As a consequence, if you use large stacks (large spatial scales, fine resolutions), your computer may not be able to extract all the values. In this case, you can run the PCA on a random subset of values, by setting <code>sample.points = TRUE</code> and defining the number of pixels to sample with <code>nb.points</code> (default 10000, try less if your computer is struggling). <em>Note that there is an automatic safety check if you don’t set <code>sample.points = TRUE</code>, and the function will not run if your computer cannot handle it.</em></p>
-<pre class="r"><code># A safe run of the function
-my.pca.species &lt;- generateSpFromPCA(raster.stack = my.stack, 
+<p>Something very important to know here is that the PCA is performed on
+all the pixels of the raster stack. As a consequence, if you use large
+stacks (large spatial scales, fine resolutions), your computer may not
+be able to extract all the values. In this case, you can run the PCA on
+a random subset of values, by setting <code>sample.points = TRUE</code>
+and defining the number of pixels to sample with <code>nb.points</code>
+(default 10000, try less if your computer is struggling).</p>
+<pre class="r"><code>my.pca.species &lt;- generateSpFromPCA(raster.stack = my.stack, 
                                     sample.points = TRUE, nb.points = 5000)</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca3-1.png" /><!-- --></p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>my.pca.species</code></pre>
 <pre><code>## Virtual species generated from 6 variables:
 ##  bio2, bio5, bio6, bio12, bio13, bio14
 ## 
 ## - Approach used: Response to axes of a PCA
-## - Axes:  1, 2 ;  83.38 % explained by these axes
+## - Axes:  1, 2 ;  83.22 % explained by these axes
 ## - Responses to axes:
-##    .Axis 1  [min=-13.43; max=2.56] : dnorm (mean=-0.8975715; sd=3.053737)
-##    .Axis 2  [min=-3.42; max=6.76] : dnorm (mean=-2.002075; sd=4.954154)
+##    .Axis 1  [min=-9.43; max=3] : dnorm (mean=0.5665933; sd=4.591964)
+##    .Axis 2  [min=-7.29; max=2.96] : dnorm (mean=0.5792889; sd=0.5148238)
 ## - Environmental suitability was rescaled between 0 and 1</code></pre>
-<p>Congratulations! You have just generated your first virtual species with a PCA. You will probably have noticed that you have not entered any parameter, but the generation has still succeeded. Indeed, when no parameter is entered, the response of the species to PCA axes is randomly generated. The reason behind this choice is that you can hardly choose by yourself the parameters before you have seen the PCA! The next step is therefore to take a look at the PCA, using the function <code>plotResponse</code> (note that you can also use the argument <code>plot = TRUE</code> in <code>generateSpFromPCA</code>)</p>
+<p>Congratulations! You have just generated your first virtual species
+with a PCA. You will probably have noticed that you have not entered any
+parameter, but the generation has still succeeded. Indeed, when no
+parameter is entered, the response of the species to PCA axes is
+randomly generated. The reason behind this choice is that you can hardly
+choose by yourself the parameters before you have seen the PCA! The next
+step is therefore to take a look at the PCA, using the function
+<code>plotResponse</code> (note that you can also use the argument
+<code>plot = TRUE</code> in <code>generateSpFromPCA</code>)</p>
 <pre class="r"><code>plotResponse(my.pca.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca4-1.png" alt="Fig. 3.1 PCA used to generate the virtual species" />
-<p class="caption">Fig. 3.1 PCA used to generate the virtual species</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca4-1.png"
+alt="Fig. 3.1 PCA used to generate the virtual species" />
+<div class="figcaption">Fig. 3.1 PCA used to generate the virtual
+species</div>
 </div>
-<p>On Fig. 3.1 you can see the PCA of environmental conditions, where each point is the representation of a pixel of your stack in the factorial space. On one of the corners is shown the projection of the variables on this PCA (the position varies for an easier reading, although it is not always perfect). Along each axis, you can see the response of the species: on my example, a wide tolerance to the axis 1, driven mostly by precipitation variables (bio12 and bio13), and an intermediate tolerance to the axis 2, driven mostly by temperature variables (bio2 and bio5). The resulting environmental suitability, as a product of responses to each axis, is illustrated by a coloration of the points, from red (high suitability), to yellow and grey (low/unsuitable pixels).</p>
-<p>Now that you have this information in hand, you will be able (in the next section) to define a narrower niche breadth for the species, or to choose a species living in hotter, colder, drier or wetter environments. But before that, you probably would like to see how the species’ environmental suitability is distributed in space. Nothing’s simpler:</p>
+<p>On Fig. 3.1 you can see the PCA of environmental conditions, where
+each point is the representation of a pixel of your stack in the
+factorial space. On one of the corners is shown the projection of the
+variables on this PCA (the position varies for an easier reading,
+although it is not always perfect). Along each axis, you can see the
+response of the species: its tolerance to the axis 1, driven mostly by
+precipitation variables (bio12, 13 and 14 bio13), and its tolerance to
+the axis 2, driven mostly by temperature variables (bio2 mostly, and
+bio5 &amp; 6 to a lesser extent and bio5). The resulting environmental
+suitability, as a product of responses to each axis, is illustrated by a
+coloration of the points, from purple (high suitability), to yellow and
+grey (low/unsuitable pixels).</p>
+<p>Now that you have this information in hand, you will be able (in the
+next section) to define a narrower niche breadth for the species, or to
+choose a species living in hotter, colder, drier or wetter environments.
+But before that, you probably would like to see how the species’
+environmental suitability is distributed in space. Nothing’s
+simpler:</p>
 <pre class="r"><code>plot(my.pca.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca5-1.png" alt="Fig. 3.2 Environmental suitability of a species generated with a PCA approach" />
-<p class="caption">Fig. 3.2 Environmental suitability of a species generated with a PCA approach</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca5-1.png"
+alt="Fig. 3.2 Environmental suitability of a species generated with a PCA approach" />
+<div class="figcaption">Fig. 3.2 Environmental suitability of a species
+generated with a PCA approach</div>
 </div>
 </div>
 <div id="customisation-of-the-parameters" class="section level2">
 <h2>3.2. Customisation of the parameters</h2>
-<p>The function <code>generateSpFromPCA</code> proceeds into four important steps: 1. The PCA is computed on the basis of the input environmental conditions. You can also provide your own PCA. 2. The Gaussian responses to axes are randomly chosen (only if you did not provide precise parameters) and then computed. 3. The environmental suitability is calculated as a product of the responses to both axes. 4. The environmental suitability is rescaled between 0 and 1. This step can be disabled.</p>
+<p>The function <code>generateSpFromPCA</code> proceeds into four
+important steps: 1. The PCA is computed on the basis of the input
+environmental conditions. You can also provide your own PCA. 2. The
+Gaussian responses to axes are randomly chosen (only if you did not
+provide precise parameters) and then computed. 3. The environmental
+suitability is calculated as a product of the responses to both axes. 4.
+The environmental suitability is rescaled between 0 and 1. This step can
+be disabled.</p>
 <div id="customisation-of-the-responses-to-axes" class="section level3">
 <h3>3.2.1. Customisation of the responses to axes</h3>
-<p>You can customise the Gaussian response functions in two different ways:</p>
+<p>You can customise the Gaussian response functions in two different
+ways:</p>
 <ol style="list-style-type: decimal">
-<li>You can constrain the random generation of parameters by choosing either a narrow-niche or a broad-niche species. To do this, specify the argument <code>niche.breadth = 'narrow'</code> or <code>niche.breadth = 'wide'</code>. By default this argument is set to <code>niche.breadth = 'any'</code>, meaning that you can obtain species with any niche breadth.<br />
-This argument controls the standard deviation of the gaussian distribution. The full details about this is available in the help of the function (<code>?generateSpFromPCA</code>)</li>
+<li>You can constrain the random generation of parameters by choosing
+either a narrow-niche or a broad-niche species. To do this, specify the
+argument <code>niche.breadth = 'narrow'</code> or
+<code>niche.breadth = 'wide'</code>. By default this argument is set to
+<code>niche.breadth = 'any'</code>, meaning that you can obtain species
+with any niche breadth.<br />
+This argument controls the standard deviation of the gaussian
+distribution. The full details about this is available in the help of
+the function (<code>?generateSpFromPCA</code>)</li>
 </ol>
-<pre class="r"><code>narrow.species &lt;- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
+<pre class="r"><code>narrow.species &lt;- generateSpFromPCA(raster.stack = my.stack,
+                                    sample.points = TRUE,
                                     nb.points = 5000,
                                     niche.breadth = &quot;narrow&quot;)</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
@@ -517,16 +548,24 @@ This argument controls the standard deviation of the gaussian distribution. The 
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca6-1.png" /><!-- --></p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>plotResponse(narrow.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca6b-1.png" alt="Fig. 3.3 PCA of a species generated with rather narrow niche breadth" />
-<p class="caption">Fig. 3.3 PCA of a species generated with rather narrow niche breadth</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca6b-1.png"
+alt="Fig. 3.3 PCA of a species generated with rather narrow niche breadth" />
+<div class="figcaption">Fig. 3.3 PCA of a species generated with rather
+narrow niche breadth</div>
 </div>
 <pre class="r"><code>plot(narrow.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca6c-1.png" alt="Fig. 3.4 Environmental suitability of a species generated with rather narrow niche breadth" />
-<p class="caption">Fig. 3.4 Environmental suitability of a species generated with rather narrow niche breadth</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca6c-1.png"
+alt="Fig. 3.4 Environmental suitability of a species generated with rather narrow niche breadth" />
+<div class="figcaption">Fig. 3.4 Environmental suitability of a species
+generated with rather narrow niche breadth</div>
 </div>
 <pre class="r"><code>wide.species &lt;- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
                                     nb.points = 5000,
@@ -536,25 +575,49 @@ This argument controls the standard deviation of the gaussian distribution. The 
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca7-1.png" alt="A species generated with rather wide niche breadth" />
-<p class="caption">A species generated with rather wide niche breadth</p>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca7-1.png"
+alt="A species generated with rather wide niche breadth" />
+<div class="figcaption">A species generated with rather wide niche
+breadth</div>
 </div>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>plotResponse(wide.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca7b-1.png" alt="Fig. 3.5 PCA of a species generated with rather wide niche breadth" />
-<p class="caption">Fig. 3.5 PCA of a species generated with rather wide niche breadth</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca7b-1.png"
+alt="Fig. 3.5 PCA of a species generated with rather wide niche breadth" />
+<div class="figcaption">Fig. 3.5 PCA of a species generated with rather
+wide niche breadth</div>
 </div>
 <pre class="r"><code>plot(wide.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca7c-1.png" alt="Fig. 3.6 Environmental suitability of a species generated with rather wide niche breadth" />
-<p class="caption">Fig. 3.6 Environmental suitability of a species generated with rather wide niche breadth</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca7c-1.png"
+alt="Fig. 3.6 Environmental suitability of a species generated with rather wide niche breadth" />
+<div class="figcaption">Fig. 3.6 Environmental suitability of a species
+generated with rather wide niche breadth</div>
 </div>
 <ol start="2" style="list-style-type: decimal">
-<li>You can define by yourself the mean and standard deviations of the Gaussian responses. To do this, use arguments <code>means</code> and <code>sds</code> as in the following example.<br />
-Using the figure above, we know that the first axis is driven by precipitation variables, and the second one by temperature variables. To define a species living in colder and wetter environments, we will move the means of Gaussian responses to the right of the first axis (<em>e.g.</em>, a mean of 0 or above) and to the top of the second axis (<em>e.g.</em>, a mean of 1 or above). In addition, if we want our species to be stenotopic (narrow niche breadth), we will also define lower standard deviations (<em>e.g.</em>, standard deviations of 0.25). The correct input will be : <code>means = c(0, 1)</code> (a mean of 0 for the first axis and 1 for the second) and <code>sds = c(0.25, 0.5)</code> (standard deviations of 0.25 for axes 1 and 2):</li>
+<li>You can define by yourself the mean and standard deviations of the
+Gaussian responses. To do this, use arguments <code>means</code> and
+<code>sds</code> as in the following example.<br />
+Using the figure above, we know that the first axis is driven by
+precipitation variables, and the second one by temperature variables. To
+define a species living in colder and wetter environments, we will move
+the means of Gaussian responses to the right of the first axis
+(<em>e.g.</em>, a mean of 0 or above) and to the top of the second axis
+(<em>e.g.</em>, a mean of 1 or above). In addition, if we want our
+species to be stenotopic (narrow niche breadth), we will also define
+lower standard deviations (<em>e.g.</em>, standard deviations of 0.25).
+The correct input will be : <code>means = c(0, 1)</code> (a mean of 0
+for the first axis and 1 for the second) and
+<code>sds = c(0.25, 0.5)</code> (standard deviations of 0.25 for axes 1
+and 2):</li>
 </ol>
-<pre class="r"><code>my.custom.species &lt;- generateSpFromPCA(raster.stack = my.stack, sample.points = TRUE,
+<pre class="r"><code>my.custom.species &lt;- generateSpFromPCA(raster.stack = my.stack, 
+                                       sample.points = TRUE,
                                        nb.points = 5000,
                                        means = c(0, 1), sds = c(0.5, 0.5))</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
@@ -563,30 +626,45 @@ Using the figure above, we know that the first axis is driven by precipitation v
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca8-1.png" /><!-- --></p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code>plotResponse(my.custom.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca8b-1.png" alt="Fig. 3.7 PCA of the species generated with custom responses to axes" />
-<p class="caption">Fig. 3.7 PCA of the species generated with custom responses to axes</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca8b-1.png"
+alt="Fig. 3.7 PCA of the species generated with custom responses to axes" />
+<div class="figcaption">Fig. 3.7 PCA of the species generated with
+custom responses to axes</div>
 </div>
 <pre class="r"><code>plot(my.custom.species)</code></pre>
-<div class="figure">
-<img src="03-PCA_files/figure-html/pca8c-1.png" alt="Fig. 3.8 Environmental suitability of the species generated with custom responses to axes" />
-<p class="caption">Fig. 3.8 Environmental suitability of the species generated with custom responses to axes</p>
+<div class="float">
+<img src="03-PCA_files/figure-html/pca8c-1.png"
+alt="Fig. 3.8 Environmental suitability of the species generated with custom responses to axes" />
+<div class="figcaption">Fig. 3.8 Environmental suitability of the
+species generated with custom responses to axes</div>
 </div>
 </div>
 <div id="choosing-axes" class="section level3">
 <h3>3.2.2. Choosing axes</h3>
-<p>You can choose the axes generated in the PCA by specifying the axes included in the PCA:</p>
+<p>You can choose the axes generated in the PCA by specifying the axes
+included in the PCA:</p>
 <pre class="r"><code>my.custom.species &lt;- generateSpFromPCA(raster.stack = my.stack,
                                        axes = c(1, 3, 5))</code></pre>
+<pre><code>## Reading raster values. If it fails for very large rasters, use arguments &#39;sample.points = TRUE&#39; and define a number of points to sample with &#39;nb.point&#39;.</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca9-1.png" /><!-- --></p>
-<p>You can see slect which axes you want to see in <code>plotResponse</code>:</p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
+<p>You can see slect which axes you want to see in
+<code>plotResponse</code>:</p>
 <pre class="r"><code>plotResponse(my.custom.species,
              axes = c(1, 5))</code></pre>
 <p><img src="03-PCA_files/figure-html/pca9b-1.png" /><!-- --></p>
@@ -594,50 +672,93 @@ Using the figure above, we know that the first axis is driven by precipitation v
              axes = c(3, 5))</code></pre>
 <p><img src="03-PCA_files/figure-html/pca9b-2.png" /><!-- --></p>
 </div>
-<div id="rescaling-of-the-final-environmental-suitability" class="section level3">
+<div id="rescaling-of-the-final-environmental-suitability"
+class="section level3">
 <h3>3.2.3. Rescaling of the final environmental suitability</h3>
-<p>The final rescaling is performed for the same reasons as in <code>generateSpFromFun</code>. It should not be disabled unless you have very precise reasons to do it. The argument <code>rescale</code> controls this rescaling (<code>TRUE</code> by default).</p>
+<p>The final rescaling is performed for the same reasons as in
+<code>generateSpFromFun</code>. It should not be disabled unless you
+have very precise reasons to do it. The argument <code>rescale</code>
+controls this rescaling (<code>TRUE</code> by default).</p>
 </div>
 <div id="using-a-custom-pca" class="section level3">
 <h3>3.2.4. Using a custom PCA</h3>
-<p>It is possible, if you need, to use your own PCA. In that case, make sure that the PCA was performed with the function <code>dudi.pca</code> of the package <a href="http://cran.r-project.org/web/packages/ade4/index.html"><code>ade4</code></a>. You also need to perform the PCA on the same variables as in your <code>RasterStack</code>, entered in the <strong>exact same order</strong>.</p>
-<p>One reason to use a custom PCA could be that you have a struggling computer, which requires to generate a PCA from a very reduced subset of your environmental stack (<em>e.g.</em>, <code>generateSpFromPCA(my.stack, sample.points = TRUE, nb.points = 250)</code>). In such a case, the PCA may vary substantially among runs, precluding any tentative to finely customise the responses to axes. In this case, it is easy to extract the PCA from a previous run, and use it in the next run(s):</p>
+<p>It is possible, if you need, to use your own PCA. In that case, make
+sure that the PCA was performed with the function <code>dudi.pca</code>
+of the package <a
+href="http://cran.r-project.org/web/packages/ade4/index.html"><code>ade4</code></a>.
+You also need to perform the PCA on the same variables as in your
+<code>SpatRaster</code>, entered in the <strong>exact same
+order</strong>.</p>
+<p>One reason to use a custom PCA could be that you have a struggling
+computer, which requires to generate a PCA from a very reduced subset of
+your environmental stack (<em>e.g.</em>,
+<code>generateSpFromPCA(my.stack, sample.points = TRUE, nb.points = 250)</code>).
+In such a case, the PCA may vary substantially among runs, precluding
+any tentative to finely customise the responses to axes. In this case,
+it is easy to extract the PCA from a previous run, and use it in the
+next run(s):</p>
 <pre class="r"><code>my.first.run &lt;- generateSpFromPCA(raster.stack = my.stack, 
-                                  sample.points = TRUE, nb.points = 250)</code></pre>
+                                  sample.points = TRUE, 
+                                  nb.points = 250)</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca10-1.png" /><!-- --></p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 <pre class="r"><code># You can access the PCA with the following command
 my.pca &lt;- my.first.run$details$pca
 
 # And then provide it to your second run 
 my.second.run &lt;- generateSpFromPCA(raster.stack = my.stack, 
                                    pca = my.pca)</code></pre>
+<pre><code>## Reading raster values. If it fails for very large rasters, use arguments &#39;sample.points = TRUE&#39; and define a number of points to sample with &#39;nb.point&#39;.</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca10-2.png" /><!-- --></p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
 </div>
-<div id="transferring-niches-between-environmental-datasets-e.g.-climate-change-studies" class="section level3">
-<h3>3.2.5. Transferring niches between environmental datasets (e.g., climate change studies)</h3>
-<p>If you are using virtual species in cases of climate change, you need to keep the virtual niche as it was generated on current data and project it entirely on future data. To do so, you have to use the PCA and responses to PCA axes that were generated on current data, and project them on future data.</p>
-<p>Let’s start by generating a virtual species in current conditions:</p>
+<div
+id="transferring-niches-between-environmental-datasets-e.g.-climate-change-studies"
+class="section level3">
+<h3>3.2.5. Transferring niches between environmental datasets (e.g.,
+climate change studies)</h3>
+<p>If you are using virtual species in cases of climate change, you need
+to keep the virtual niche as it was generated on current data and
+project it entirely on future data. To do so, you have to use the PCA
+and responses to PCA axes that were generated on current data, and
+project them on future data.</p>
+<p>Let’s start by generating a virtual species in current
+conditions:</p>
 <pre class="r"><code>vs1.current &lt;- generateSpFromPCA(raster.stack = my.stack,
                                  means = c(0, 0), sds = c(1, 1))</code></pre>
+<pre><code>## Reading raster values. If it fails for very large rasters, use arguments &#39;sample.points = TRUE&#39; and define a number of points to sample with &#39;nb.point&#39;.</code></pre>
 <pre><code>##  - Perfoming the pca</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##     - You have provided standard deviations, so argument niche.breadth will be ignored.</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca11-1.png" /><!-- --></p>
-<p>Then, we will project this virtual species onto future conditions:</p>
-<pre class="r"><code># Let&#39;s get future projections from the CMIP5, RCP scenario 8.5, year 2050, model HadGEM2-AO
-future.stack &lt;- getData(&quot;CMIP5&quot;, var = &quot;bio&quot;, res = 10, rcp = 85, model = &quot;HD&quot;, year = 50)
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
+<p>Then, we will project this virtual species onto future
+conditions:</p>
+<pre class="r"><code># Let&#39;s get future projections from the CMIP6, SSP scenario 5-8.5, year 2050, model IPSL-CM6A-LR
+future.stack &lt;- cmip6_world(&quot;IPSL-CM6A-LR&quot;, var = &quot;bioc&quot;, res = 10, 
+                            ssp = 585, time = &quot;2041-2060&quot;,
+                            path = tempdir())
 names(future.stack) &lt;- paste0(&quot;bio&quot;, 1:19)
 future.stack &lt;- future.stack[[c(&quot;bio2&quot;, &quot;bio5&quot;, &quot;bio6&quot;, &quot;bio12&quot;, &quot;bio13&quot;, &quot;bio14&quot;)]]
 
@@ -646,13 +767,19 @@ vs1.future &lt;- generateSpFromPCA(raster.stack = future.stack,
                                  pca = vs1.current$details$pca,
                                  means = vs1.current$details$means,
                                  sds = vs1.current$details$sds)</code></pre>
+<pre><code>## Reading raster values. If it fails for very large rasters, use arguments &#39;sample.points = TRUE&#39; and define a number of points to sample with &#39;nb.point&#39;.</code></pre>
 <pre><code>##  - Defining the response of the species along PCA axes</code></pre>
 <pre><code>##     - You have provided standard deviations, so argument niche.breadth will be ignored.</code></pre>
 <pre><code>##  - Calculating suitability values</code></pre>
 <pre><code>##    The final environmental suitability was rescaled between 0 and 1.
 ##                   To disable, set argument rescale = FALSE</code></pre>
+<pre><code>## Argument rescale was not specified, so it was automatically defined to TRUE. Verify that this is what you want.</code></pre>
+<pre><code>## No default value was defined for rescale.each.response, setting rescale.each.response = TRUE</code></pre>
 <p><img src="03-PCA_files/figure-html/pca12-1.png" /><!-- --></p>
-<p>You can see how the species range will shift northward. Will your sdms correctly predict it? ;)</p>
+<pre><code>## Error in data.frame(dev = paste(names(d), d[[1]], sep = &quot;_&quot;), rbind(clp),  : 
+##   les arguments impliquent des nombres de lignes différents : 1, 0</code></pre>
+<p>You can see how the species range will shift northward. Will your
+sdms correctly predict it? ;)</p>
 </div>
 </div>
 
@@ -674,13 +801,59 @@ Do not hesitate if you have a question, find a bug, or would like to add a featu
 
 // add bootstrap table styles to pandoc tables
 function bootstrapStylePandocTables() {
-  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+  $('tr.odd').parent('tbody').parent('table').addClass('table table-condensed');
 }
 $(document).ready(function () {
   bootstrapStylePandocTables();
 });
 
 
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open');
+  });
+});
+</script>
+
+<!-- code folding -->
+
+<script>
+$(document).ready(function ()  {
+
+    // temporarily add toc-ignore selector to headers for the consistency with Pandoc
+    $('.unlisted.unnumbered').addClass('toc-ignore')
+
+    // move toc-ignore selectors from section div to header
+    $('div.section.toc-ignore')
+        .removeClass('toc-ignore')
+        .children('h1,h2,h3,h4,h5').addClass('toc-ignore');
+
+    // establish options
+    var options = {
+      selectors: "h1,h2,h3",
+      theme: "bootstrap3",
+      context: '.toc-content',
+      hashGenerator: function (text) {
+        return text.replace(/[.\\/?&!#<>]/g, '').replace(/\s/g, '_');
+      },
+      ignoreSelector: ".toc-ignore",
+      scrollTo: 0
+    };
+    options.showAndHide = true;
+    options.smoothScroll = true;
+
+    // tocify
+    var toc = $("#TOC").tocify(options).data("toc-tocify");
+});
 </script>
 
 <!-- dynamically load mathjax for compatibility with self-contained -->

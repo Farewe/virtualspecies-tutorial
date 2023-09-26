@@ -5,7 +5,7 @@ output:
     fig_caption: yes
     keep_md: yes
     mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-    theme: united
+    theme: yeti
     toc: true
     toc_float: true
 ---
@@ -13,50 +13,115 @@ output:
 
 
 ## 4.1. Introduction: why should we avoid a threshold conversion?
-What we did so far was defining the relationship between the species and its environment. It was the most important part, but what it provides us is a spatial distribution of the species' environmental suitability, not a spatial distribution of the species' presences/absences. Hence we now have to convert the environmental suitability into presence-absence.
+What we did so far was defining the relationship between the species and its
+environment. It was the most important part, but what it provides us is a 
+spatial distribution of the species' environmental suitability, not a spatial
+distribution of the species' presences/absences. Hence we now have to convert
+the environmental suitability into presence-absence.
 
-The simplest approach, which was also the most widely used until 2014, consists in defining a threshold of environmental suitability, below which conditions are unsuitable, so absence is attributed; and above which conditions are suitable, so presence is attributed. However, you should completely avoid this approach which is *pure evil*:
+The simplest approach, which was also the most widely used until 2014, consists
+in defining a threshold of environmental suitability, below which conditions are
+unsuitable, so absence is attributed; and above which conditions are suitable,
+so presence is attributed. However, you should avoid this approach 
+which is *inadequate* (see [Meynard et al. 2019 for a review](https://onlinelibrary.wiley.com/doi/10.1111/ecog.04385)):
 
 * Most importantly, this creates completely unrealistic species:
-    + Real species are often absent from areas of high suitability, because of factors acting at smaller spatial scales, such as biotic pressure (competition, predation), disturbances, stochastic events.
-    + Real species often occur in unsuitable areas, because of very particular conditions allowing their occurrence (microclimatic/microhabitat conditions, climatic refugia).
-* The threshold almost completely removes the previously defined relationship between the species and its environment. The gradual aspect is lost: the above-threshold part of the environmental gradient is always fully suitable, while the below-threshold part is always fully unsuitable.
+    + Real species are often absent from areas of high suitability, because of 
+    factors acting at smaller spatial scales, such as biotic pressure 
+    (competition, predation), disturbances, stochastic events.
+    + Real species often occur in unsuitable areas, because of very particular
+    conditions allowing their occurrence (microclimatic/microhabitat conditions, 
+    climatic refugia).
+* The threshold almost completely removes the previously defined relationship
+between the species and its environment. The gradual aspect is lost: the 
+above-threshold part of the environmental gradient is always fully suitable,
+while the below-threshold part is always fully unsuitable.
 
-So, how can we convert our environmental suitability into presence-absence without a threshold? 
+So, how can we convert our environmental suitability into presence-absence 
+without a threshold? 
 
 
 
-We use a probabilistic approach: the probability of getting a presence of the species in a given pixel is dependent on its suitability in that pixel.
-With the package, the probability of presence can be defined as a linear transformation of  environmental suitability, or as a logistic transformation of environmental suitability.
+We use a probabilistic approach: the probability of getting a presence of the 
+species in a given pixel is dependent on its suitability in that pixel.
+With the package, the probability of presence can be defined as a linear 
+transformation of  environmental suitability, or as a logistic transformation
+of environmental suitability.
 
 
+
+
+```
+## Le chargement a nécessité le package : terra
+```
+
+```
+## terra 1.7.39
+```
+
+```
+## The legacy packages maptools, rgdal, and rgeos, underpinning the sp package,
+## which was just loaded, will retire in October 2023.
+## Please refer to R-spatial evolution reports for details, especially
+## https://r-spatial.org/r/2023/05/15/evolution4.html.
+## It may be desirable to make the sf package available;
+## package maintainers should consider adding sf to Suggests:.
+## The sp package is now running under evolution status 2
+##      (status 2 uses the sf package in place of rgdal)
+```
 
 ![Fig. 4.1 Conversion of environmental suitability into probability of occurrence](04-presenceabsence_files/figure-html/conv1-1.png)
 
-In the example above, two linear conversions are illustrated (left panel), and one logistic conversion (right panel). The simplest method is to use environmental suitability as a probability of occurrence (left panel, plain line). In this case, a pixel with environmental suitability equal to 0.6 has 60% chance of having species presence, and 40% chance of having species absence. A linear conversion with a slope different from 1 may be chosen, e.g. to change the species prevalence (left panel, dashed line). In this example (slope = 0.5, intercept = 0), a pixel with environmental suitability equal to 0.6 has 30% chance of having species presence, and 70% chance of having species absence.
+In the example above, two linear conversions are illustrated (left panel), and 
+one logistic conversion (right panel). The simplest method is to use
+environmental suitability as a probability of occurrence (left panel, plain
+line). In this case, a pixel with environmental suitability equal to 0.6 has 
+60% chance of having species presence, and 40% chance of having species absence.
+A linear conversion with a slope different from 1 may be chosen, e.g. to change 
+the species prevalence (left panel, dashed line). In this example (slope = 0.5,
+intercept = 0), a pixel with environmental suitability equal to 0.6 has 30%
+chance of having species presence, and 70% chance of having species absence.
 
-A logistic function on the other hand, will ensure that the simulated probability is within the 0-1 range and allow easycontrol of species prevalence. However, the logistic function will also flatten out the relationship at the extreme  suitability values, and narrow or broaden the intermediate probability values depending on the slope of the logistic curve. In the example above (right panel), a pixel with environmental suitability equal to 0.6 has 88% chance of having species presence, and 12% chance of having species absence.
+A logistic function on the other hand, will ensure that the simulated
+probability is within the 0-1 range and allow easycontrol of species prevalence.
+However, the logistic function will also flatten out the relationship at the
+extreme suitability values, and narrow or broaden the intermediate probability 
+values depending on the slope of the logistic curve. In the example above (right
+panel), a pixel with environmental suitability equal to 0.6 has 88% chance of
+having species presence, and 12% chance of having species absence.
 
-This means that we convert the environmental suitability of each pixel into a probability of occurrence. This probability of occurrence is then used to sample presence or absence in each cell, i.e., we make a random draw of presence or absence weighted by the probability of occurrence. As a consequence, repeated realisation of the presence-absence conversion will produce different occupancy maps, each providing a valid realisation of the true species distribution map.
+This means that we convert the environmental suitability of each pixel into a
+probability of occurrence. This probability of occurrence is then used to sample
+presence or absence in each cell, i.e., we make a random draw of presence or 
+absence weighted by the probability of occurrence. As a consequence, repeated
+realisation of the presence-absence conversion will produce different occupancy
+maps, each providing a valid realisation of the true species distribution map.
 
-The conversion is fully customisable, and can range from threshold conversion to logistic to linear conversion, by adjusting parameters (explained in section 4.2):
+The conversion is fully customisable, and can range from threshold conversion
+to logistic to linear conversion, by adjusting parameters (explained in section 
+4.2):
 
 
 ![Fig. 4.2 Contrasting examples of conversion curves and their result on the distribution range of the same environmental suitability.](04-presenceabsence_files/figure-html/conv2-1.png)
 
-The logistic conversion looks much more like what a real species distribution is than the linear and threshold-like conversions.
+The logistic & linear conversions look much more realistic than the
+threshold-like conversion.
 
-In the next section we will see how to perform the conversion, and how to customise it.
+In the next section we will see how to perform the conversion, and how to 
+customise it.
 
 ## 4.2. A quick example of the function in action
 
-At first you may be interested to see the function in action, before we try to customise it. Here it is!
+At first you may be interested to see the function in action, before we try to 
+customise it. Here it is!
 
 
 ```r
 # Let's use the same species we generated before:
-my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm', mean = 250, sd = 50),
-                                 bio12 = c(fun = 'dnorm', mean = 4000, sd = 2000))
+my.parameters <- formatFunctions(bio1 = c(fun = 'dnorm',
+                                          mean = 25, sd = 5),
+                                 bio12 = c(fun = 'dnorm',
+                                           mean = 4000, sd = 2000))
 my.first.species <- generateSpFromFun(raster.stack = worldclim[[c("bio1", "bio12")]],
                                       parameters = my.parameters,
                                       plot = FALSE)
@@ -67,14 +132,23 @@ pa1 <- convertToPA(my.first.species, plot = TRUE)
 
 ![Fig. 4.3 Maps of environmental suitability and presence-absence of the virtual species](04-presenceabsence_files/figure-html/conv3-1.png)
 
-You have probably noticed that the conversion was performed without you choosing any parameter. This is because by default, the function performs a logistic conversion with random parameters. It would probably be better if you defined them yourself! 
+You have probably noticed that the conversion was performed without you choosing
+any parameter. This is because by default, the function performs a logistic 
+conversion with random parameters. It would probably be better if you defined 
+them yourself! 
 
-In the next section I summarise how to choose appropriate values of parameters, and then I illustrate how you can ask for a specific species prevalence (i.e., the number of places occupied by the species, out of the total number of available places) and let the function decide the parameters for you.
+In the next section I summarise how to choose appropriate values of parameters, 
+and then I illustrate how you can ask for a specific species prevalence (i.e., 
+the number of places occupied by the species, out of the total number of
+available places) and let the function decide the parameters for you.
 
 ## 4.3. Customisation of the conversion
 ### 4.3.1. Threshold conversion
 
-This conversion can be selected by defining argument `PA.method = "threshold"`. The only parameter that can be customised in this kind of conversion is `beta` which determines the threshold of suitability above which the species is present and below which the species is absent. 
+This conversion can be selected by defining argument `PA.method = "threshold"`.
+The only parameter that can be customised in this kind of conversion is `beta`
+which determines the threshold of suitability above which the species is present
+and below which the species is absent. 
 
 
 
@@ -86,16 +160,19 @@ pa2 <- convertToPA(my.first.species, PA.method = "threshold", beta = 0.65)
 ##    Threshold conversion finished:
 ##               
 ## - cutoff = 0.65
-## - species prevalence =0.0409104206692316
+## - species prevalence =0.0297987879507904
 ```
 
 ![Fig. 4.4 Threshold conversion](04-presenceabsence_files/figure-html/conv4.1-1.png)
 
 ### 4.3.2. Linear conversion
 
-This conversion can be selected by defining arguments `PA.method = "probability"` (default value) and `prob.method = "linear"`. Two arguments can be customised: the slope `a` and intercept `b` of the curve. 
+This conversion can be selected by defining arguments 
+`PA.method = "probability"` (default value) and `prob.method = "linear"`. Two 
+arguments can be customised: the slope `a` and intercept `b` of the curve. 
 
-Here is a first example where the probability of occurrence is equal to environmental suitability:
+Here is a first example where the probability of occurrence is equal to 
+environmental suitability:
 
 
 ```r
@@ -114,12 +191,13 @@ pa3 <- convertToPA(my.first.species, PA.method = "probability",
 ##               
 ## - slope (a) = 1
 ## - intercept (b) = 0
-## - species prevalence =0.117027446404834
+## - species prevalence =0.0874113455429285
 ```
 
 ![Fig. 4.5 Linear conversion, ](04-presenceabsence_files/figure-html/conv4.2-1.png)
 
-A second example where we change the probability of occurrence, which results in a difference in terms of species prevalence:
+A second example where we change the probability of occurrence, which results 
+in a difference in terms of species prevalence:
 
 
 ```r
@@ -138,7 +216,7 @@ pa4 <- convertToPA(my.first.species, PA.method = "probability",
 ##               
 ## - slope (a) = 0.5
 ## - intercept (b) = 0
-## - species prevalence =0.0589029307757976
+## - species prevalence =0.0434142314922412
 ```
 
 ![Fig. 4.6 Linear conversion](04-presenceabsence_files/figure-html/conv4.3-1.png)
@@ -155,8 +233,11 @@ plotSuitabilityToProba(pa4, add = TRUE, lty = 2)
 
 ### 4.3.3. Logistic conversion
 
-This conversion can be selected by defining arguments `PA.method = "probability"` (default value) and `prob.method = "logistic"` (default value).
-The parameters $\alpha$ (`alpha`) and $\beta$ (`beta`)determine the shape of the logistic curve:
+This conversion can be selected by defining arguments 
+`PA.method = "probability"` (default value) and `prob.method = "logistic"` 
+(default value).
+The parameters $\alpha$ (`alpha`) and $\beta$ (`beta`)determine the shape of
+the logistic curve:
 
 * $\beta$ controls the inflexion point,
 
@@ -202,27 +283,56 @@ plotSuitabilityToProba(pa5)
 
 #### 4.3.3.1. beta
 
-`beta` is very simple to grasp, as it is the inflexion point of the curve. Hence, looking at the three beta curves above, we can see that a lower `beta` will increase the probability of finding suitable conditions for the species (wider distribution range). A higher `beta` will decrease the probability of finding suitable conditions (smaller distribution range).
+`beta` is very simple to grasp, as it is the inflexion point of the curve. 
+Hence, looking at the three beta curves above, we can see that a lower `beta`
+will increase the probability of finding suitable conditions for the species
+(wider distribution range). A higher `beta` will decrease the probability of 
+finding suitable conditions (smaller distribution range).
 
 #### 4.3.3.2. alpha
 
-`alpha` may be more difficult to grasp, as it is dependent on the range of values of the `x` axis (in our case, the environmental suitability, ranging from 0 to 1):
+`alpha` may be more difficult to grasp, as it is dependent on the range of 
+values of the `x` axis (in our case, the environmental suitability, ranging 
+from 0 to 1):
 
-* If `alpha` is approximately equal to the range of`x` or greater (in absolute value), then the conversion will have a linear shape. In our case, it means  values of `alpha` below -.3).
-* If `alpha` is about 5-10% of the range of `x`, then the conversion will be logistic. In our case, you can have nice logistic curves for values of `alpha` between -0.1 and -0.01.
-* If `alpha` is much smaller compared to `x` (in absolute value), then the conversion will be threshold-like. In our case, if means values of `alpha` in the range [-0.001, 0[.
+* If `alpha` is approximately equal to the range of`x` or greater (in absolute
+value), then the conversion will have a linear shape. In our case, it means  
+values of `alpha` below -.3).
+* If `alpha` is about 5-10% of the range of `x`, then the conversion will be 
+logistic. In our case, you can have nice logistic curves for values of `alpha` 
+between -0.1 and -0.01.
+* If `alpha` is much smaller compared to `x` (in absolute value), then the 
+conversion will be threshold-like. In our case, if means values of `alpha` in 
+the range [-0.001, 0[.
 
 ## 4.4. Conversion to presence-absence based on a value of species prevalence
 
-_The species prevalence is the number of places (here, pixels) actually occupied by the species out of the total number of places (pixels) available. Do not confuse the **SPECIES PREVALENCE** with the [**SAMPLE PREVALENCE**](07-sampleoccurrences.html#defining-the-sample-prevalence), which in turn is the proportion of samples in which you have found the species._
+_The species prevalence is the number of places (here, pixels) actually 
+occupied by the species out of the total number of places (pixels) available.
+Do not confuse the **SPECIES PREVALENCE** with the [**SAMPLE PREVALENCE**](07-sampleoccurrences.html#defining-the-sample-prevalence), which 
+in turn is the proportion of samples in which you have found the species._
 
-Numerous authors have shown the importance of the species prevalence in species distribution modelling, and how it can bias models. As a consequence, when generating virtual species distributions to test particular protocols or modelling techniques, you may be interested in testing different values of species prevalence. However, it is important to know that the species prevalence is dependent on **the species-environment relationship**, **the shape of the probabilistic conversion curve** AND **the spatial distribution of environmental conditions**. As a consequence, the function has to try different shapes of conversion curve to find a conversion according to your chosen value of species prevalence. Sometimes, it is not possible to reach a particular species prevalence, in that case the function will choose the conversion curve providing results closest to your species prevalence.
+Numerous authors have shown the importance of the species prevalence in species
+distribution modelling, and how it can bias models. As a consequence, when
+generating virtual species distributions to test particular protocols or 
+modelling techniques, you may be interested in testing different values of 
+species prevalence. However, it is important to know that the species 
+prevalence is dependent on **the species-environment relationship**, **the
+shape of the probabilistic conversion curve** AND **the spatial distribution 
+of environmental conditions**. As a consequence, the function has to try
+different shapes of conversion curve to find a conversion according to your 
+chosen value of species prevalence. Sometimes, it is not possible to reach a
+particular species prevalence, in that case the function will choose the 
+conversion curve providing results closest to your species prevalence.
 
-For all three types of conversion (threshold, linear, logistic), the function can automatically find parameters according to your chosen value of species prevalence. 
+For all three types of conversion (threshold, linear, logistic), the function 
+can automatically find parameters according to your chosen value of species
+prevalence. 
 
 ### 4.4.1 Threshold conversion
 
-In this case you just specify your value of species prevalence without any other parameter:
+In this case you just specify your value of species prevalence without any
+other parameter:
 
 
 ```r
@@ -235,8 +345,8 @@ sp.0.2 <- convertToPA(my.first.species,
 ```
 ##    Threshold conversion finished:
 ##               
-## - cutoff = 0.203386126930749
-## - species prevalence =0.199999657839496
+## - cutoff = 0.1362433482644
+## - species prevalence =0.200000495017035
 ```
 
 ![Fig. 4.13 Threshold conversion of a species with a prevalence of 0.2, _i.e._ occupying 20% of the world (which is quite large)](04-presenceabsence_files/figure-html/conv8.1-1.png)
@@ -251,22 +361,25 @@ sp.0.2
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
-##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=25; sd=5)
+##    .bio12  [min=0; max=11191] : dnorm   (mean=4000; sd=2000)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio12
 ## - Environmental suitability was rescaled between 0 and 1
 ## 
 ## - Converted into presence-absence:
 ##    .Method = threshold
-##    .threshold           = 0.203386126930749
-##    .species prevalence  = 0.199999657839496
+##    .threshold           = 0.1362433482644
+##    .species prevalence  = 0.200000495017035
 ```
 
 
 ### 4.4.2 Linear conversion
 
-In this case again, you just specify your value of species prevalence without any other parameter, and the function will try to find a conversion that respects the chosen prevalence, and does not result in probabilities below 0 or above 1.
+In this case again, you just specify your value of species prevalence without
+any other parameter, and the function will try to find a conversion that 
+respects the chosen prevalence, and does not result in probabilities below 0 
+or above 1.
 
 
 ```r
@@ -286,9 +399,9 @@ sp.0.2 <- convertToPA(my.first.species,
 ```
 ##    Linear conversion finished:
 ##               
-## - slope (a) = 0.906510955920892
-## - intercept (b) = 0.0934890440791084
-## - species prevalence =0.200039006297464
+## - slope (a) = 0.876382668991938
+## - intercept (b) = 0.123617331008062
+## - species prevalence =0.199248069124179
 ```
 
 ![Fig. 4.14 Linear conversion of a species with a prevalence of 0.2](04-presenceabsence_files/figure-html/conv8.2-1.png)
@@ -303,8 +416,8 @@ sp.0.2
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
-##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=25; sd=5)
+##    .bio12  [min=0; max=11191] : dnorm   (mean=4000; sd=2000)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio12
 ## - Environmental suitability was rescaled between 0 and 1
@@ -312,9 +425,9 @@ sp.0.2
 ## - Converted into presence-absence:
 ##    .Method = probability
 ##    .probabilistic method    = linear
-##    .a (slope)               = 0.906510955920892
-##    .b (intercept)           = 0.0934890440791084
-##    .species prevalence      = 0.200039006297464
+##    .a (slope)               = 0.876382668991938
+##    .b (intercept)           = 0.123617331008062
+##    .species prevalence      = 0.199248069124179
 ```
 
 ```r
@@ -334,9 +447,9 @@ sp.0.05 <- convertToPA(my.first.species,
 ```
 ##    Linear conversion finished:
 ##               
-## - slope (a) = 0.425548220877006
+## - slope (a) = 0.573679003730832
 ## - intercept (b) = 0
-## - species prevalence =0.0502017891572758
+## - species prevalence =0.0502380413165968
 ```
 
 ![Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5](04-presenceabsence_files/figure-html/conv8.4-1.png)
@@ -357,9 +470,9 @@ sp.0.5 <- convertToPA(my.first.species,
 ```
 ##    Linear conversion finished:
 ##               
-## - slope (a) = 0.566569347450557
-## - intercept (b) = 0.433430652549443
-## - species prevalence =0.499480771435072
+## - slope (a) = 0.547739168119961
+## - intercept (b) = 0.452260831880039
+## - species prevalence =0.500036507506315
 ```
 
 ![Fig. 4.15 Linear conversion of species with a prevalence 0.05 and 0.5](04-presenceabsence_files/figure-html/conv8.4-2.png)
@@ -376,7 +489,13 @@ legend("topleft", lty = 1:3, legend = c(0.05, 0.2, 0.5), title = "Prevalence")
 
 ### 4.4.3 Logistic conversion
 
-For the logistic conversion, you have to fix either `alpha` or `beta`. I strongly advise to fix a value of `alpha` (this is the default parameter, with `alpha = -0.05`), so that the function will try to find an appropriate conversion by testing different values of `beta`. If you prefer to fix the value of `beta`, then the function will try different values of `alpha`, but it is likely that it will not be able to find a conversion generating a species with the appropriate prevalence.
+For the logistic conversion, you have to fix either `alpha` or `beta`. I
+strongly advise to fix a value of `alpha` (this is the default parameter, with 
+`alpha = -0.05`), so that the function will try to find an appropriate
+conversion by testing different values of `beta`. If you prefer to fix the value
+of `beta`, then the function will try different values of `alpha`, but it is 
+likely that it will not be able to find a conversion generating a species with
+the appropriate prevalence.
 
 Let's see it in practice:
 
@@ -395,9 +514,9 @@ sp.0.2 <- convertToPA(my.first.species,
 ```
 ##    Logistic conversion finished:
 ##               
-## - beta = 0.234375
+## - beta = 0.17578125
 ## - alpha = -0.05
-## - species prevalence =0.199236639915418
+## - species prevalence =0.200796234900434
 ```
 
 ![Fig. 4.17 Conversion of a species with a prevalence of 0.2, _i.e._ occupying 20% of the world (which is quite large)](04-presenceabsence_files/figure-html/conv8-1.png)
@@ -412,8 +531,8 @@ sp.0.2
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
-##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=25; sd=5)
+##    .bio12  [min=0; max=11191] : dnorm   (mean=4000; sd=2000)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio12
 ## - Environmental suitability was rescaled between 0 and 1
@@ -422,8 +541,8 @@ sp.0.2
 ##    .Method = probability
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.05
-##    .beta  (inflexion point) = 0.234375
-##    .species prevalence      = 0.199236639915418
+##    .beta  (inflexion point) = 0.17578125
+##    .species prevalence      = 0.200796234900434
 ```
 
 
@@ -442,9 +561,9 @@ sp.0.015 <- convertToPA(my.first.species,
 ```
 ##    Logistic conversion finished:
 ##               
-## - beta = 0.828125
+## - beta = 0.78125
 ## - alpha = -0.015
-## - species prevalence =0.0144066680239033
+## - species prevalence =0.0144841984374787
 ```
 
 ![Fig. 4.18 Conversion of a species with a prevalence of 0.015, _i.e._ occupying 1.5% of the world](04-presenceabsence_files/figure-html/conv9-1.png)
@@ -459,8 +578,8 @@ sp.0.015
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
-##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=25; sd=5)
+##    .bio12  [min=0; max=11191] : dnorm   (mean=4000; sd=2000)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio12
 ## - Environmental suitability was rescaled between 0 and 1
@@ -469,8 +588,8 @@ sp.0.015
 ##    .Method = probability
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.015
-##    .beta  (inflexion point) = 0.828125
-##    .species prevalence      = 0.0144066680239033
+##    .beta  (inflexion point) = 0.78125
+##    .species prevalence      = 0.0144841984374787
 ```
 
 
@@ -491,8 +610,8 @@ sp.10 <- convertToPA(my.first.species,
 ##    Logistic conversion finished:
 ##               
 ## - beta = 0.9
-## - alpha = -0.31346875
-## - species prevalence =0.0904467076460897
+## - alpha = -0.35252734375
+## - species prevalence =0.101000800690054
 ```
 
 ![Fig. 4.19 Conversion of a species with a prevalence of 0.1, _i.e._ occupying 10% of the world](04-presenceabsence_files/figure-html/conv10-1.png)
@@ -507,8 +626,8 @@ sp.10
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
-##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=25; sd=5)
+##    .bio12  [min=0; max=11191] : dnorm   (mean=4000; sd=2000)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio12
 ## - Environmental suitability was rescaled between 0 and 1
@@ -516,9 +635,9 @@ sp.10
 ## - Converted into presence-absence:
 ##    .Method = probability
 ##    .probabilistic method    = logistic
-##    .alpha (slope)           = -0.31346875
+##    .alpha (slope)           = -0.35252734375
 ##    .beta  (inflexion point) = 0.9
-##    .species prevalence      = 0.0904467076460897
+##    .species prevalence      = 0.101000800690054
 ```
 
 It worked, but the resulting species does not look realistic at all: alpha was below -0.3, which means that we had a quasi-linear conversion curve, producing this unrealistic presence-absence map.
@@ -539,7 +658,7 @@ sp.10bis <- convertToPA(my.first.species,
 
 ```
 ## Warning in convertToPA(my.first.species, species.prevalence = 0.1, alpha = NULL, : Warning, the desired species prevalence cannot be obtained, because of the chosen beta and available environmental conditions (see details).
-##                           The closest possible estimate of prevalence was 0.15 
+##                           The closest possible estimate of prevalence was 0.11 
 ## Perhaps you can try a higher beta value.
 ```
 
@@ -548,7 +667,7 @@ sp.10bis <- convertToPA(my.first.species,
 ##               
 ## - beta = 0.3
 ## - alpha = -0.001
-## - species prevalence =0.147229954099168
+## - species prevalence =0.108668614558699
 ```
 
 ![Fig. 4.20 Conversion of a species whose asked prevalence (0.1) cannot be reached because of a too low value of beta](04-presenceabsence_files/figure-html/conv11-1.png)
@@ -563,8 +682,8 @@ sp.10bis
 ## 
 ## - Approach used: Responses to each variable
 ## - Response functions:
-##    .bio1  [min=-269; max=314] : dnorm   (mean=250; sd=50)
-##    .bio12  [min=0; max=9916] : dnorm   (mean=4000; sd=2000)
+##    .bio1  [min=-54.72435; max=30.98764] : dnorm   (mean=25; sd=5)
+##    .bio12  [min=0; max=11191] : dnorm   (mean=4000; sd=2000)
 ## - Each response function was rescaled between 0 and 1
 ## - Environmental suitability formula = bio1 * bio12
 ## - Environmental suitability was rescaled between 0 and 1
@@ -574,7 +693,7 @@ sp.10bis
 ##    .probabilistic method    = logistic
 ##    .alpha (slope)           = -0.001
 ##    .beta  (inflexion point) = 0.3
-##    .species prevalence      = 0.147229954099168
+##    .species prevalence      = 0.108668614558699
 ```
 
 

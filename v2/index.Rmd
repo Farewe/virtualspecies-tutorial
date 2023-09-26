@@ -1,13 +1,13 @@
 ---
-title: 'The virtualspecies R package: a complete tutorial - version 1.5'
+title: 'The virtualspecies R package: a complete tutorial - version 1.6'
 author: "Boris Leroy - leroy.boris@gmail.com"
-date: "April 2019"
+date: "September 2023"
 output:
   html_document:
     fig_caption: yes
     keep_md: yes
     mathjax: "http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
-    theme: united
+    theme: yeti
 ---
 
 
